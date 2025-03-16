@@ -1,0 +1,95 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    background-color: #ffffff;
+    background-image: url('../assets/grid-background.svg');
+    background-size: 24px 32px;
+    background-repeat: repeat;
+    background-position: center;
+    font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    
+    /* Force landscape orientation */
+    max-height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .title {
+    color: #4A90E2;
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+  }
+  
+  .playButton {
+    background-color: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
+  }
+  
+  .playButton:hover {
+    background-color: #3A80D2;
+    transform: translateY(-2px);
+  }
+  
+  .playButton:active {
+    transform: translateY(1px);
+  }
+  
+  .settingButton {
+    background-color: #82B1E8;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 120px;
+  }
+  
+  .settingButton:hover {
+    background-color: #6B9CDB;
+    transform: translateY(-2px);
+  }
+  
+  .settingButton:active {
+    transform: translateY(1px);
+  }
+  
+  .version {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    color: #757575;
+    font-size: 0.8rem;
+  }
