@@ -1,12 +1,10 @@
 import React from 'react';
 import styles from '../styles/GameModeDetailScreen.module.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const GameModeDetailScreen = () => {
   const navigate = useNavigate();
-
-  // Simulating route parameter extraction
-  const type = window.location.pathname.includes('grid') ? 'grid' : 'free';
+  const { type } = useParams(); // 'grid' or 'free'
 
   const handleBack = () => {
     navigate('/game-mode'); // Use React Router's navigate function
@@ -21,6 +19,7 @@ const GameModeDetailScreen = () => {
   };
 
   const handleZenMode = () => {
+    // Directly navigate to Zen gameplay screen rather than a configuration screen
     navigate(`/game/${type}/zen`);
   };
 

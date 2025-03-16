@@ -1,0 +1,171 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background-color: #ffffff;
+  font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f8f8f8;
+  height: 60px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.pauseButton {
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.pauseButton:hover {
+  background-color: #3A80D2;
+}
+
+.instructionText {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.statsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.timeDisplay, .scoreDisplay, .livesDisplay {
+  font-size: 1rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.gameContent {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grid Mode Styles */
+.gridContainer {
+  width: 100%;
+  max-width: 600px;
+  height: 100%;
+  max-height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 500px;
+  max-height: 500px;
+}
+
+.gridCell {
+  background-color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.gridCell:hover {
+  background-color: #d0d0d0;
+}
+
+/* Free Mode Styles */
+.freeContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.freeNumber {
+  position: absolute;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s;
+}
+
+.freeNumber:hover {
+  transform: scale(1.1);
+}
+
+/* Pause Menu Overlay */
+.pauseOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.pauseMenu {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  min-width: 250px;
+}
+
+.pauseMenu h2 {
+  color: #4A90E2;
+  margin: 0;
+}
+
+.pauseMenu button {
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.pauseMenu button:hover {
+  background-color: #3A80D2;
+}
