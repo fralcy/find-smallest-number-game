@@ -1,0 +1,109 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #ffffff;
+  background-image: url('../assets/grid-background.svg');
+  background-size: 24px 32px;
+  background-repeat: repeat;
+  font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #4A90E2;
+  cursor: pointer;
+}
+
+.titleContainer {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  color: #4A90E2;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.levelGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 800px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.levelCard {
+  aspect-ratio: 1;
+  background-color: #F5A623;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.levelCard:hover:not(.locked) {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.levelLabel {
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lockIcon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: white;
+}
+
+/* Scrollbar styling */
+.levelGrid::-webkit-scrollbar {
+  width: 10px;
+}
+
+.levelGrid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.levelGrid::-webkit-scrollbar-thumb {
+  background: #4A90E2;
+  border-radius: 10px;
+}
+
+.levelGrid::-webkit-scrollbar-thumb:hover {
+  background: #3A80D2;
+}
