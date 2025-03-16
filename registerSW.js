@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/find-smallest-number-game/sw.js', { scope: '/find-smallest-number-game/' })})}
