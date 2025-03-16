@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import MainScreen from './screens/MainScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import GameModeScreen from './screens/GameModeScreen';
 import './App.css';
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<MainScreen />} />
         <Route path="/settings" element={<SettingsScreen />} />
+        <Route path="/game-mode" element={<GameModeScreen />} />
         {/* Redirect any unknown route to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
