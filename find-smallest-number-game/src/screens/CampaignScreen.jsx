@@ -22,9 +22,9 @@ const CampaignScreen = () => {
     const currentPath = window.location.pathname;
   
     if (currentPath.includes('/game/grid/campaign')) {
-      navigate('/game/grid');
+      navigate('/game-mode/grid');
     } else {
-      navigate('/game/free');
+      navigate('/game-mode/free');
     }
   };
 
