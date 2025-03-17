@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/SettingsScreen.module.css';
 
 const LANGUAGES = [
@@ -14,6 +14,12 @@ const LANGUAGES = [
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check if we're navigating from gameplay
+  const fromGameplay = location.state?.fromGameplay || false;
+  const gameType = location.state?.type;
+  const gameMode = location.state?.mode;
   
   // Trạng thái cài đặt
   const [volume, setVolume] = useState(50);
@@ -51,19 +57,32 @@ const SettingsScreen = () => {
   };
 
   const handleBack = () => {
-    navigate(-1); // Quay lại màn hình trước
+    if (fromGameplay) {
+      // If from gameplay, go back to the game
+      navigate(`/game/${gameType}/${gameMode}`);
+    } else {
+      // Otherwise, go back to main menu
+      navigate(-1);
+    }
+  };
+  
+  const handleEndGame = () => {
+    // Navigate to results screen or game mode selection
+    navigate(`/game-mode/${gameType}`);
   };
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <button 
-          className={styles.backButton}
-          onClick={handleBack}
-        >
-          ←
-        </button>
-      </div>
+      {!fromGameplay && (
+        <div className={styles.header}>
+          <button 
+            className={styles.backButton}
+            onClick={handleBack}
+          >
+            ←
+          </button>
+        </div>
+      )}
       
       <div className={styles.titleContainer}>
         <h1 className={styles.title}>Setting</h1>
@@ -113,6 +132,23 @@ const SettingsScreen = () => {
           </select>
         </div>
       </div>
+      
+      {fromGameplay && (
+        <div className={styles.gameplayButtons}>
+          <button 
+            className={styles.endButton}
+            onClick={handleEndGame}
+          >
+            End
+          </button>
+          <button 
+            className={styles.continueButton}
+            onClick={handleBack}
+          >
+            Continue
+          </button>
+        </div>
+      )}
     </div>
   );
 };

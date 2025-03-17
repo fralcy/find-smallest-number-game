@@ -51,7 +51,8 @@ const GameplayScreen = () => {
   }, [type, gridSize]);
   
   const handlePauseClick = () => {
-    setIsPaused(!isPaused);
+    // Chuyển thẳng đến màn hình cài đặt thay vì hiển thị modal pause
+    navigate(`/settings`, { state: { fromGameplay: true, type, mode } });
   };
   
   const renderGridMode = () => {
@@ -105,7 +106,7 @@ const GameplayScreen = () => {
           className={styles.pauseButton}
           onClick={handlePauseClick}
         >
-          {isPaused ? '▶️' : '⏸️'}
+          ⏸️
         </button>
         
         <div className={styles.instructionText}>
@@ -132,16 +133,6 @@ const GameplayScreen = () => {
       <div className={styles.gameContent}>
         {type === 'grid' ? renderGridMode() : renderFreeMode()}
       </div>
-      
-      {isPaused && (
-        <div className={styles.pauseOverlay}>
-          <div className={styles.pauseMenu}>
-            <h2>Game Paused</h2>
-            <button onClick={() => setIsPaused(false)}>Resume</button>
-            <button onClick={() => navigate(`/game-mode/${type}`)}>Exit</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -1,106 +1,148 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; /* Thêm justify-content để căn giữa theo chiều dọc */
-    min-height: 100vh;
-    width: 100%;
-    background-color: #ffffff;
-    background-image: url('../assets/grid-background.svg');
-    background-size: 24px 32px;
-    background-repeat: repeat;
-    font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
-    padding: 20px;
-  }
-  
-  .header {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  
-  .backButton {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #4A90E2;
-    cursor: pointer;
-  }
-  
-  .titleContainer {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 2rem; /* Tăng khoảng cách giữa title và setting items */
-  }
-  
-  .title {
-    color: #4A90E2;
-    font-size: 2rem;
-    font-weight: bold;
-  }
-  
-  .settingsWrapper {
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem; /* Khoảng cách giữa các setting items */
-  }
-  
-  .settingItem {
-    width: 100%;
-  }
-  
-  .settingLabel {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #333;
-    font-size: 1rem;
-  }
-  
-  .sliderContainer {
-    display: flex;
-    align-items: center;
-  }
-  
-  .slider {
-    flex-grow: 1;
-    margin-right: 15px;
-    appearance: none;
-    width: 100%;
-    height: 8px;
-    background: #E0E0E0;
-    outline: none;
-    opacity: 0.7;
-    transition: opacity .2s;
-    border-radius: 5px;
-  }
-  
-  .slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background: #4A90E2;
-    cursor: pointer;
-    border-radius: 50%;
-  }
-  
-  .sliderValue {
-    color: #4A90E2;
-    font-weight: bold;
-    min-width: 40px;
-    text-align: right;
-  }
-  
-  .languageSelect {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #E0E0E0;
-    border-radius: 8px;
-    appearance: none;
-    background: url("data:image/svg+xml;utf8,<svg fill='%234A90E2' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") no-repeat right 10px center;
-    background-size: 24px;
-    color: #333;
-    font-size: 1rem;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Thêm justify-content để căn giữa theo chiều dọc */
+  min-height: 100vh;
+  width: 100%;
+  background-color: #ffffff;
+  background-image: url('../assets/grid-background.svg');
+  background-size: 24px 32px;
+  background-repeat: repeat;
+  font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #4A90E2;
+  cursor: pointer;
+}
+
+.titleContainer {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem; /* Tăng khoảng cách giữa title và setting items */
+}
+
+.title {
+  color: #4A90E2;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.settingsWrapper {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Khoảng cách giữa các setting items */
+  margin-bottom: 2rem;
+}
+
+.settingItem {
+  width: 100%;
+}
+
+.settingLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: 1rem;
+}
+
+.sliderContainer {
+  display: flex;
+  align-items: center;
+}
+
+.slider {
+  flex-grow: 1;
+  margin-right: 15px;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #E0E0E0;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+  border-radius: 5px;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #4A90E2;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.sliderValue {
+  color: #4A90E2;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: right;
+}
+
+.languageSelect {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg fill='%234A90E2' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") no-repeat right 10px center;
+  background-size: 24px;
+  color: #333;
+  font-size: 1rem;
+}
+
+/* New styles for gameplay buttons */
+.gameplayButtons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.endButton, .continueButton {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.endButton {
+  background-color: #4CEEAD;
+  color: white;
+}
+
+.endButton:hover {
+  background-color: #3CD69A;
+  transform: translateY(-2px);
+}
+
+.continueButton {
+  background-color: #4A90E2;
+  color: white;
+}
+
+.continueButton:hover {
+  background-color: #3A80D2;
+  transform: translateY(-2px);
+}
