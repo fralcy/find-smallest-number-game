@@ -67,8 +67,17 @@ const SettingsScreen = () => {
   };
   
   const handleEndGame = () => {
-    // Navigate to results screen or game mode selection
-    navigate(`/game-mode/${gameType}`);
+    // Navigate to results screen with appropriate state
+    navigate('/result', {
+      state: {
+        type: gameType,
+        mode: gameMode,
+        outcome: 'finish', // When user chooses to end, still show as "Finish"
+        score: 100, // This would be the actual score from gameplay
+        usedTime: 50, // This would be the actual time used
+        timeRemaining: 100 // This would be the actual time remaining
+      }
+    });
   };
 
   return (

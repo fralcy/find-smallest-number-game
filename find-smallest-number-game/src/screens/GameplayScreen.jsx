@@ -98,6 +98,69 @@ const GameplayScreen = () => {
       </div>
     );
   };
+
+  // Function to handle game completion (win)
+  const handleGameComplete = () => {
+    navigate('/result', {
+      state: {
+        type,
+        mode,
+        outcome: 'finish',
+        score,
+        usedTime: 100 - timeLeft, // Convert from remaining time to used time
+        timeRemaining: timeLeft,
+        level: mode === 'campaign' ? getCurrentLevel() : undefined,
+        stars: calculateStars() // Calculate stars based on performance
+      }
+    });
+  };
+
+  // Function to handle timeout
+  const handleTimeout = () => {
+    navigate('/result', {
+      state: {
+        type,
+        mode,
+        outcome: 'timeout',
+        score,
+        usedTime: 100, // All time was used
+        timeRemaining: 0,
+        level: mode === 'campaign' ? getCurrentLevel() : undefined,
+        stars: calculateStars()
+      }
+    });
+  };
+
+  // Function to handle running out of lives (zen mode)
+  const handleLifeOut = () => {
+    navigate('/result', {
+      state: {
+        type,
+        mode,
+        outcome: 'lifeout',
+        score,
+        level: undefined,
+        stars: undefined
+      }
+    });
+  };
+
+  // Helper function to get current level from state or URL params
+  const getCurrentLevel = () => {
+    return location.state?.level || 1;
+  };
+
+  // Helper function to calculate stars based on performance
+  const calculateStars = () => {
+    // Example calculation:
+    // 3 stars: > 80% time remaining
+    // 2 stars: > 50% time remaining
+    // 1 star: completed with any time
+    const timePercentage = timeLeft / 100 * 100;
+    if (timePercentage > 80) return 3;
+    if (timePercentage > 50) return 2;
+    return 1;
+  };
   
   return (
     <div className={styles.container}>
