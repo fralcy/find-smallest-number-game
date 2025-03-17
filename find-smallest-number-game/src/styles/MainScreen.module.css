@@ -13,7 +13,7 @@
     background-position: center;
     font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
     text-align: center;
-    padding: 20px;
+    padding: 10px;
     
     /* Force landscape orientation */
     max-height: 100vh;
@@ -31,9 +31,9 @@
   
   .title {
     color: #4A90E2;
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: bold;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     text-align: center;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
@@ -44,8 +44,8 @@
     color: white;
     border: none;
     border-radius: 12px;
-    padding: 1rem 3rem;
-    font-size: 1.5rem;
+    padding: 0.8rem 2rem;
+    font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 1.5rem;
     cursor: pointer;
@@ -68,13 +68,13 @@
     color: white;
     border: none;
     border-radius: 12px;
-    padding: 0.6rem 1.5rem;
+    padding: 0.5rem 1rem;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 120px;
+    width: 100px;
   }
   
   .settingButton:hover {

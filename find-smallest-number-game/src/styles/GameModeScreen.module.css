@@ -44,9 +44,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
-    width: 100%;
-    max-width: 800px;
+    gap: 1rem;
+    max-width: 600px;
   }
   
   .modeCard {
@@ -62,8 +61,8 @@
   }
   
   .modeImagePlaceholder {
-    width: 250px;
-    height: 250px;
+    width: 200px;
+    height: 200px;
     background-color: #F5A623;
     border-radius: 15px;
     margin-bottom: 1rem;
@@ -74,8 +73,8 @@
     color: white;
     border: none;
     border-radius: 12px;
-    padding: 0.8rem 2rem;
-    font-size: 1.2rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;

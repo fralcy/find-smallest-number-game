@@ -8,12 +8,15 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  overscroll-behavior: none; /* Prevent pull-to-refresh */
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   background-color: #ffffff;
+  touch-action: manipulation; /* Disable double-tap zoom */
+  text-size-adjust: 100%; /* Prevent automatic text scaling on mobile */
 }
 
 #root {
@@ -22,32 +25,26 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 
 button {
   cursor: pointer;
   font-family: inherit;
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 button:focus {
   outline: none;
 }
 
-/* Remove default styling from App.css */
-.logo {
-  display: none;
-}
-
-.card {
-  display: none;
-}
-
-.read-the-docs {
+/* Disable default styling */
+.logo, .card, .read-the-docs {
   display: none;
 }
 
 /* Force landscape mode on mobile */
-@media screen and (orientation: portrait) {
+@media screen and (max-width: 768px) and (orientation: portrait) {
   html {
     transform: rotate(-90deg);
     transform-origin: left top;
@@ -56,27 +53,15 @@ button:focus {
     position: absolute;
     top: 100%;
     left: 0;
+    overflow: hidden;
+  }
+  
+  body {
+    overflow: hidden;
   }
 }
 
-button {
-  cursor: pointer;
-  font-family: inherit;
-}
-
-button:focus {
-  outline: none;
-}
-
-/* Remove default styling from App.css */
-.logo {
-  display: none;
-}
-
-.card {
-  display: none;
-}
-
-.read-the-docs {
-  display: none;
+/* Disable zoom on input elements */
+input, select, textarea {
+  font-size: 16px; /* Prevents automatic zoom on iOS */
 }
