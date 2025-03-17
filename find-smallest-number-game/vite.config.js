@@ -43,7 +43,6 @@ export default defineConfig({
             form_factor: 'narrow' // Cho mobile
           }
         ],
-        start_url: '/find-smallest-number-game/',
         display: 'standalone',
         background_color: '#ffffff',
         orientation: 'landscape',
