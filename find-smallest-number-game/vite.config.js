@@ -14,6 +14,7 @@ export default defineConfig({
         short_name: 'Number Game',
         description: 'A fun game to find the smallest number',
         theme_color: '#4A90E2',
+        start_url: '/',
         icons: [
           {
             src: 'pwa-192x192.png',

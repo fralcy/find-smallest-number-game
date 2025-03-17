@@ -6,12 +6,10 @@ const CACHE_NAME = 'find-smallest-number-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/assets/index.css',
-  '/assets/index.js',
-  '/game-icon.svg',
   '/pwa-192x192.png',
-  '/pwa-512x512.png',
+  '/pwa-512x512.png'
 ];
+
 
 // Cài đặt Service Worker
 self.addEventListener('install', (event) => {
@@ -44,15 +42,10 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
+      .then((response) => response || fetch(event.request).catch(() => caches.match('/index.html')))
   );
 });
+
 
 // Nhận thông báo push
 self.addEventListener('push', (event) => {

@@ -14,7 +14,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/find-smallest-number-game" element={<MainScreen />} />
+        <Route path="/" element={<MainScreen />} />
         <Route path="/settings" element={<SettingsScreen />} />
         <Route path="/game-mode" element={<GameModeScreen />} />
         <Route path="/game-mode/:type" element={<GameModeDetailScreen />} />
@@ -23,7 +23,7 @@ function App() {
         <Route path="/game/:type/:mode" element={<GameplayScreen />} />
         <Route path="/result" element={<ResultScreen />} />
         {/* Redirect any unknown route to home */}
-        <Route path="*" element={<Navigate to="/find-smallest-number-game" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
