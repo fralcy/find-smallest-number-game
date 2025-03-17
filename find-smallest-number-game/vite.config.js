@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['favicon.ico', 'robots.txt', 'game-icon.svg'],
       manifest: {
         name: 'Find the Smallest Number',
@@ -18,21 +18,39 @@ export default defineConfig({
           {
             src: 'pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           },
           {
             src: 'pwa-512x512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ],
+        screenshots: [
+          {
+            src: 'screenshot-wide.png',
+            sizes: '1280x720',
+            type: 'image/png',
+            form_factor: 'wide' // Cho desktop
           },
           {
-            src: 'game-icon.svg',
-            sizes: '512x512',
-            type: 'image/svg+xml'
+            src: 'screenshot-narrow.png',
+            sizes: '720x1280',
+            type: 'image/png',
+            form_factor: 'narrow' // Cho mobile
           }
-        ]
+        ],
+        start_url: '/find-smallest-number-game/',
+        display: 'standalone',
+        background_color: '#ffffff',
+        orientation: 'landscape',
+        categories: ['games', 'education', 'entertainment']
       },
       workbox: {
+        navigateFallback: 'index.html',
+        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -47,8 +65,19 @@ export default defineConfig({
                 statuses: [0, 200]
               }
             }
+          },
+          {
+            urlPattern: new RegExp('^https://username\\.github\\.io/find-smallest-number-game/'),
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'app-content'
+            }
           }
         ]
+      },
+      devOptions: {
+        enabled: true,
+        type: 'module'
       }
     })
   ],
