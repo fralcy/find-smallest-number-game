@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from '../styles/CustomScreen.module.css';
+import RotateDeviceNotice from './RotateDeviceNotice';
 
 const CustomScreen = () => {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ const CustomScreen = () => {
   
   return (
     <div className={styles.container}>
+      <RotateDeviceNotice />
       <div className={styles.header}>
         <button 
           className={styles.backButton}

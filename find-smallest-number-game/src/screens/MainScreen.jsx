@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/MainScreen.module.css';
+import RotateDeviceNotice from './RotateDeviceNotice';
 
 const MainScreen = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const MainScreen = () => {
 
   return (
     <div className={styles.container}>
+      <RotateDeviceNotice />
       <div className={styles.content}>
         <h1 className={styles.title}>Find the smallest number!</h1>
         <button 

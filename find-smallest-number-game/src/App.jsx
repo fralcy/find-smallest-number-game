@@ -8,6 +8,7 @@ import CampaignScreen from './screens/CampaignScreen';
 import CustomScreen from './screens/CustomScreen';
 import GameplayScreen from './screens/GameplayScreen';
 import ResultScreen from './screens/ResultScreen';
+import RotateDeviceNotice from './screens/RotateDeviceNotice';
 import './App.css';
 
 function App() {

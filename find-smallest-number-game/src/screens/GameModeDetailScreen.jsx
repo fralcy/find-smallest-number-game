@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from '../styles/GameModeDetailScreen.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
+import RotateDeviceNotice from './RotateDeviceNotice';
 
 const GameModeDetailScreen = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const GameModeDetailScreen = () => {
 
   return (
     <div className={styles.container}>
+      <RotateDeviceNotice />
       <div className={styles.header}>
         <button 
           className={styles.backButton}

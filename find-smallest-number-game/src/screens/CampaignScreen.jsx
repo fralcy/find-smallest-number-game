@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from '../styles/CampaignScreen.module.css';
 import { useNavigate } from 'react-router-dom';
+import RotateDeviceNotice from './RotateDeviceNotice';
 
 const CampaignScreen = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const CampaignScreen = () => {
 
   return (
     <div className={styles.container}>
+      <RotateDeviceNotice />
       <div className={styles.header}>
         <button 
           className={styles.backButton}

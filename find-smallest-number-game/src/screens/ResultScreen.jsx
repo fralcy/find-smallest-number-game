@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/ResultScreen.module.css';
+import RotateDeviceNotice from './RotateDeviceNotice';
 
 const ResultScreen = () => {
   const navigate = useNavigate();
@@ -73,6 +74,7 @@ const ResultScreen = () => {
 
   return (
     <div className={styles.container}>
+      <RotateDeviceNotice />
       <h1 className={styles.title}>{getResultTitle()}</h1>
       
       {/* Only show stars for campaign mode */}

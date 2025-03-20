@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/SettingsScreen.module.css';
+import RotateDeviceNotice from './RotateDeviceNotice';
 
 const LANGUAGES = [
   'English', 
@@ -82,6 +83,7 @@ const SettingsScreen = () => {
 
   return (
     <div className={styles.container}>
+      <RotateDeviceNotice />
       {!fromGameplay && (
         <div className={styles.header}>
           <button 

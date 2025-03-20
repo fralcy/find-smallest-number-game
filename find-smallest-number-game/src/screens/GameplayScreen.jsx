@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styles from '../styles/GameplayScreen.module.css';
+import RotateDeviceNotice from './RotateDeviceNotice';
 
 const GameplayScreen = () => {
   const { type, mode } = useParams(); // type: 'grid' or 'free', mode: 'campaign', 'custom', or 'zen'
@@ -164,6 +165,7 @@ const GameplayScreen = () => {
   
   return (
     <div className={styles.container}>
+      <RotateDeviceNotice />
       <div className={styles.header}>
         <button 
           className={styles.pauseButton}
