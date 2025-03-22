@@ -18,7 +18,7 @@ const GameplayScreen = () => {
   const [settings, setSettings] = useState({
     minNumber: 1,
     maxNumber: 100,
-    gridSize: 5, // Default for grid mode
+    gridSize: type === 'grid' && mode === 'zen' ? 9 : 5, // 9x9 cho Zen mode, 5x5 cho các mode khác
     maxNumbers: 20, // Default for free mode
     timePerNumber: 5, // seconds
     totalTime: 100, // seconds
@@ -45,13 +45,26 @@ const GameplayScreen = () => {
   // Timer reference
   const [timer, setTimer] = useState(null);
   
-  // Load game settings from context
+  // Load game settings from context or location state
   useEffect(() => {
-    // Lấy level từ location state nếu đến từ campaign
-    const level = location.state?.gameSettings?.level || null;
-    
-    // Lấy cài đặt game từ context
-    const gameSettings = getGameSettings(type, mode, level);
+    let gameSettings;
+
+    // Nếu là Zen Mode trong Grid Mode, sử dụng cài đặt mặc định đặc biệt
+    if (type === 'grid' && mode === 'zen') {
+      gameSettings = {
+        minNumber: 1,
+        maxNumber: 100,
+        gridSize: 9, // 9x9 grid cho Zen mode
+        timePerNumber: 0, // Không giới hạn thời gian
+        totalTime: 0
+      };
+    } else {
+      // Lấy level từ location state nếu đến từ campaign
+      const level = location.state?.gameSettings?.level || null;
+      
+      // Lấy cài đặt game từ context hoặc location state
+      gameSettings = location.state?.gameSettings || getGameSettings(type, mode, level);
+    }
     
     setSettings(gameSettings);
     setTimeLeft(gameSettings.totalTime);
@@ -77,7 +90,7 @@ const GameplayScreen = () => {
   
   // Start timer when game starts
   useEffect(() => {
-    if (gameStarted && !isPaused) {
+    if (gameStarted && !isPaused && mode !== 'zen') {
       const countdown = setInterval(() => {
         setTimeLeft(prevTime => {
           if (prevTime <= 1) {
@@ -93,30 +106,38 @@ const GameplayScreen = () => {
       
       return () => clearInterval(countdown);
     }
-  }, [gameStarted, isPaused]);
+  }, [gameStarted, isPaused, mode]);
   
   // Track current smallest number
-  useEffect(() => {
-    if (type === 'grid' && gridNumbers.length > 0) {
-      updateTargetNumber();
-    } else if (type === 'free' && freeNumbers.length > 0) {
-      updateTargetNumber();
+  useEffect(() => { 
+    if (mode !== 'zen') {
+      if (type === 'grid' && gridNumbers.length > 0) {
+        updateTargetNumber();
+      } else if (type === 'free' && freeNumbers.length > 0) {
+        updateTargetNumber();
+      }
     }
-  }, [gridNumbers, freeNumbers, foundNumbers]);
+  }, [gridNumbers, freeNumbers, foundNumbers, mode, type]);
   
   // Function to generate random numbers for grid
   const generateGridNumbers = () => {
     const { minNumber, maxNumber, gridSize } = settings;
     const totalCells = gridSize * gridSize;
-    
-    // Generate unique random numbers
-    const uniqueNumbers = new Set();
-    while (uniqueNumbers.size < totalCells) {
-      uniqueNumbers.add(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
-    }
-    
-    setGridNumbers(Array.from(uniqueNumbers));
-    setTargetNumber(Math.min(...uniqueNumbers));
+  
+    // Tạo số cần tìm ban đầu
+    const target = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+  
+    // Tạo lưới với các số ngẫu nhiên
+    const numbers = Array(totalCells).fill(null).map(() => 
+      Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber
+    );
+  
+    // Đặt số cần tìm ở một vị trí ngẫu nhiên
+    const targetIndex = Math.floor(Math.random() * totalCells);
+    numbers[targetIndex] = target;
+  
+    setGridNumbers(numbers);
+    setTargetNumber(target); // Cập nhật số cần tìm
   };
   
   // Function to generate random numbers for free mode
@@ -140,10 +161,63 @@ const GameplayScreen = () => {
     setTargetNumber(Math.min(...uniqueNumbers));
   };
   
+  // Hàm xáo trộn vị trí các số (cho Zen mode)
+  const shuffleGridNumbers = () => {
+    if (type !== 'grid' || mode !== 'zen') return;
+    
+    // Clone mảng hiện tại và xáo trộn
+    const shuffled = [...gridNumbers];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    setGridNumbers(shuffled);
+  };
+  
+  // Hàm thay thế số đã tìm thấy bằng một số mới (cho Zen mode)
+  const replaceFoundNumber = (number) => {
+    if (type !== 'grid' || mode !== 'zen') return;
+  
+    const { minNumber, maxNumber } = settings;
+  
+    // Tạo số cần tìm mới
+    let newTargetNumber;
+    do {
+      newTargetNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+    } while (newTargetNumber === targetNumber); // Đảm bảo số mới khác số cần tìm hiện tại
+  
+    // Tạo số mới để thay thế số đã tìm thấy
+    let newNumber;
+    do {
+      newNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+    } while (newNumber === number || newNumber === newTargetNumber); // Đảm bảo số mới khác số cũ và số cần tìm mới
+  
+    // Thay thế số tại vị trí của số đã tìm thấy
+    const newGridNumbers = [...gridNumbers];
+    const indexToReplace = gridNumbers.indexOf(number);
+    newGridNumbers[indexToReplace] = newNumber;
+  
+    // Đặt số cần tìm mới ở một vị trí ngẫu nhiên
+    const targetIndex = Math.floor(Math.random() * newGridNumbers.length);
+    newGridNumbers[targetIndex] = newTargetNumber;
+  
+    // Cập nhật trạng thái
+    setGridNumbers(newGridNumbers);
+    setTargetNumber(newTargetNumber); // Cập nhật số cần tìm mới
+  };
+  
   // Function to update the target number (smallest number that hasn't been found)
   const updateTargetNumber = () => {
     if (type === 'grid') {
-      // Filter out numbers that have already been found
+      // Với Zen mode, đơn giản chỉ tìm số nhỏ nhất trong mảng hiện tại
+      if (mode === 'zen') {
+        const smallestNumber = Math.min(...gridNumbers);
+        setTargetNumber(smallestNumber);
+        return;
+      }
+      
+      // Các mode khác - lọc ra số chưa tìm thấy
       const remainingNumbers = gridNumbers.filter(num => !foundNumbers.includes(num));
       
       if (remainingNumbers.length === 0) {
@@ -180,9 +254,20 @@ const GameplayScreen = () => {
     if (number === targetNumber) {
       // Correct number
       handleCorrectNumber(number);
+      
+      // Nếu là Zen mode, thay số đúng bằng số mới và xáo trộn grid
+      if (mode === 'zen') {
+        replaceFoundNumber(number);
+        shuffleGridNumbers();
+      }
     } else {
       // Wrong number
       handleWrongNumber();
+      
+      // Nếu là Zen mode, xáo trộn grid sau khi chọn sai
+      if (mode === 'zen') {
+        shuffleGridNumbers();
+      }
     }
   };
   
@@ -201,17 +286,22 @@ const GameplayScreen = () => {
   
   // Handle when player finds correct number
   const handleCorrectNumber = (number) => {
-    // Update found numbers
+    if (mode === 'zen') {
+      // Trong Zen mode, tăng điểm mỗi khi tìm đúng
+      setScore(prevScore => prevScore + 10);
+  
+      // Thay thế số đúng bằng số mới và cập nhật số cần tìm
+      replaceFoundNumber(number);
+      return;
+    }
+  
+    // Các mode khác
     setFoundNumbers(prev => [...prev, number]);
-    
-    // Update score based on time spent
     const pointsForNumber = Math.ceil(timeLeft / 10);
     setScore(prevScore => prevScore + pointsForNumber);
-    
-    // Track progress
     setNumbersFound(prev => prev + 1);
-    
-    // Check if the game is complete
+  
+    // Kiểm tra nếu trò chơi hoàn thành
     if (type === 'grid' && foundNumbers.length + 1 === gridNumbers.length) {
       handleGameComplete();
     } else if (type === 'free' && foundNumbers.length + 1 === freeNumbers.length) {
@@ -332,7 +422,7 @@ const GameplayScreen = () => {
       if (settings.level <= 7) return 'normal';
       return 'hard';
     }
-    return 'normal';
+    return mode === 'zen' ? 'hard' : 'normal'; // Zen mode luôn khó
   };
 
   const renderGridMode = () => {
@@ -347,10 +437,10 @@ const GameplayScreen = () => {
         >
           {gridNumbers.map((number, index) => (
             <NumberBox
-              key={index}
+              key={`${index}-${number}`} // Thêm number vào key để React cập nhật khi số thay đổi
               number={number}
               isTarget={number === targetNumber}
-              isFound={foundNumbers.includes(number)}
+              isFound={mode === 'zen' ? false : foundNumbers.includes(number)}
               onClick={() => handleGridNumberClick(number, index)}
               difficulty={getDifficulty()}
             />

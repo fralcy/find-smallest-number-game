@@ -53,6 +53,90 @@ const DEFAULT_SETTINGS = {
       id: 5,
       minNumber: 50,
       maxNumber: 200,
+      gridSize: 5,
+      timePerNumber: 2.5,
+      unlocked: false
+    },
+    {
+      id: 6,
+      minNumber: 100,
+      maxNumber: 300,
+      gridSize: 5,
+      timePerNumber: 2.5,
+      unlocked: false
+    },
+    {
+      id: 7,
+      minNumber: 200,
+      maxNumber: 500,
+      gridSize: 6,
+      timePerNumber: 2,
+      unlocked: false
+    },
+    {
+      id: 8,
+      minNumber: 500,
+      maxNumber: 999,
+      gridSize: 6,
+      timePerNumber: 2,
+      unlocked: false
+    },
+    {
+      id: 9,
+      minNumber: 1000,
+      maxNumber: 9999,
+      gridSize: 6,
+      timePerNumber: 1.5,
+      unlocked: false
+    },
+    {
+      id: 10,
+      minNumber: 1000,
+      maxNumber: 9999,
+      gridSize: 7,
+      timePerNumber: 1.5,
+      unlocked: false
+    }
+  ],
+  
+  // Chế độ Free, mức độ khó tăng dần
+  freeLevels: [
+    {
+      id: 1,
+      minNumber: 1,
+      maxNumber: 20,
+      maxNumbers: 10,
+      timePerNumber: 5,
+      unlocked: true
+    },
+    {
+      id: 2,
+      minNumber: 1,
+      maxNumber: 50,
+      maxNumbers: 15,
+      timePerNumber: 4,
+      unlocked: false
+    },
+    {
+      id: 3,
+      minNumber: 1,
+      maxNumber: 99,
+      maxNumbers: 15,
+      timePerNumber: 3,
+      unlocked: false
+    },
+    {
+      id: 4,
+      minNumber: 10,
+      maxNumber: 100,
+      maxNumbers: 20,
+      timePerNumber: 3,
+      unlocked: false
+    },
+    {
+      id: 5,
+      minNumber: 50,
+      maxNumber: 200,
       maxNumbers: 20,
       timePerNumber: 2.5,
       unlocked: false
@@ -302,16 +386,26 @@ export const GameProvider = ({ children }) => {
         console.error("Error loading custom settings:", error);
       }
     } else if (mode === 'zen') {
-      // Zen mode có cài đặt mặc định
-      return {
-        minNumber: 1,
-        maxNumber: 100,
-        timePerNumber: 0, // Không có giới hạn thời gian
-        totalTime: 0,
-        ...(type === 'grid' 
-          ? { gridSize: settings.defaultGridSize } 
-          : { maxNumbers: settings.defaultMaxNumbers })
-      };
+      // Zen mode có cài đặt đặc biệt
+      if (type === 'grid') {
+        // Grid Zen Mode - bảng lớn
+        return {
+          minNumber: 1,
+          maxNumber: 100,
+          gridSize: 9, // 9x9 cho Zen mode
+          timePerNumber: 0, // Không có giới hạn thời gian
+          totalTime: 0
+        };
+      } else {
+        // Free Zen Mode
+        return {
+          minNumber: 1,
+          maxNumber: 100,
+          maxNumbers: 30, // Nhiều số hơn cho Free Zen mode
+          timePerNumber: 0, // Không có giới hạn thời gian
+          totalTime: 0
+        };
+      }
     }
     
     // Trả về cài đặt mặc định nếu không tìm thấy cài đặt phù hợp

@@ -21,7 +21,7 @@ const GameModeDetailScreen = () => {
 
   const handleZenMode = () => {
     // Directly navigate to Zen gameplay screen rather than a configuration screen
-    navigate(`/game/${type}/zen`);
+    navigate(`/game/${type}/zen/play`);
   };
 
   const getModeTitle = () => {
