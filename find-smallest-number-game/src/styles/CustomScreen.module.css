@@ -14,9 +14,35 @@
 
 .header {
   display: flex;
-  width: 100%;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
   margin-bottom: 1rem;
+  position: relative;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+}
+
+.middleSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
 }
 
 .backButton {
@@ -35,36 +61,120 @@
 
 .title {
   color: #4A90E2;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
+  text-align: center;
 }
 
 .settingsContainer {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 350px;
+  max-width: 500px;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.settingItem {
+.settingGroup {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .settingLabel {
   color: #333;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-right: 1rem;
 }
 
-.settingValue {
-  color: #4A90E2;
-  font-size: 1.5rem;
+.rangeControls {
+  display: flex;
+  gap: 1rem;
+}
+
+.inputControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inputControl span {
+  color: #000;
   font-weight: bold;
+}
+
+.numberInput {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 80px;
+  background-color: #fff;
+  color: #000;
+}
+
+.numberInput:focus {
+  outline: none;
+  border-color: #4A90E2;
+  box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
+}
+
+.slider {
+  flex: 1;
+  height: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #ddd;
+  outline: none;
+  border-radius: 4px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4A90E2;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4A90E2;
+  cursor: pointer;
+  border: none;
+}
+
+.sliderValue {
+  min-width: 60px;
+  text-align: right;
+  font-weight: bold;
+  color: #4A90E2;
+}
+
+.settingInfo {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.infoLabel {
+  font-weight: bold;
+  color: #333;
+}
+
+.infoValue {
+  font-weight: bold;
+  color: #4A90E2;
 }
 
 .startButton {
@@ -72,13 +182,12 @@
   color: white;
   border: none;
   border-radius: 12px;
-  padding: 0.6rem 2rem;
+  padding: 0.8rem 2rem;
   font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 1rem;
 }
 
 .startButton:hover {
