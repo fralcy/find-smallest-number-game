@@ -124,20 +124,23 @@ const GameplayScreen = () => {
     const { minNumber, maxNumber, gridSize } = settings;
     const totalCells = gridSize * gridSize;
   
-    // Tạo số cần tìm ban đầu
-    const target = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-  
-    // Tạo lưới với các số ngẫu nhiên
-    const numbers = Array(totalCells).fill(null).map(() => 
-      Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber
-    );
-  
-    // Đặt số cần tìm ở một vị trí ngẫu nhiên
-    const targetIndex = Math.floor(Math.random() * totalCells);
-    numbers[targetIndex] = target;
-  
-    setGridNumbers(numbers);
-    setTargetNumber(target); // Cập nhật số cần tìm
+    // Đối với Zen mode, cho phép số trùng nhau để tăng độ khó
+    if (mode === 'zen') {
+      const numbers = [];
+      for (let i = 0; i < totalCells; i++) {
+        numbers.push(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
+      }
+      setGridNumbers(numbers);
+      setTargetNumber(Math.min(...numbers));
+    } else {
+      // Các mode khác vẫn giữ số không trùng nhau
+      const uniqueNumbers = new Set();
+      while (uniqueNumbers.size < totalCells) {
+        uniqueNumbers.add(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
+      }
+      setGridNumbers(Array.from(uniqueNumbers));
+      setTargetNumber(Math.min(...uniqueNumbers));
+    }
   };
   
   // Function to generate random numbers for free mode
