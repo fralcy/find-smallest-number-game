@@ -1,0 +1,66 @@
+.numberBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    color: #333;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .numberBox:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+  }
+  
+  .found {
+    background-color: #4CEEAD;
+    color: white;
+    cursor: default;
+    opacity: 0.7;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  .hovered {
+    background-color: #e0e0e0;
+  }
+  
+  .target {
+    /* Thực tế ta không cho người dùng biết số nào là target */
+    /* Nhưng có thể thêm CSS đặc biệt cho dev mode */
+  }
+  
+  /* Styling dựa vào level độ khó */
+  .easy {
+    font-size: 1.3rem;
+  }
+  
+  .normal {
+    font-size: 1.1rem;
+  }
+  
+  .hard {
+    font-size: 1rem;
+    color: #555;
+    transition: transform 0.1s ease;
+  }
+  
+  /* Thêm hiệu ứng nhấp nháy cho hard mode */
+  @keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+  
+  .hard:not(.found):hover {
+    animation: flicker 0.5s infinite;
+  }
