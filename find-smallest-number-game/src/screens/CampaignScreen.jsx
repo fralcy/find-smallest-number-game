@@ -235,15 +235,15 @@ const CampaignScreen = () => {
 
   const handleLevelSelect = (level) => {
     if (!level.unlocked) return;
-    
-    // Tính toán thời gian tổng cộng dựa trên kích thước grid hoặc số lượng số
+
+    // Calculate total time
     const totalNumbers = type === 'grid' 
       ? level.gridSize * level.gridSize 
       : level.maxNumbers;
-      
+
     const totalTime = Math.round(level.timePerNumber * totalNumbers);
-    
-    // Tạo gameSettings để truyền vào GameplayScreen
+
+    // Create gameSettings to pass to GameplayScreen
     const gameSettings = {
       minNumber: level.minNumber,
       maxNumber: level.maxNumber,
@@ -254,10 +254,11 @@ const CampaignScreen = () => {
         ? { gridSize: level.gridSize } 
         : { maxNumbers: level.maxNumbers })
     };
-    
-    // Điều hướng đến màn chơi và truyền thông tin cấu hình
-    navigate(`/game/${type}/campaign`, {
-      state: { gameSettings }
+
+    console.log('Navigating to GameplayScreen with state:', { gameSettings, mode: 'campaign' });
+    // Navigate to GameplayScreen with state
+    navigate(`/game/${type}/campaign/play`, {
+      state: { gameSettings, mode: 'campaign' } // Pass mode explicitly
     });
   };
 

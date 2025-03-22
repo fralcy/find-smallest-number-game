@@ -14,20 +14,22 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<MainScreen />} />
-        <Route path="/settings" element={<SettingsScreen />} />
-        <Route path="/game-mode" element={<GameModeScreen />} />
-        <Route path="/game-mode/:type" element={<GameModeDetailScreen />} />
-        <Route path="/game/:type/campaign" element={<CampaignScreen />} />
-        <Route path="/game/:type/custom" element={<CustomScreen />} />
-        <Route path="/game/:type/:mode" element={<GameplayScreen />} />
-        <Route path="/result" element={<ResultScreen />} />
-        {/* Redirect any unknown route to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+    <GameProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<MainScreen />} />
+          <Route path="/settings" element={<SettingsScreen />} />
+          <Route path="/game-mode" element={<GameModeScreen />} />
+          <Route path="/game-mode/:type" element={<GameModeDetailScreen />} />
+          <Route path="/game/:type/campaign" element={<CampaignScreen />} />
+          <Route path="/game/:type/custom" element={<CustomScreen />} />
+          <Route path="/game/:type/:mode/play" element={<GameplayScreen />} />
+          <Route path="/result" element={<ResultScreen />} />
+          {/* Redirect any unknown route to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </GameProvider>
   );
 }
 
