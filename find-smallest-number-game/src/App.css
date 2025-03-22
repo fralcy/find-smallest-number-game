@@ -43,24 +43,6 @@ button:focus {
   display: none;
 }
 
-/* Force landscape mode on mobile */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-  html {
-    transform: rotate(-90deg);
-    transform-origin: left top;
-    width: 100vh;
-    height: 100vw;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    overflow: hidden;
-  }
-  
-  body {
-    overflow: hidden;
-  }
-}
-
 /* Disable zoom on input elements */
 input, select, textarea {
   font-size: 16px; /* Prevents automatic zoom on iOS */

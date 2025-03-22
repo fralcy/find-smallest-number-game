@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Thêm justify-content để căn giữa theo chiều dọc */
   min-height: 100vh;
   width: 100%;
   background-color: #ffffff;
