@@ -1,115 +1,47 @@
 .statsContainer {
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 200px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 5;
+  display: flex;
+  flex-direction: column; /* Arrange rows vertically */
+  align-items: left;;
+}
+
+.row {
+  display: flex;
+  justify-content: left;
+  width: 100%;
+}
+
+.scoreValue {
+  font-size: 1.5rem;
+  color: #4A90E2;
+  font-weight: bold;
+}
+
+.timeValue {
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.livesContainer {
+  display: flex;
+  gap: 5px;
+}
+
+.lifeIcon {
+  font-size: 1.5rem;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .statsContainer {
+    padding: 8px 15px;
   }
   
-  .gameMode {
-    font-size: 0.85rem;
-    color: #4A90E2;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 5px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .scoreContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  
-  .scoreLabel {
-    font-size: 0.9rem;
-    color: #333;
-    font-weight: bold;
-  }
-  
-  .scoreValue {
+  .scoreValue, .timeValue {
     font-size: 1.2rem;
-    color: #4A90E2;
-    font-weight: bold;
-  }
-  
-  .timeContainer {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 8px;
-  }
-  
-  .timeLabel {
-    font-size: 0.9rem;
-    color: #333;
-    font-weight: bold;
-    margin-bottom: 2px;
-  }
-  
-  .timeValue {
-    font-size: 1.1rem;
-    color: #333;
-    font-weight: bold;
-  }
-  
-  .timeBarContainer {
-    width: 100%;
-    height: 8px;
-    background-color: #e0e0e0;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 4px;
-  }
-  
-  .timeBar {
-    height: 100%;
-    transition: width 0.3s ease, background-color 0.3s ease;
-  }
-  
-  .livesContainer {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 8px;
   }
   
   .lifeIcon {
     font-size: 1.2rem;
-    margin: 0 2px;
   }
-  
-  .progressContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 5px;
-  }
-  
-  .progressText {
-    font-size: 0.9rem;
-    color: #333;
-    font-weight: bold;
-  }
-  
-  /* Responsive styling */
-  @media (max-width: 768px) {
-    .statsContainer {
-      width: 150px;
-      padding: 8px;
-    }
-    
-    .scoreValue, .timeValue {
-      font-size: 1rem;
-    }
-    
-    .lifeIcon {
-      font-size: 1rem;
-    }
-  }
+}

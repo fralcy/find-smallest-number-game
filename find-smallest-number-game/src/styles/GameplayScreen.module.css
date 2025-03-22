@@ -12,9 +12,43 @@
   align-items: center;
   justify-content: space-between;
   background-color: #f8f8f8;
-  height: 50px;
-  padding: 5px 10px;
+  height: 60px;
+  padding: 0 15px;
   border-bottom: 1px solid #e0e0e0;
+  position: relative;
+}
+
+/* Left Section: Pause Button */
+.leftSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+}
+
+/* Middle Section: Instruction Text */
+.middleSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Right Section: Stats */
+.rightSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.statsInHeader {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .pauseButton {
@@ -40,6 +74,12 @@
   font-size: 1.5rem;
   font-weight: bold;
   color: #333;
+  text-align: center;
+}
+
+.targetNumber {
+  color: #4A90E2;
+  font-size: 2rem;
 }
 
 .statsContainer {

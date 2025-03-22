@@ -396,33 +396,36 @@ const GameplayScreen = () => {
     <div className={styles.container}>
       <RotateDeviceNotice />
       <div className={styles.header}>
-        <button 
-          className={styles.pauseButton}
-          onClick={handlePauseClick}
-        >
-          ⏸️
-        </button>
-        
-        <div className={styles.instructionText}>
-          Find <span className={styles.targetNumber}>{targetNumber}</span>
+        {/* Left Section: Pause Button */}
+        <div className={styles.leftSection}>
+          <button 
+            className={styles.pauseButton}
+            onClick={handlePauseClick}
+          >
+            ⏸️
+          </button>
+        </div>
+
+        {/* Middle Section: Instruction Text */}
+        <div className={styles.middleSection}>
+          <div className={styles.instructionText}>
+            Find <span className={styles.targetNumber}>{targetNumber}</span>
+          </div>
+        </div>
+
+        {/* Right Section: Stats */}
+        <div className={styles.rightSection}>
+          <GameStats
+            score={score}
+            timeLeft={timeLeft}
+            lives={lives}
+            isZenMode={mode === 'zen'}
+          />
         </div>
       </div>
-      
+
       <div className={styles.gameContent}>
         {type === 'grid' ? renderGridMode() : renderFreeMode()}
-        
-        {/* Hiển thị thông tin trò chơi */}
-        <GameStats
-          score={score}
-          timeLeft={timeLeft}
-          totalTime={settings.totalTime}
-          lives={lives}
-          mode={mode}
-          level={settings.level}
-          type={type}
-          numbersFound={foundNumbers.length}
-          totalNumbers={type === 'grid' ? gridNumbers.length : freeNumbers.length}
-        />
       </div>
     </div>
   );
