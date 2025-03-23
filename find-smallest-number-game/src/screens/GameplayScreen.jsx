@@ -124,16 +124,23 @@ const GameplayScreen = () => {
     const { minNumber, maxNumber, gridSize } = settings;
     const totalCells = gridSize * gridSize;
   
-    // Đối với Zen mode, cho phép số trùng nhau để tăng độ khó
     if (mode === 'zen') {
-      const numbers = [];
-      for (let i = 0; i < totalCells; i++) {
-        numbers.push(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
-      }
+      // Tạo target number mới
+      const target = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+  
+      // Tạo lưới với các số làm xao nhãng
+      const numbers = Array(totalCells).fill(null).map(() => 
+        Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber
+      );
+  
+      // Đảm bảo target number xuất hiện duy nhất
+      const targetIndex = Math.floor(Math.random() * totalCells);
+      numbers[targetIndex] = target;
+  
       setGridNumbers(numbers);
-      setTargetNumber(Math.min(...numbers));
+      setTargetNumber(target); // Cập nhật target number
     } else {
-      // Các mode khác vẫn giữ số không trùng nhau
+      // Các mode khác giữ số không trùng nhau
       const uniqueNumbers = new Set();
       while (uniqueNumbers.size < totalCells) {
         uniqueNumbers.add(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
@@ -146,22 +153,72 @@ const GameplayScreen = () => {
   // Function to generate random numbers for free mode
   const generateFreeNumbers = () => {
     const { minNumber, maxNumber, maxNumbers } = settings;
-    
-    // Generate unique random numbers
-    const uniqueNumbers = new Set();
-    while (uniqueNumbers.size < maxNumbers) {
-      uniqueNumbers.add(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
+  
+    if (mode === 'zen') {
+      // Tạo target number mới
+      const target = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+  
+      // Tạo danh sách số làm xao nhãng
+      const numbersWithPosition = [];
+      const minDistance = 10; // Khoảng cách tối thiểu giữa các số (đơn vị: %)
+  
+      for (let i = 0; i < maxNumbers; i++) {
+        let x, y, isValidPosition;
+  
+        do {
+          x = Math.random() * 80 + 10; // Random x position (10% to 90%)
+          y = Math.random() * 70 + 15; // Random y position (15% to 85%)
+  
+          // Kiểm tra khoảng cách với các số đã tạo
+          isValidPosition = numbersWithPosition.every(num => {
+            const distance = Math.sqrt(Math.pow(num.x - x, 2) + Math.pow(num.y - y, 2));
+            return distance >= minDistance;
+          });
+        } while (!isValidPosition);
+  
+        numbersWithPosition.push({
+          value: Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber,
+          x,
+          y
+        });
+      }
+  
+      // Đảm bảo target number xuất hiện duy nhất
+      const targetIndex = Math.floor(Math.random() * maxNumbers);
+      numbersWithPosition[targetIndex].value = target;
+  
+      setFreeNumbers(numbersWithPosition);
+      setTargetNumber(target); // Cập nhật target number
+    } else {
+      // Các mode khác giữ số không trùng nhau
+      const uniqueNumbers = new Set();
+      while (uniqueNumbers.size < maxNumbers) {
+        uniqueNumbers.add(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
+      }
+  
+      const numbersWithPosition = [];
+      const minDistance = 10; // Khoảng cách tối thiểu giữa các số (đơn vị: %)
+  
+      Array.from(uniqueNumbers).forEach(value => {
+        let x, y, isValidPosition;
+  
+        do {
+          x = Math.random() * 80 + 10; // Random x position (10% to 90%)
+          y = Math.random() * 70 + 15; // Random y position (15% to 85%)
+  
+          // Kiểm tra khoảng cách với các số đã tạo
+          isValidPosition = numbersWithPosition.every(num => {
+            const distance = Math.sqrt(Math.pow(num.x - x, 2) + Math.pow(num.y - y, 2));
+            return distance >= minDistance;
+          });
+        } while (!isValidPosition);
+  
+        numbersWithPosition.push({ value, x, y });
+      });
+  
+      setFreeNumbers(numbersWithPosition);
+      setTargetNumber(Math.min(...uniqueNumbers));
     }
-    
-    // Create array with position for each number
-    const numbersWithPosition = Array.from(uniqueNumbers).map(value => ({
-      value,
-      x: Math.random() * 80 + 10, // percentage position (10% to 90%)
-      y: Math.random() * 70 + 15  // percentage position (15% to 85%)
-    }));
-    
-    setFreeNumbers(numbersWithPosition);
-    setTargetNumber(Math.min(...uniqueNumbers));
   };
   
   // Hàm xáo trộn vị trí các số (cho Zen mode)
@@ -176,6 +233,40 @@ const GameplayScreen = () => {
     }
     
     setGridNumbers(shuffled);
+  };
+
+  const shuffleFreeNumbers = () => {
+    if (type !== 'free' || mode !== 'zen') return;
+  
+    // Clone mảng hiện tại và xáo trộn
+    const shuffled = [...freeNumbers];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+  
+    // Cập nhật vị trí ngẫu nhiên mới cho từng số
+    const minDistance = 10; // Khoảng cách tối thiểu giữa các số (đơn vị: %)
+    shuffled.forEach(num => {
+      let x, y, isValidPosition;
+  
+      do {
+        x = Math.random() * 80 + 10; // Random x position (10% to 90%)
+        y = Math.random() * 70 + 15; // Random y position (15% to 85%)
+  
+        // Kiểm tra khoảng cách với các số đã tạo
+        isValidPosition = shuffled.every(otherNum => {
+          if (otherNum === num) return true; // Không so sánh với chính nó
+          const distance = Math.sqrt(Math.pow(otherNum.x - x, 2) + Math.pow(otherNum.y - y, 2));
+          return distance >= minDistance;
+        });
+      } while (!isValidPosition);
+  
+      num.x = x;
+      num.y = y;
+    });
+  
+    setFreeNumbers(shuffled);
   };
   
   // Hàm thay thế số đã tìm thấy bằng một số mới (cho Zen mode)
@@ -277,13 +368,23 @@ const GameplayScreen = () => {
   // Handle number click in free mode
   const handleFreeNumberClick = (numberObj, index) => {
     if (isPaused) return;
-    
+  
     if (numberObj.value === targetNumber) {
       // Correct number
       handleCorrectNumber(numberObj.value);
+  
+      // Nếu là Zen mode, tạo danh sách số mới
+      if (mode === 'zen') {
+        generateFreeNumbers(); // Gọi lại hàm generateFreeNumbers
+      }
     } else {
       // Wrong number
       handleWrongNumber();
+  
+      // Nếu là Zen mode, chỉ xáo trộn vị trí các số
+      if (mode === 'zen') {
+        shuffleFreeNumbers();
+      }
     }
   };
   

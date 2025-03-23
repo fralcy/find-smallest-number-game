@@ -145,9 +145,10 @@
 
 /* Free Mode Styles */
 .freeContainer {
+  position: relative;
   width: 100%;
   height: 100%;
-  position: relative;
+  overflow: hidden;
 }
 
 .freeNumber {
@@ -162,6 +163,11 @@
 
 .freeNumber:hover {
   transform: scale(1.1);
+}
+
+.freeNumberWrapper {
+  position: absolute;
+  transform: translate(-50%, -50%); /* Đặt tâm số tại vị trí x, y */
 }
 
 /* Pause Menu Overlay */

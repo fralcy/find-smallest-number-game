@@ -91,7 +91,7 @@ const CustomScreen = () => {
   const handleGridSizeChange = (newSize) => {
     newSize = parseInt(newSize);
     if (isNaN(newSize) || newSize < 3) newSize = 3; // Minimum 3x3
-    if (newSize > 9) newSize = 9; // Maximum 10x10
+    if (newSize > 9) newSize = 9; // Maximum 9x9
     setGridSize(newSize);
   };
   
@@ -99,7 +99,7 @@ const CustomScreen = () => {
   const handleMaxNumbersChange = (newMax) => {
     newMax = parseInt(newMax);
     if (isNaN(newMax) || newMax < 5) newMax = 5; // Minimum 5 numbers
-    if (newMax > 50) newMax = 50; // Maximum 50 numbers
+    if (newMax > 45) newMax = 45; // Maximum 45 numbers
     setMaxNumbers(newMax);
   };
   
@@ -185,7 +185,7 @@ const CustomScreen = () => {
               <input 
                 type="range" 
                 min="5" 
-                max="50" 
+                max="45" 
                 value={maxNumbers}
                 onChange={(e) => handleMaxNumbersChange(e.target.value)}
                 className={styles.slider}
