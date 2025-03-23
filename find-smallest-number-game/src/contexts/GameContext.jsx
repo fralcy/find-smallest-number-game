@@ -217,13 +217,22 @@ export const GameProvider = ({ children }) => {
     const savedGridLevels = localStorage.getItem('campaign_levels_grid');
     if (savedGridLevels) {
       try {
-        setGridLevels(JSON.parse(savedGridLevels));
+        const parsedLevels = JSON.parse(savedGridLevels);
+        // Kiểm tra nếu dữ liệu bị thiếu hoặc không đầy đủ
+        if (parsedLevels.length < DEFAULT_SETTINGS.gridLevels.length) {
+          setGridLevels(DEFAULT_SETTINGS.gridLevels);
+          localStorage.setItem('campaign_levels_grid', JSON.stringify(DEFAULT_SETTINGS.gridLevels));
+        } else {
+          setGridLevels(parsedLevels);
+        }
       } catch (error) {
         console.error("Error loading grid levels:", error);
         setGridLevels(DEFAULT_SETTINGS.gridLevels);
+        localStorage.setItem('campaign_levels_grid', JSON.stringify(DEFAULT_SETTINGS.gridLevels));
       }
     } else {
       setGridLevels(DEFAULT_SETTINGS.gridLevels);
+      localStorage.setItem('campaign_levels_grid', JSON.stringify(DEFAULT_SETTINGS.gridLevels));
     }
     
     // Load tiến trình free levels
