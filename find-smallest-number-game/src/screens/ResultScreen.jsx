@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/ResultScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
@@ -12,12 +12,19 @@ const ResultScreen = () => {
     type = 'grid',                     // grid or free
     mode = 'campaign',                 // campaign, custom, or zen
     outcome = 'finish',                // finish, timeout, or lifeout
-    score = 100,
-    usedTime = 50,                     // in seconds
-    timeRemaining = 100,               // in seconds
+    score = 0,                         // default score is 0 if not provided
+    usedTime = 0,                      // default used time is 0
+    timeRemaining = 0,                 // default time remaining is 0
     level = 1,                         // for campaign mode
-    stars = 3                          // 1-3 stars for campaign mode
+    stars = 0                          // default stars is 0
   } = location.state || {};
+  
+  // If data does not exist, navigate to the main screen
+  useEffect(() => {
+    if (!location.state) {
+      navigate('/');
+    }
+  }, [location, navigate]);
   
   // Determine the result title based on outcome
   const getResultTitle = () => {

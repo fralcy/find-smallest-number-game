@@ -442,14 +442,16 @@ const GameplayScreen = () => {
   const handlePauseClick = () => {
     setIsPaused(true);
     if (timer) clearInterval(timer);
-    
-    // Navigate to settings screen
+  
+    // Điều hướng đến SettingsScreen với dữ liệu gameplay
     navigate('/settings', { 
       state: { 
         fromGameplay: true, 
         type, 
         mode,
-        returnToGame: true
+        score, // Điểm số hiện tại
+        timeLeft, // Thời gian còn lại
+        settings // Cài đặt gameplay
       } 
     });
   };

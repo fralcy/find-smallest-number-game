@@ -68,17 +68,33 @@ const SettingsScreen = () => {
   };
   
   const handleEndGame = () => {
-    // Navigate to results screen with appropriate state
+    // Lấy thông tin gameplay từ location.state
+    const { score, timeLeft, settings } = location.state || {};
+
+    // Tính toán thời gian đã sử dụng
+    const usedTime = settings.totalTime - timeLeft;
+
+    // Điều hướng đến ResultScreen với đầy đủ thông tin
     navigate('/result', {
       state: {
         type: gameType,
         mode: gameMode,
-        outcome: 'finish', // When user chooses to end, still show as "Finish"
-        score: 100, // This would be the actual score from gameplay
-        usedTime: 50, // This would be the actual time used
-        timeRemaining: 100 // This would be the actual time remaining
+        outcome: 'finish', // Khi người dùng chọn "End", vẫn hiển thị là "Finish"
+        score: score || 0, // Điểm số hiện tại
+        usedTime: usedTime || 0, // Thời gian đã sử dụng
+        timeRemaining: timeLeft || 0, // Thời gian còn lại
+        level: gameMode === 'campaign' ? settings.level : undefined, // Level (nếu là campaign mode)
+        stars: calculateStars(timeLeft, settings.totalTime) // Tính số sao dựa trên thời gian còn lại
       }
     });
+  };
+
+  // Hàm tính số sao dựa trên thời gian còn lại
+  const calculateStars = (timeLeft, totalTime) => {
+    const timePercentage = (timeLeft / totalTime) * 100;
+    if (timePercentage > 70) return 3;
+    if (timePercentage > 40) return 2;
+    return 1;
   };
 
   return (
