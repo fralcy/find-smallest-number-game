@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    width="100" height="100"
+    viewBox="0 0 100 100"
+    xmlns="http://www.w3.org/2000/svg"
+>
+    <!-- Vẽ số 7 -->
+    <text x="25" y="45" font-size="40" font-weight="bold" fill="#333">7</text>
+    
+    <!-- Vẽ kính lúp -->
+    <circle cx="60" cy="40" r="15" stroke="#333" stroke-width="4" fill="none" />
+    <line x1="70" y1="50" x2="85" y2="65" stroke="#333" stroke-width="4" stroke-linecap="round" />
+</svg>
