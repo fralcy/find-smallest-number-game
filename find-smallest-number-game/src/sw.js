@@ -4,10 +4,10 @@
 // Tên cache và các tài nguyên cần cache
 const CACHE_NAME = 'find-smallest-number-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/pwa-192x192.png',
-  '/pwa-512x512.png'
+  '/find-smallest-number-game/',
+  '/find-smallest-number-game/index.html',
+  '/find-smallest-number-game/public/pwa-192x192.png',
+  '/find-smallest-number-game/public/pwa-512x512.png'
 ];
 
 

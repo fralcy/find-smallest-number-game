@@ -14,7 +14,7 @@ export default defineConfig({
         short_name: 'Number Game',
         description: 'A fun game to find the smallest number',
         theme_color: '#4A90E2',
-        start_url: '/',
+        start_url: '/find-smallest-number-game/',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -49,7 +49,7 @@ export default defineConfig({
         categories: ['games', 'education', 'entertainment']
       },
       workbox: {
-        navigateFallback: 'index.html',
+        navigateFallback: '/find-smallest-number-game/index.html',
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
         runtimeCaching: [
           {

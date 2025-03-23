@@ -84,11 +84,11 @@ define(['./workbox-1cfa77fd'], (function (workbox) { 'use strict';
     "url": "registerSW.js",
     "revision": "a8b973d2b39152e241a80b0aba40e299"
   }, {
-    "url": "index.html",
-    "revision": "0.hfte1phgij"
+    "url": "/find-smallest-number-game/index.html",
+    "revision": "0.81tgsaain8"
   }], {});
   workbox.cleanupOutdatedCaches();
-  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
+  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/find-smallest-number-game/index.html"), {
     allowlist: [/^\/$/]
   }));
   workbox.registerRoute(/^https:\/\/fonts\.googleapis\.com\/.*/i, new workbox.CacheFirst({
