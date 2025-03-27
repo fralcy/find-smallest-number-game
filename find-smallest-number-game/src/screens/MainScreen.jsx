@@ -16,8 +16,10 @@ const MainScreen = () => {
   return (
     <div className={styles.container}>
       <RotateDeviceNotice />
-      <div className={styles.content}>
+      <div className={styles.topSection}>
         <h1 className={styles.title}>Find the smallest number!</h1>
+      </div>
+      <div className={styles.bottomSection}>
         <button 
           className={styles.playButton}
           onClick={handlePlayClick}

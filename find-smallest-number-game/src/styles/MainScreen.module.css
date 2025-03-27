@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     min-height: 100vh;
     width: 100%;
     max-width: 100%;
@@ -10,86 +9,115 @@
     background-image: url('../assets/grid-background.svg');
     background-size: 24px 32px;
     background-repeat: repeat;
-    background-position: center;
     font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
     text-align: center;
     padding: 10px;
-    
-    /* Force landscape orientation */
-    max-height: 100vh;
-    overflow: hidden;
     position: relative;
-  }
-  
-  .content {
+}
+
+.topSection {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.bottomSection {
+    flex: 3;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
-  }
-  
-  .title {
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.title {
     color: #4A90E2;
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
     text-align: center;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
-  }
-  
-  .playButton {
-    background-color: #4A90E2;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }  
+}
+
+.playButton {
+    background: linear-gradient(90deg, #4A90E2, #3A80D2);
     color: white;
     border: none;
-    border-radius: 12px;
-    padding: 0.8rem 2rem;
-    font-size: 1.2rem;
+    border-radius: 16px;
+    padding: 1.2rem 3rem;
+    font-size: 1.6rem;
     font-weight: bold;
     margin-bottom: 1.5rem;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 200px;
-  }
-  
-  .playButton:hover {
-    background-color: #3A80D2;
-    transform: translateY(-2px);
-  }
-  
-  .playButton:active {
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    width: 240px;
+}
+
+.playButton:hover {
+    background: linear-gradient(90deg, #3A80D2, #2A70C2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.playButton:active {
     transform: translateY(1px);
-  }
-  
-  .settingButton {
-    background-color: #82B1E8;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.settingButton {
+    background: linear-gradient(90deg, #82B1E8, #6B9CDB);
     color: white;
     border: none;
     border-radius: 12px;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100px;
-  }
-  
-  .settingButton:hover {
-    background-color: #6B9CDB;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 140px;
+}
+
+.settingButton:hover {
+    background: linear-gradient(90deg, #6B9CDB, #5A8CCB);
     transform: translateY(-2px);
-  }
-  
-  .settingButton:active {
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.settingButton:active {
     transform: translateY(1px);
-  }
-  
-  .version {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+.version {
+    position: fixed; /* Đặt cố định ở cuối màn hình */
+    bottom: 10px;
+    right: 10px;
     color: #757575;
     font-size: 0.8rem;
-  }
+    font-style: italic; /* Thêm kiểu chữ nghiêng */
+}
