@@ -51,32 +51,38 @@ const CampaignScreen = () => {
     <div className={styles.container}>
       <RotateDeviceNotice />
       <div className={styles.header}>
-        <button 
-          className={styles.backButton}
-          onClick={handleBack}
-        >
-          ←
-        </button>
-      </div>
-
-      <div className={styles.titleContainer}>
-        <h1 className={styles.title}>Campaign - {type === 'grid' ? 'Grid' : 'Free'} Mode</h1>
-      </div>
-
-      <div className={styles.levelGrid}>
-        {levels.map((level) => (
-          <div 
-            key={level.id} 
-            className={`${styles.levelCard} ${!level.unlocked ? styles.locked : ''}`}
-            onClick={() => handleLevelSelect(level)}
+        <div className={styles.leftSection}>
+          <button 
+            className={styles.backButton}
+            onClick={handleBack}
           >
-            <span className={styles.levelLabel}>Level {level.id}</span>
-            <span className={styles.levelInfo}>
-              {type === 'grid' ? `${level.gridSize}x${level.gridSize}` : `${level.maxNumbers} nums`}
-            </span>
-            {!level.unlocked && <div className={styles.lockIcon}>🔒</div>}
-          </div>
-        ))}
+            ←
+          </button>
+        </div>
+        <div className={styles.middleSection}>
+          <h1 className={styles.title}>Campaign - {type === 'grid' ? 'Grid' : 'Free'} Mode</h1>
+        </div>
+        <div className={styles.rightSection}>
+          {/* Thành phần rỗng để căn chỉnh */}
+        </div>
+      </div>
+
+      <div className={styles.contentWrapper}>
+        <div className={styles.levelGrid}>
+          {levels.map((level) => (
+            <div 
+              key={level.id} 
+              className={`${styles.levelCard} ${!level.unlocked ? styles.locked : ''}`}
+              onClick={() => handleLevelSelect(level)}
+            >
+              <span className={styles.levelLabel}>Level {level.id}</span>
+              <span className={styles.levelInfo}>
+                {type === 'grid' ? `${level.gridSize}x${level.gridSize}` : `${level.maxNumbers} nums`}
+              </span>
+              {!level.unlocked && <div className={styles.lockIcon}>🔒</div>}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

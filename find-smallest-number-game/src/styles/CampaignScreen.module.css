@@ -14,9 +14,34 @@
 
 .header {
   display: flex;
-  width: 100%;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
   margin-bottom: 1rem;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+}
+
+.middleSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
 }
 
 .backButton {
@@ -37,6 +62,15 @@
   color: #4A90E2;
   font-size: 2rem;
   font-weight: bold;
+  text-align: center;
+}
+
+.contentWrapper {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .levelGrid {
@@ -46,6 +80,7 @@
   gap: 0.5rem;
   width: 100%;
   max-width: 800px;
+  padding: 0.5rem; /* Thêm padding để tránh tràn */
   overflow-y: auto;
 }
 

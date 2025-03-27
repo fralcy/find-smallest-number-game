@@ -14,9 +14,31 @@
 
 .header {
   display: flex;
-  width: 100%;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
   margin-bottom: 1rem;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+}
+
+.middleSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
 }
 
 .backButton {
@@ -27,46 +49,46 @@
   cursor: pointer;
 }
 
-.titleContainer {
-  width: 100%;
-  text-align: center;
-  margin-bottom: 2rem; /* Tăng khoảng cách giữa title và setting items */
-}
-
 .title {
   color: #4A90E2;
   font-size: 2rem;
   font-weight: bold;
+  text-align: center;
+}
+
+.contentWrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 500px;
 }
 
 .settingsWrapper {
   width: 100%;
-  max-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* Khoảng cách giữa các setting items */
-  margin-bottom: 2rem;
+  gap: 1rem;
 }
 
 .settingItem {
-  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .settingLabel {
-  display: block;
-  margin-bottom: 0.5rem;
+  flex: 1;
   color: #333;
   font-size: 1rem;
 }
 
-.sliderContainer {
-  display: flex;
-  align-items: center;
-}
-
 .slider {
-  flex-grow: 1;
-  margin-right: 15px;
+  flex: 2;
   appearance: none;
   width: 100%;
   height: 8px;
@@ -87,61 +109,47 @@
 }
 
 .sliderValue {
+  flex: 0.5;
   color: #4A90E2;
   font-weight: bold;
-  min-width: 40px;
   text-align: right;
 }
 
 .languageSelect {
-  width: 100%;
+  flex: 2;
   padding: 10px;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #4A90E2;
   border-radius: 8px;
-  appearance: none;
-  background: url("data:image/svg+xml;utf8,<svg fill='%234A90E2' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") no-repeat right 10px center;
-  background-size: 24px;
-  color: #333;
-  font-size: 1rem;
+  background-color: #ffffff;
+  color: #4A90E2;
+  font-weight: semi-bold;
 }
 
-/* New styles for gameplay buttons */
 .gameplayButtons {
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  max-width: 400px;
-  margin-top: 1rem;
   gap: 1rem;
+  width: 100%;
 }
 
 .endButton, .continueButton {
   flex: 1;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.endButton {
-  background-color: #4CEEAD;
-  color: white;
-}
-
-.endButton:hover {
-  background-color: #3CD69A;
-  transform: translateY(-2px);
-}
-
-.continueButton {
   background-color: #4A90E2;
   color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  margin: 0px 20px;
 }
 
-.continueButton:hover {
+.endButton:hover, .continueButton:hover {
   background-color: #3A80D2;
-  transform: translateY(-2px);
+}
+
+.endButton:active, .continueButton:active {
+  transform: translateY(1px);
 }

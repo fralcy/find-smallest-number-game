@@ -10,45 +10,74 @@
     background-repeat: repeat;
     font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
     padding: 10px;
-  }
-  
-  .header {
+}
+
+.header {
     display: flex;
-    width: 100%;
     align-items: center;
-    margin-bottom: 1rem;
-  }
-  
-  .backButton {
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.leftSection {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
+}
+
+.middleSection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.rightSection {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+}
+
+.backButton {
     background: none;
     border: none;
     font-size: 1.5rem;
     color: #4A90E2;
     cursor: pointer;
-  }
-  
-  .titleContainer {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-  
-  .title {
+}
+
+.title {
     color: #4A90E2;
     font-size: 1.8rem;
     font-weight: bold;
-  }
-  
-  .modeContainer {
+    text-align: center;
+}
+
+.contentWrapper {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.modeContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.5rem;
     width: 100%;
     max-width: 300px;
-  }
-  
-  .modeButton {
+}
+
+.modeButton {
     width: 100%;
     background-color: #4A90E2;
     color: white;
@@ -60,13 +89,13 @@
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .modeButton:hover {
+}
+
+.modeButton:hover {
     background-color: #3A80D2;
     transform: translateY(-2px);
-  }
-  
-  .modeButton:active {
+}
+
+.modeButton:active {
     transform: translateY(1px);
-  }
+}

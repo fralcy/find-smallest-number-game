@@ -8,7 +8,7 @@ const GameModeDetailScreen = () => {
   const { type } = useParams(); // 'grid' or 'free'
 
   const handleBack = () => {
-    navigate('/game-mode'); // Use React Router's navigate function
+    navigate('/game-mode');
   };
 
   const handleCampaign = () => {
@@ -20,7 +20,6 @@ const GameModeDetailScreen = () => {
   };
 
   const handleZenMode = () => {
-    // Directly navigate to Zen gameplay screen rather than a configuration screen
     navigate(`/game/${type}/zen/play`);
   };
 
@@ -32,39 +31,45 @@ const GameModeDetailScreen = () => {
     <div className={styles.container}>
       <RotateDeviceNotice />
       <div className={styles.header}>
-        <button 
-          className={styles.backButton}
-          onClick={handleBack}
-        >
-          ←
-        </button>
+        <div className={styles.leftSection}>
+          <button 
+            className={styles.backButton}
+            onClick={handleBack}
+          >
+            ←
+          </button>
+        </div>
+        <div className={styles.middleSection}>
+          <h1 className={styles.title}>{getModeTitle()}</h1>
+        </div>
+        <div className={styles.rightSection}>
+          {/* Thành phần rỗng để căn chỉnh */}
+        </div>
       </div>
 
-      <div className={styles.titleContainer}>
-        <h1 className={styles.title}>{getModeTitle()}</h1>
-      </div>
+      <div className={styles.contentWrapper}>
+        <div className={styles.modeContainer}>
+          <button 
+            className={styles.modeButton}
+            onClick={handleCampaign}
+          >
+            Campaign
+          </button>
 
-      <div className={styles.modeContainer}>
-        <button 
-          className={styles.modeButton}
-          onClick={handleCampaign}
-        >
-          Campaign
-        </button>
+          <button 
+            className={styles.modeButton}
+            onClick={handleCustom}
+          >
+            Custom
+          </button>
 
-        <button 
-          className={styles.modeButton}
-          onClick={handleCustom}
-        >
-          Custom
-        </button>
-
-        <button 
-          className={styles.modeButton}
-          onClick={handleZenMode}
-        >
-          Zen mode
-        </button>
+          <button 
+            className={styles.modeButton}
+            onClick={handleZenMode}
+          >
+            Zen mode
+          </button>
+        </div>
       </div>
     </div>
   );
