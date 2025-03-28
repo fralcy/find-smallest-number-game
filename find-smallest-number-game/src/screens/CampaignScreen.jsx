@@ -8,6 +8,7 @@ const CampaignScreen = () => {
   const navigate = useNavigate();
   const { type } = useParams(); // 'grid' or 'free'
   const location = useLocation();
+  const { audioManager } = useGameContext();
 
   // Lấy dữ liệu màn chơi từ GameContext
   const { gridLevels, freeLevels, updateLevelProgress } = useGameContext();
@@ -37,6 +38,8 @@ const CampaignScreen = () => {
         : { maxNumbers: level.maxNumbers })
     };
 
+    audioManager.play('button');
+
     // Navigate to GameplayScreen with state
     navigate(`/game/${type}/campaign/play`, {
       state: { gameSettings, mode: 'campaign' }
@@ -44,6 +47,7 @@ const CampaignScreen = () => {
   };
 
   const handleBack = () => {
+    audioManager.play('button');
     navigate(`/game-mode/${type}`);
   };
 

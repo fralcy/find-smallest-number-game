@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import audioManager from '../utils/AudioManager';
 
 // Tạo context
 const GameContext = createContext();
@@ -271,7 +272,11 @@ export const GameProvider = ({ children }) => {
     }));
     
     // Lưu vào localStorage
-    localStorage.setItem('audioSettings', JSON.stringify({ volume, music }));
+    localStorage.setItem('volume', volume.toString());
+    localStorage.setItem('music', music.toString());
+    
+    // Cập nhật AudioManager
+    audioManager.updateVolume(volume, music);
   };
   
   // Lưu cài đặt ngôn ngữ vào localStorage
@@ -457,7 +462,10 @@ export const GameProvider = ({ children }) => {
       
       // Game settings
       getGameSettings,
-      saveCustomSettings
+      saveCustomSettings,
+
+      // Audio manager
+      audioManager
     }}>
       {children}
     </GameContext.Provider>

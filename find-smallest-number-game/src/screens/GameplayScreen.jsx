@@ -12,7 +12,7 @@ const GameplayScreen = () => {
   const location = useLocation();
   
   // Game context
-  const { getGameSettings, saveHighScore, updateLevelProgress } = useGameContext();
+  const { getGameSettings, saveHighScore, updateLevelProgress, audioManager } = useGameContext();
   
   // Game settings
   const [settings, setSettings] = useState({
@@ -106,7 +106,7 @@ const GameplayScreen = () => {
       
       return () => clearInterval(countdown);
     }
-  }, [gameStarted, isPaused, mode]);
+  }, [gameStarted, isPaused, mode, audioManager]);
   
   // Track current smallest number
   useEffect(() => { 
@@ -399,6 +399,9 @@ const GameplayScreen = () => {
   
   // Handle when player finds correct number
   const handleCorrectNumber = (number) => {
+    // Phát âm thanh đúng
+    audioManager.play('correct');
+    
     if (mode === 'zen') {
       // Trong Zen mode, tăng điểm mỗi khi tìm đúng
       setScore(prevScore => prevScore + 10);
@@ -424,6 +427,9 @@ const GameplayScreen = () => {
   
   // Handle when player clicks wrong number
   const handleWrongNumber = () => {
+    // Phát âm thanh sai
+    audioManager.play('wrong');
+
     if (mode === 'zen') {
       // Reduce lives in zen mode
       setLives(prev => {
@@ -442,6 +448,9 @@ const GameplayScreen = () => {
   const handlePauseClick = () => {
     setIsPaused(true);
     if (timer) clearInterval(timer);
+
+    // Phát âm thanh nút bấm
+    audioManager.play('button');
   
     // Điều hướng đến SettingsScreen với dữ liệu gameplay
     navigate('/settings', { 
@@ -459,6 +468,9 @@ const GameplayScreen = () => {
   // Function to handle game completion (win)
   const handleGameComplete = () => {
     if (timer) clearInterval(timer);
+
+    // Phát âm thanh hoàn thành màn chơi
+    audioManager.play('win');
     
     // Tính toán số sao đạt được
     const stars = calculateStars();
@@ -489,6 +501,9 @@ const GameplayScreen = () => {
   // Function to handle timeout
   const handleTimeout = () => {
     if (timer) clearInterval(timer);
+
+    // Phát âm thanh hết thời gian
+    audioManager.play('lose');
     
     navigate('/result', {
       state: {
@@ -507,6 +522,9 @@ const GameplayScreen = () => {
   // Function to handle running out of lives (zen mode)
   const handleLifeOut = () => {
     if (timer) clearInterval(timer);
+
+    // Phát âm thanh hết mạng
+    audioManager.play('lose');
     
     navigate('/result', {
       state: {

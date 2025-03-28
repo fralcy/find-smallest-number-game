@@ -4,19 +4,23 @@ import styles from '../styles/GameModeScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import gridModeImage from '../assets/grid-mode.png';
 import freeModeImage from '../assets/free-mode.png';
+import { useGameContext } from '../contexts/GameContext';
 
 const GameModeScreen = () => {
   const navigate = useNavigate();
+  const { audioManager } = useGameContext();
 
   const handleBack = () => {
     navigate('/');
   };
 
   const handleGridMode = () => {
+    audioManager.play('button');
     navigate('/game-mode/grid');
   };
 
   const handleFreeMode = () => {
+    audioManager.play('button');
     navigate('/game-mode/free');
   };
 

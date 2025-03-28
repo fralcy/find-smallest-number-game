@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from '../styles/CustomScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
+import { useGameContext } from '../contexts/GameContext';
 
 const CustomScreen = () => {
   const navigate = useNavigate();
   const { type } = useParams(); // 'grid' or 'free'
+  const { audioManager } = useGameContext();
   
   // Default settings
   const [range, setRange] = useState({ min: 1, max: 100 });
@@ -42,6 +44,7 @@ const CustomScreen = () => {
   }, [type, isGridMode]);
   
   const handleBack = () => {
+    audioManager.play('button');
     navigate(`/game-mode/${type}`);
   };
   
@@ -62,6 +65,8 @@ const CustomScreen = () => {
     
     // Store settings in localStorage
     localStorage.setItem('customGameSettings', JSON.stringify(gameSettings));
+
+    audioManager.play('button');
     
     // Navigate to game screen with settings
     navigate(`/game/${type}/custom/play`, {
@@ -78,6 +83,7 @@ const CustomScreen = () => {
     if (isNaN(newMin) || newMin < 0) newMin = 0;
     if (newMin >= range.max) newMin = range.max - 1;
     setRange({ ...range, min: newMin });
+    audioManager.play('button');
   };
   
   const handleMaxChange = (newMax) => {
@@ -85,6 +91,7 @@ const CustomScreen = () => {
     if (isNaN(newMax) || newMax <= range.min) newMax = range.min + 1;
     if (newMax > 9999) newMax = 9999; // Upper limit
     setRange({ ...range, max: newMax });
+    audioManager.play('button');
   };
   
   // Handle grid size changes
@@ -93,6 +100,7 @@ const CustomScreen = () => {
     if (isNaN(newSize) || newSize < 3) newSize = 3; // Minimum 3x3
     if (newSize > 9) newSize = 9; // Maximum 9x9
     setGridSize(newSize);
+    audioManager.play('button');
   };
   
   // Handle max numbers changes (for free mode)
@@ -101,6 +109,7 @@ const CustomScreen = () => {
     if (isNaN(newMax) || newMax < 5) newMax = 5; // Minimum 5 numbers
     if (newMax > 45) newMax = 45; // Maximum 45 numbers
     setMaxNumbers(newMax);
+    audioManager.play('button');
   };
   
   // Handle time per number changes
@@ -109,6 +118,7 @@ const CustomScreen = () => {
     if (isNaN(newTime) || newTime < 1) newTime = 1; // Minimum 1 second
     if (newTime > 15) newTime = 15; // Maximum 15 seconds
     setTimePerNumber(newTime);
+    audioManager.play('button');
   };
   
   return (

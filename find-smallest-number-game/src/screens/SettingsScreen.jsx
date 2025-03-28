@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/SettingsScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
+import { useGameContext } from '../contexts/GameContext';
 
 const LANGUAGES = [
   'English', 
@@ -16,6 +17,7 @@ const LANGUAGES = [
 const SettingsScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { saveAudioSettings, saveLanguage, audioManager } = useGameContext();
   
   const fromGameplay = location.state?.fromGameplay || false;
   const gameType = location.state?.type;
@@ -39,21 +41,36 @@ const SettingsScreen = () => {
     const newVolume = parseInt(e.target.value);
     setVolume(newVolume);
     localStorage.setItem('volume', newVolume.toString());
+
+    // Lưu và cập nhật âm lượng
+    saveAudioSettings({ volume: newVolume, music });
+
+    // Phát âm thanh để kiểm tra
+    audioManager.play('button');
   };
 
   const handleMusicChange = (e) => {
     const newMusic = parseInt(e.target.value);
     setMusic(newMusic);
     localStorage.setItem('music', newMusic.toString());
+
+    // Lưu và cập nhật âm lượng nhạc
+    saveAudioSettings({ volume, music: newMusic });
   };
 
   const handleLanguageChange = (e) => {
     const newLanguage = e.target.value;
     setLanguage(newLanguage);
     localStorage.setItem('language', newLanguage);
+
+    // Phát âm thanh khi thay đổi
+    audioManager.play('button');
   };
 
   const handleBack = () => {
+    // Phát âm thanh nút bấm
+    audioManager.play('button');
+
     if (fromGameplay) {
       navigate(`/game/${gameType}/${gameMode}`);
     } else {

@@ -2,24 +2,30 @@ import React from 'react';
 import styles from '../styles/GameModeDetailScreen.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import RotateDeviceNotice from './RotateDeviceNotice';
+import { useGameContext } from '../contexts/GameContext';
 
 const GameModeDetailScreen = () => {
   const navigate = useNavigate();
   const { type } = useParams(); // 'grid' or 'free'
+  const { audioManager } = useGameContext();
 
   const handleBack = () => {
+    audioManager.play('button');
     navigate('/game-mode');
   };
 
   const handleCampaign = () => {
+    audioManager.play('button');
     navigate(`/game/${type}/campaign`);
   };
 
   const handleCustom = () => {
+    audioManager.play('button');
     navigate(`/game/${type}/custom`);
   };
 
   const handleZenMode = () => {
+    audioManager.play('button');
     navigate(`/game/${type}/zen/play`);
   };
 

@@ -2,21 +2,23 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/ResultScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
+import { useGameContext } from '../contexts/GameContext';
 
 const ResultScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { audioManager } = useGameContext();
   
   // Get data from location state
   const { 
-    type = 'grid',                     // grid or free
-    mode = 'campaign',                 // campaign, custom, or zen
-    outcome = 'finish',                // finish, timeout, or lifeout
-    score = 0,                         // default score is 0 if not provided
-    usedTime = 0,                      // default used time is 0
-    timeRemaining = 0,                 // default time remaining is 0
-    level = 1,                         // for campaign mode
-    stars = 0                          // default stars is 0
+    type = 'grid',
+    mode = 'campaign',
+    outcome = 'finish',
+    score = 0,
+    usedTime = 0,
+    timeRemaining = 0,
+    level = 1,
+    stars = 0
   } = location.state || {};
   
   // If data does not exist, navigate to the main screen
@@ -25,6 +27,19 @@ const ResultScreen = () => {
       navigate('/');
     }
   }, [location, navigate]);
+  
+  // Phát âm thanh tương ứng khi hiển thị kết quả
+  useEffect(() => {
+    if (outcome === 'finish') {
+      audioManager.play('win');
+    } else {
+      audioManager.play('lose');
+    }
+    
+    return () => {
+      audioManager.playMusic('./sounds/background-music.mp3');
+    };
+  }, [outcome, audioManager]);
   
   // Determine the result title based on outcome
   const getResultTitle = () => {
@@ -35,6 +50,8 @@ const ResultScreen = () => {
   
   // Handle Exit button - returns to appropriate screen based on mode
   const handleExit = () => {
+    audioManager.play('button');
+    
     if (mode === 'campaign' || mode === 'custom') {
       navigate(`/game/${type}/${mode}`);
     } else {
@@ -45,19 +62,29 @@ const ResultScreen = () => {
   
   // Handle Replay button - replays the same level/game
   const handleReplay = () => {
-    navigate(`/game/${type}/${mode}`, { 
+    audioManager.play('button');
+    
+    navigate(`/game/${type}/${mode}/play`, { 
       state: { 
-        level: mode === 'campaign' ? level : undefined
+        gameSettings: {
+          level: mode === 'campaign' ? level : undefined
+        },
+        mode
       }
     });
   };
   
   // Handle Continue button - only for campaign mode, goes to next level
   const handleContinue = () => {
+    audioManager.play('button');
+    
     if (mode === 'campaign') {
-      navigate(`/game/${type}/${mode}`, { 
+      navigate(`/game/${type}/campaign/play`, { 
         state: { 
-          level: level + 1
+          gameSettings: {
+            level: level + 1
+          },
+          mode: 'campaign'
         }
       });
     }
