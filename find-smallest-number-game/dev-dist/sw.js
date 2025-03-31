@@ -85,7 +85,7 @@ define(['./workbox-1cfa77fd'], (function (workbox) { 'use strict';
     "revision": "a8b973d2b39152e241a80b0aba40e299"
   }, {
     "url": "/find-smallest-number-game/index.html",
-    "revision": "0.scd6hpq0gb8"
+    "revision": "0.dgdtrtba0j8"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/find-smallest-number-game/index.html"), {

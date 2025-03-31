@@ -47,7 +47,6 @@ const AppContent = () => {
         <Route path="/game/:type/custom" element={<CustomScreen />} />
         <Route path="/game/:type/:mode/play" element={<GameplayScreen />} />
         <Route path="/result" element={<ResultScreen />} />
-        {/* Redirect any unknown route to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

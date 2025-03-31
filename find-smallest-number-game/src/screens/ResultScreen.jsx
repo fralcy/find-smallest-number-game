@@ -7,7 +7,7 @@ import { useGameContext } from '../contexts/GameContext';
 const ResultScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { audioManager } = useGameContext();
+  const { audioManager, getGameSettings, gridLevels, freeLevels } = useGameContext();
   
   // Get data from location state
   const { 
@@ -21,6 +21,9 @@ const ResultScreen = () => {
     stars = 0
   } = location.state || {};
   
+  // Determine total levels based on type
+  const totalLevels = type === 'grid' ? gridLevels.length : freeLevels.length;
+
   // If data does not exist, navigate to the main screen
   useEffect(() => {
     if (!location.state) {
@@ -62,29 +65,32 @@ const ResultScreen = () => {
   
   // Handle Replay button - replays the same level/game
   const handleReplay = () => {
-    audioManager.play('button');
-    
+    const gameSettings = location.state?.gameSettings || getGameSettings(type, mode, level);
+
+    console.log('Replay - gameSettings:', gameSettings);
+
     navigate(`/game/${type}/${mode}/play`, { 
       state: { 
-        gameSettings: {
-          level: mode === 'campaign' ? level : undefined
-        },
-        mode
+        gameSettings,
+        mode,
+        type
       }
     });
   };
   
   // Handle Continue button - only for campaign mode, goes to next level
   const handleContinue = () => {
-    audioManager.play('button');
-    
     if (mode === 'campaign') {
+      const nextLevel = level + 1;
+      const gameSettings = getGameSettings(type, mode, nextLevel);
+
+      console.log('Continue - gameSettings:', gameSettings);
+
       navigate(`/game/${type}/campaign/play`, { 
         state: { 
-          gameSettings: {
-            level: level + 1
-          },
-          mode: 'campaign'
+          gameSettings,
+          mode: 'campaign',
+          type
         }
       });
     }
@@ -152,7 +158,7 @@ const ResultScreen = () => {
         </button>
         
         {/* Only show Continue button for campaign mode */}
-        {mode === 'campaign' && (
+        {mode === 'campaign' && level < totalLevels && (
           <button 
             className={`${styles.actionButton} ${styles.continueButton}`}
             onClick={handleContinue}

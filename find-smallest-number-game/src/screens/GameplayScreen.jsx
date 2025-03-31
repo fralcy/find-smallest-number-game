@@ -49,23 +49,17 @@ const GameplayScreen = () => {
   useEffect(() => {
     let gameSettings;
 
-    // Nếu là Zen Mode trong Grid Mode, sử dụng cài đặt mặc định đặc biệt
-    if (type === 'grid' && mode === 'zen') {
-      gameSettings = {
-        minNumber: 1,
-        maxNumber: 100,
-        gridSize: 9, // 9x9 grid cho Zen mode
-        timePerNumber: 0, // Không giới hạn thời gian
-        totalTime: 0
-      };
+    if (location.state?.gameSettings) {
+      // Sử dụng dữ liệu từ location.state nếu có
+      gameSettings = location.state.gameSettings;
+      console.log('GameplayScreen - Received gameSettings from location.state:', gameSettings);
     } else {
-      // Lấy level từ location state nếu đến từ campaign
-      const level = location.state?.gameSettings?.level || null;
-      
-      // Lấy cài đặt game từ context hoặc location state
-      gameSettings = location.state?.gameSettings || getGameSettings(type, mode, level);
+      // Nếu không có dữ liệu, lấy từ GameContext hoặc khởi tạo mặc định
+      const level = mode === 'campaign' ? 1 : null; // Mặc định level 1 cho campaign
+      gameSettings = getGameSettings(type, mode, level);
+      console.log('GameplayScreen - Fallback to default gameSettings:', gameSettings);
     }
-    
+
     setSettings(gameSettings);
     setTimeLeft(gameSettings.totalTime);
   }, [type, mode, location, getGameSettings]);
