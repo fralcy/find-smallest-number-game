@@ -505,6 +505,8 @@ const GameplayScreen = () => {
     // Phát âm thanh hết thời gian
     audioManager.play('lose');
     
+    const stars = calculateStars(); // Tính số sao dựa trên hiệu suất
+    
     navigate('/result', {
       state: {
         type,
@@ -514,7 +516,7 @@ const GameplayScreen = () => {
         usedTime: settings.totalTime, // All time was used
         timeRemaining: 0,
         level: mode === 'campaign' ? settings.level : undefined,
-        stars: calculateStars()
+        stars: stars
       }
     });
   };
@@ -540,12 +542,16 @@ const GameplayScreen = () => {
 
   // Helper function to calculate stars based on performance
   const calculateStars = () => {
-    // Calculate based on percentage of time remaining
-    const timePercentage = (timeLeft / settings.totalTime) * 100;
-    
-    if (timePercentage > 70) return 3;
-    if (timePercentage > 40) return 2;
-    return 1;
+    const totalNumbers = type === 'grid' ? gridNumbers.length : freeNumbers.length;
+    const foundPercentage = (numbersFound / totalNumbers) * 100; // Tỷ lệ số đã tìm thấy
+    const timePercentage = ((settings.totalTime - timeLeft) / settings.totalTime) * 100; // Tỷ lệ thời gian đã sử dụng
+  
+    // Kết hợp tỷ lệ số đã tìm thấy và thời gian đã sử dụng
+    const performanceScore = (foundPercentage * 0.7) + ((100 - timePercentage) * 0.3);
+  
+    if (performanceScore > 80) return 3; // Hiệu suất cao
+    if (performanceScore > 50) return 2; // Hiệu suất trung bình
+    return 1; // Hiệu suất thấp
   };
   
   // Xác định độ khó dựa vào level hoặc settings
