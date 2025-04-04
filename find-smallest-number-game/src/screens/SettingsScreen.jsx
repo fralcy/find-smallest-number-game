@@ -3,16 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/SettingsScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
-
-const LANGUAGES = [
-  'English', 
-  'Tiếng Việt', 
-  '中文', 
-  'Español', 
-  'Français', 
-  'Deutsch', 
-  '日本語'
-];
+import { t, SUPPORTED_LANGUAGES, setLanguage } from '../utils/languageUtils';
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
@@ -25,7 +16,7 @@ const SettingsScreen = () => {
   
   const [volume, setVolume] = useState(50);
   const [music, setMusic] = useState(100);
-  const [language, setLanguage] = useState('English');
+  const [language, setLanguageState] = useState('vi');
 
   useEffect(() => {
     const savedVolume = localStorage.getItem('volume');
@@ -34,7 +25,7 @@ const SettingsScreen = () => {
 
     if (savedVolume !== null) setVolume(parseInt(savedVolume));
     if (savedMusic !== null) setMusic(parseInt(savedMusic));
-    if (savedLanguage !== null) setLanguage(savedLanguage);
+    if (savedLanguage !== null) setLanguageState(savedLanguage);
   }, []);
 
   const handleVolumeChange = (e) => {
@@ -60,8 +51,14 @@ const SettingsScreen = () => {
 
   const handleLanguageChange = (e) => {
     const newLanguage = e.target.value;
-    setLanguage(newLanguage);
+    setLanguageState(newLanguage);
     localStorage.setItem('language', newLanguage);
+    
+    // Cập nhật ngôn ngữ trong hệ thống
+    setLanguage(newLanguage);
+    
+    // Lưu trong context
+    saveLanguage(newLanguage);
 
     // Phát âm thanh khi thay đổi
     audioManager.play('button');
@@ -87,11 +84,11 @@ const SettingsScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            ←
+            {t('back')}
           </button>
         </div>
         <div className={styles.middleSection}>
-          <h1 className={styles.title}>Settings</h1>
+          <h1 className={styles.title}>{t('settings')}</h1>
         </div>
         <div className={styles.rightSection}>
           {/* Thành phần rỗng để căn chỉnh */}
@@ -102,7 +99,7 @@ const SettingsScreen = () => {
       <div className={styles.contentWrapper}>
         <div className={styles.settingsWrapper}>
           <div className={styles.settingItem}>
-            <label className={styles.settingLabel}>Volume:</label>
+            <label className={styles.settingLabel}>{t('volume')}</label>
             <input 
               type="range" 
               min="0" 
@@ -115,7 +112,7 @@ const SettingsScreen = () => {
           </div>
 
           <div className={styles.settingItem}>
-            <label className={styles.settingLabel}>Music:</label>
+            <label className={styles.settingLabel}>{t('music')}</label>
             <input 
               type="range" 
               min="0" 
@@ -128,14 +125,14 @@ const SettingsScreen = () => {
           </div>
 
           <div className={styles.settingItem}>
-            <label className={styles.settingLabel}>Language:</label>
+            <label className={styles.settingLabel}>{t('language')}</label>
             <select 
               value={language}
               onChange={handleLanguageChange}
               className={styles.languageSelect}
             >
-              {LANGUAGES.map(lang => (
-                <option key={lang} value={lang}>{lang}</option>
+              {SUPPORTED_LANGUAGES.map(lang => (
+                <option key={lang.code} value={lang.code}>{lang.name}</option>
               ))}
             </select>
           </div>
@@ -147,13 +144,13 @@ const SettingsScreen = () => {
               className={styles.endButton}
               onClick={handleBack}
             >
-              End
+              {t('end')}
             </button>
             <button 
               className={styles.continueButton}
               onClick={handleBack}
             >
-              Continue
+              {t('continue')}
             </button>
           </div>
         )}

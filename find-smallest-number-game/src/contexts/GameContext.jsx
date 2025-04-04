@@ -1,6 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import audioManager from '../utils/AudioManager';
 import GameHistoryManager from '../data/GameHistoryManager';
+import { setLanguage } from '../utils/languageUtils';
+
 
 // Tạo context
 const GameContext = createContext();
@@ -25,11 +27,18 @@ export const GameProvider = ({ children }) => {
   const [freeLevels, setFreeLevels] = useState([]);
   const [highScores, setHighScores] = useState({});
 
-  // Load dữ liệu từ GameHistoryManager khi component được mount
+  // Khi khoi tạo context
   useEffect(() => {
+    // Load dữ liệu từ GameHistoryManager
     setGridLevels(GameHistoryManager.loadProgress('grid'));
     setFreeLevels(GameHistoryManager.loadProgress('free'));
     setHighScores(GameHistoryManager.loadHighScores());
+
+    // Load cài đặt ngôn ngữ
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
   }, []);
 
   // Lưu cài đặt âm thanh vào localStorage
@@ -56,9 +65,12 @@ export const GameProvider = ({ children }) => {
       ...prev,
       language
     }));
-
+  
+    // Lưu vào localStorage và cập nhật biến toàn cục
     localStorage.setItem('language', language);
+    setLanguage(language);
   };
+  
 
   // Cập nhật tiến trình level sau khi hoàn thành một level
   const updateLevelProgress = (type, levelId, stars) => {
