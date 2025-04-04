@@ -5,6 +5,7 @@ import RotateDeviceNotice from './RotateDeviceNotice';
 import NumberBox from '../components/NumberBox';
 import GameStats from '../components/GameStats';
 import { useGameContext } from '../contexts/GameContext';
+import { t } from '../utils/languageUtils';
 
 const GameplayScreen = () => {
   const { type, mode } = useParams(); // type: 'grid' or 'free', mode: 'campaign', 'custom', or 'zen'
@@ -632,7 +633,7 @@ const GameplayScreen = () => {
         {/* Middle Section: Instruction Text */}
         <div className={styles.middleSection}>
           <div className={styles.instructionText}>
-            Find <span className={styles.targetNumber}>{targetNumber}</span>
+            {t('find')} <span className={styles.targetNumber}>{targetNumber}</span>
           </div>
         </div>
 

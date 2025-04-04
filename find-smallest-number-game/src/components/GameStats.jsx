@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from '../styles/GameStats.module.css';
+import { t } from '../utils/languageUtils';
 
 const GameStats = ({ 
   score, 
@@ -21,7 +22,7 @@ const GameStats = ({
       {/* Row 1: Score */}
       <div className={styles.row}>
         <div className={styles.scoreContainer}>
-          <span className={styles.scoreValue}>Score: {score}</span>
+          <span className={styles.scoreValue}>{t('score')} {score}</span>
         </div>
       </div>
 
@@ -29,7 +30,7 @@ const GameStats = ({
       <div className={styles.row}>
         {!isZenMode ? (
           <div className={styles.timeContainer}>
-            <span className={styles.timeValue}>Time: {formatTime(timeLeft)}</span>
+            <span className={styles.timeValue}>{t('time')} {formatTime(timeLeft)}</span>
           </div>
         ) : (
           <div className={styles.livesContainer}>
