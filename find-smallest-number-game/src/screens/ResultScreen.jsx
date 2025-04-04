@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/ResultScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
+import { t } from '../utils/languageUtils';
 
 const ResultScreen = () => {
   const navigate = useNavigate();
@@ -46,9 +47,9 @@ const ResultScreen = () => {
   
   // Determine the result title based on outcome
   const getResultTitle = () => {
-    if (outcome === 'timeout') return 'Time out';
-    if (outcome === 'lifeout') return 'Life out';
-    return 'Finish';
+    if (outcome === 'timeout') return t('timeout');
+    if (outcome === 'lifeout') return t('lifeout');
+    return t('finish');
   };
   
   // Handle Exit button - returns to appropriate screen based on mode
@@ -122,7 +123,7 @@ const ResultScreen = () => {
       
       <div className={styles.resultsContainer}>
         <div className={styles.resultRow}>
-          <span className={styles.resultLabel}>Score:</span>
+          <span className={styles.resultLabel}>{t('score')}</span>
           <span className={styles.resultValue}>{score}</span>
         </div>
         
@@ -130,12 +131,12 @@ const ResultScreen = () => {
         {mode !== 'zen' && (
           <>
             <div className={styles.resultRow}>
-              <span className={styles.resultLabel}>Used time:</span>
+              <span className={styles.resultLabel}>{t('usedTime')}</span>
               <span className={styles.resultValue}>{usedTime}s</span>
             </div>
             
             <div className={styles.resultRow}>
-              <span className={styles.resultLabel}>Time remaining:</span>
+              <span className={styles.resultLabel}>{t('timeRemaining')}</span>
               <span className={styles.resultValue}>{timeRemaining}s</span>
             </div>
           </>
@@ -147,14 +148,14 @@ const ResultScreen = () => {
           className={`${styles.actionButton} ${styles.exitButton}`}
           onClick={handleExit}
         >
-          Exit
+          {t('exit')}
         </button>
         
         <button 
           className={`${styles.actionButton} ${styles.replayButton}`}
           onClick={handleReplay}
         >
-          Replay
+          {t('replay')}
         </button>
         
         {/* Only show Continue button for campaign mode */}
@@ -163,7 +164,7 @@ const ResultScreen = () => {
             className={`${styles.actionButton} ${styles.continueButton}`}
             onClick={handleContinue}
           >
-            Continue
+            {t('continue')}
           </button>
         )}
       </div>
