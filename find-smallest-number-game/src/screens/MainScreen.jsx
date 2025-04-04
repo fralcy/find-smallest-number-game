@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import styles from '../styles/MainScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
+import { t } from '../utils/languageUtils';
 
 const MainScreen = () => {
   const navigate = useNavigate();
@@ -37,20 +38,20 @@ const MainScreen = () => {
     <div className={styles.container}>
       <RotateDeviceNotice />
       <div className={styles.topSection}>
-        <h1 className={styles.title}>Find the smallest number!</h1>
+        <h1 className={styles.title}>{t('findSmallestNumber')}</h1>
       </div>
       <div className={styles.bottomSection}>
         <button 
           className={styles.playButton}
           onClick={handlePlayClick}
         >
-          Play
+          {t('play')}
         </button>
         <button 
           className={styles.settingButton}
           onClick={handleSettingsClick}
         >
-          Setting
+          {t('settings')}
         </button>
       </div>
       <div className={styles.version}>v1.0</div>

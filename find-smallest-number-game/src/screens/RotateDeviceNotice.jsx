@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from '../styles/RotateDeviceNotice.module.css';
+import { t } from '../utils/languageUtils';
 
 const RotateDeviceNotice = () => {
   return (
@@ -8,7 +9,7 @@ const RotateDeviceNotice = () => {
         <div className={styles.phoneIcon}>
           <div className={styles.phone}></div>
         </div>
-        <p>Please rotate your device horizontally for the best experience</p>
+        <p>{t('rotateDevice')}</p>
       </div>
     </div>
   );
