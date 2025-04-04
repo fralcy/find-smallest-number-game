@@ -3,6 +3,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import styles from '../styles/CampaignScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
+import { t } from '../utils/languageUtils';
 
 const CampaignScreen = () => {
   const navigate = useNavigate();
@@ -60,11 +61,13 @@ const CampaignScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            ←
+            {t('back')}
           </button>
         </div>
         <div className={styles.middleSection}>
-          <h1 className={styles.title}>Campaign - {type === 'grid' ? 'Grid' : 'Free'} Mode</h1>
+          <h1 className={styles.title}>
+            {type === 'grid' ? t('campaignGridMode') : t('campaignFreeMode')}
+          </h1>
         </div>
         <div className={styles.rightSection}>
           {/* Thành phần rỗng để căn chỉnh */}
@@ -79,7 +82,7 @@ const CampaignScreen = () => {
               className={`${styles.levelCard} ${!level.unlocked ? styles.locked : ''}`}
               onClick={() => handleLevelSelect(level)}
             >
-              <span className={styles.levelLabel}>Level {level.id}</span>
+              <span className={styles.levelLabel}>{t('level')} {level.id}</span>
               <span className={styles.levelInfo}>
                 {type === 'grid' ? `${level.gridSize}x${level.gridSize}` : `${level.maxNumbers} nums`}
               </span>

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styles from '../styles/CustomScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
+import { t } from '../utils/languageUtils';
 
 const CustomScreen = () => {
   const navigate = useNavigate();
@@ -131,13 +132,15 @@ const CustomScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            ←
+            {t('back')}
           </button>
         </div>
 
         {/* Middle Section: Title */}
         <div className={styles.middleSection}>
-          <h1 className={styles.title}>Custom - {isGridMode ? 'Grid' : 'Free'} mode</h1>
+          <h1 className={styles.title}>
+            {type === 'grid' ? t('customGridMode') : t('customFreeMode')}
+          </h1>
         </div>
 
         {/* Right Section: Empty (for future use or alignment purposes) */}
@@ -146,10 +149,10 @@ const CustomScreen = () => {
 
       <div className={styles.settingsContainer}>
         <div className={styles.settingGroup}>
-          <label className={styles.settingLabel}>Number Range:</label>
+          <label className={styles.settingLabel}>{t('numberRange')}</label>
           <div className={styles.rangeControls}>
             <div className={styles.inputControl}>
-              <span>Min</span>
+              <span>{t('min')}</span>
               <input 
                 type="number" 
                 value={range.min}
@@ -160,7 +163,7 @@ const CustomScreen = () => {
               />
             </div>
             <div className={styles.inputControl}>
-              <span>Max</span>
+              <span>{t('max')}</span>
               <input 
                 type="number" 
                 value={range.max}
@@ -175,7 +178,7 @@ const CustomScreen = () => {
         
         {isGridMode ? (
           <div className={styles.settingGroup}>
-            <label className={styles.settingLabel}>Grid Size:</label>
+            <label className={styles.settingLabel}>{t('gridSize')}</label>
             <div className={styles.inputControl}>
               <input 
                 type="range" 
@@ -190,7 +193,7 @@ const CustomScreen = () => {
           </div>
         ) : (
           <div className={styles.settingGroup}>
-            <label className={styles.settingLabel}>Max Numbers:</label>
+            <label className={styles.settingLabel}>{t('maxNumbers')}</label>
             <div className={styles.inputControl}>
               <input 
                 type="range" 
@@ -206,7 +209,7 @@ const CustomScreen = () => {
         )}
         
         <div className={styles.settingGroup}>
-          <label className={styles.settingLabel}>Time per Number:</label>
+          <label className={styles.settingLabel}>{t('timePerNumber')}</label>
           <div className={styles.inputControl}>
             <input 
               type="range" 
@@ -222,14 +225,14 @@ const CustomScreen = () => {
         </div>
         
         <div className={styles.settingInfo}>
-          <span className={styles.infoLabel}>Total Numbers:</span>
+          <span className={styles.infoLabel}>{t('totalNumbers')}</span>
           <span className={styles.infoValue}>
             {isGridMode ? gridSize * gridSize : maxNumbers}
           </span>
         </div>
         
         <div className={styles.settingInfo}>
-          <span className={styles.infoLabel}>Total Time:</span>
+          <span className={styles.infoLabel}>{t('totalTime')}</span>
           <span className={styles.infoValue}>
             {Math.round(timePerNumber * (isGridMode ? gridSize * gridSize : maxNumbers))}s
           </span>
@@ -240,7 +243,7 @@ const CustomScreen = () => {
         className={styles.startButton}
         onClick={handleStart}
       >
-        Start Game
+        {t('startGame')}
       </button>
     </div>
   );

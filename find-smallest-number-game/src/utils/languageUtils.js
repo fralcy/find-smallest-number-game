@@ -37,7 +37,7 @@ const translations = {
       // Màn hình chiến dịch
       'campaignGridMode': 'Chiến dịch - Chế độ lưới',
       'campaignFreeMode': 'Chiến dịch - Chế độ tự do',
-      'level': 'Cấp',
+      'level': 'Cấp độ',
       
       // Màn hình cài đặt
       'volume': 'Âm lượng:',
