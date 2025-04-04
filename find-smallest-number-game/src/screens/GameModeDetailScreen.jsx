@@ -3,6 +3,7 @@ import styles from '../styles/GameModeDetailScreen.module.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
+import { t } from '../utils/languageUtils';
 
 const GameModeDetailScreen = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const GameModeDetailScreen = () => {
   };
 
   const getModeTitle = () => {
-    return type === 'grid' ? 'Grid Mode' : 'Free Mode';
+    return type === 'grid' ? t('gridMode') : t('freeMode');
   };
 
   return (
@@ -42,7 +43,7 @@ const GameModeDetailScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            ←
+            {t('back')}
           </button>
         </div>
         <div className={styles.middleSection}>
@@ -59,21 +60,21 @@ const GameModeDetailScreen = () => {
             className={styles.modeButton}
             onClick={handleCampaign}
           >
-            Campaign
+            {t('campaign')}
           </button>
 
           <button 
             className={styles.modeButton}
             onClick={handleCustom}
           >
-            Custom
+            {t('custom')}
           </button>
 
           <button 
             className={styles.modeButton}
             onClick={handleZenMode}
           >
-            Zen mode
+            {t('zenMode')}
           </button>
         </div>
       </div>

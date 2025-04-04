@@ -5,12 +5,14 @@ import RotateDeviceNotice from './RotateDeviceNotice';
 import gridModeImage from '../assets/grid-mode.png';
 import freeModeImage from '../assets/free-mode.png';
 import { useGameContext } from '../contexts/GameContext';
+import { t } from '../utils/languageUtils';
 
 const GameModeScreen = () => {
   const navigate = useNavigate();
   const { audioManager } = useGameContext();
 
   const handleBack = () => {
+    audioManager.play('button');
     navigate('/');
   };
 
@@ -33,11 +35,11 @@ const GameModeScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            ←
+            {t('back')}
           </button>
         </div>
         <div className={styles.middleSection}>
-          <h1 className={styles.title}>Game Mode</h1>
+          <h1 className={styles.title}>{t('gameMode')}</h1>
         </div>
         <div className={styles.rightSection}>
           {/* Thành phần rỗng để căn chỉnh */}
@@ -55,7 +57,7 @@ const GameModeScreen = () => {
               alt="Grid Mode" 
               className={styles.modeImage}
             />
-            <button className={styles.modeButton}>Grid mode</button>
+            <button className={styles.modeButton}>{t('gridMode')}</button>
           </div>
 
           <div 
@@ -67,7 +69,7 @@ const GameModeScreen = () => {
               alt="Free Mode" 
               className={styles.modeImage}
             />
-            <button className={styles.modeButton}>Free mode</button>
+            <button className={styles.modeButton}>{t('freeMode')}</button>
           </div>
         </div>
       </div>
