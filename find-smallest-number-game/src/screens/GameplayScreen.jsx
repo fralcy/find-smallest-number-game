@@ -7,6 +7,9 @@ import GameStats from '../components/GameStats';
 import { useGameContext } from '../contexts/GameContext';
 import { t } from '../utils/languageUtils';
 
+import {generateGridNumbers, generateFreeNumbers, shuffleGridNumbers, shuffleFreeNumbers} from '../utils/GameLogic';
+
+
 const GameplayScreen = () => {
   const { type, mode } = useParams(); // type: 'grid' or 'free', mode: 'campaign', 'custom', or 'zen'
   const navigate = useNavigate();
@@ -70,9 +73,13 @@ const GameplayScreen = () => {
     if (!settings.minNumber || !settings.maxNumber) return;
     
     if (type === 'grid') {
-      generateGridNumbers();
+      const {numbers, target} = generateGridNumbers(settings, mode);
+      setGridNumbers(numbers);
+      setTargetNumber(target);
     } else {
-      generateFreeNumbers();
+      const {numbers, target} = generateFreeNumbers(settings, mode);
+      setFreeNumbers(numbers);
+      setTargetNumber(target);
     }
     
     // Reset game state
@@ -112,167 +119,7 @@ const GameplayScreen = () => {
         updateTargetNumber();
       }
     }
-  }, [gridNumbers, freeNumbers, foundNumbers, mode, type]);
-  
-  // Function to generate random numbers for grid
-  const generateGridNumbers = () => {
-    const { minNumber, maxNumber, gridSize } = settings;
-    const totalCells = gridSize * gridSize;
-  
-    if (mode === 'zen') {
-      // Tạo target number duy nhất
-      const target = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-  
-      // Tạo lưới số ngẫu nhiên không chứa target
-      let numbers = [];
-      while (numbers.length < totalCells - 1) {
-        let num = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-        if (num !== target) numbers.push(num);
-      }
-  
-      // Chèn target vào vị trí ngẫu nhiên
-      const targetIndex = Math.floor(Math.random() * totalCells);
-      numbers.splice(targetIndex, 0, target);
-  
-      setGridNumbers(numbers);
-      setTargetNumber(target);
-    } else {
-      // Các mode khác giữ số không trùng nhau
-      const uniqueNumbers = new Set();
-      while (uniqueNumbers.size < totalCells) {
-        uniqueNumbers.add(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
-      }
-      setGridNumbers(Array.from(uniqueNumbers));
-      setTargetNumber(Math.min(...uniqueNumbers));
-    }
-  };
-  
-  
-  // Function to generate random numbers for free mode
-  const generateFreeNumbers = () => {
-    const { minNumber, maxNumber, maxNumbers } = settings;
-  
-    if (mode === 'zen') {
-      // Tạo target number duy nhất
-      const target = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-  
-      // Tạo danh sách số ngẫu nhiên không chứa target
-      const numbersWithPosition = [];
-      const minDistance = 10; // Khoảng cách tối thiểu giữa các số (%)
-  
-      while (numbersWithPosition.length < maxNumbers - 1) {
-        let x, y, isValidPosition, value;
-        
-        do {
-          x = Math.random() * 80 + 10; // Random x position (10% to 90%)
-          y = Math.random() * 70 + 15; // Random y position (15% to 85%)
-  
-          // Kiểm tra khoảng cách với các số đã tạo
-          isValidPosition = numbersWithPosition.every(num => {
-            const distance = Math.sqrt(Math.pow(num.x - x, 2) + Math.pow(num.y - y, 2));
-            return distance >= minDistance;
-          });
-  
-          // Chỉ lấy số nếu khác target
-          if (isValidPosition) {
-            value = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-            if (value !== target) break;
-          }
-        } while (true);
-  
-        numbersWithPosition.push({ value, x, y });
-      }
-  
-      // Chèn target vào vị trí ngẫu nhiên
-      const targetIndex = Math.floor(Math.random() * maxNumbers);
-      numbersWithPosition.splice(targetIndex, 0, {
-        value: target,
-        x: Math.random() * 80 + 10,
-        y: Math.random() * 70 + 15
-      });
-  
-      setFreeNumbers(numbersWithPosition);
-      setTargetNumber(target);
-    } else {
-      // Các mode khác giữ số không trùng nhau
-      const uniqueNumbers = new Set();
-      while (uniqueNumbers.size < maxNumbers) {
-        uniqueNumbers.add(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
-      }
-  
-      const numbersWithPosition = [];
-      const minDistance = 10; // Khoảng cách tối thiểu giữa các số (%)
-  
-      Array.from(uniqueNumbers).forEach(value => {
-        let x, y, isValidPosition;
-  
-        do {
-          x = Math.random() * 80 + 10; // Random x position (10% to 90%)
-          y = Math.random() * 70 + 15; // Random y position (15% to 85%)
-  
-          // Kiểm tra khoảng cách với các số đã tạo
-          isValidPosition = numbersWithPosition.every(num => {
-            const distance = Math.sqrt(Math.pow(num.x - x, 2) + Math.pow(num.y - y, 2));
-            return distance >= minDistance;
-          });
-        } while (!isValidPosition);
-  
-        numbersWithPosition.push({ value, x, y });
-      });
-  
-      setFreeNumbers(numbersWithPosition);
-      setTargetNumber(Math.min(...uniqueNumbers));
-    }
-  };
-  
-  
-  // Hàm xáo trộn vị trí các số (cho Zen mode)
-  const shuffleGridNumbers = () => {
-    if (type !== 'grid' || mode !== 'zen') return;
-    
-    // Clone mảng hiện tại và xáo trộn
-    const shuffled = [...gridNumbers];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    
-    setGridNumbers(shuffled);
-  };
-
-  const shuffleFreeNumbers = () => {
-    if (type !== 'free' || mode !== 'zen') return;
-  
-    // Clone mảng hiện tại và xáo trộn
-    const shuffled = [...freeNumbers];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-  
-    // Cập nhật vị trí ngẫu nhiên mới cho từng số
-    const minDistance = 10; // Khoảng cách tối thiểu giữa các số (đơn vị: %)
-    shuffled.forEach(num => {
-      let x, y, isValidPosition;
-  
-      do {
-        x = Math.random() * 80 + 10; // Random x position (10% to 90%)
-        y = Math.random() * 70 + 15; // Random y position (15% to 85%)
-  
-        // Kiểm tra khoảng cách với các số đã tạo
-        isValidPosition = shuffled.every(otherNum => {
-          if (otherNum === num) return true; // Không so sánh với chính nó
-          const distance = Math.sqrt(Math.pow(otherNum.x - x, 2) + Math.pow(otherNum.y - y, 2));
-          return distance >= minDistance;
-        });
-      } while (!isValidPosition);
-  
-      num.x = x;
-      num.y = y;
-    });
-  
-    setFreeNumbers(shuffled);
-  };
+  }, [gridNumbers, freeNumbers, foundNumbers, mode, type]);  
   
   // Hàm thay thế số đã tìm thấy bằng một số mới (cho Zen mode)
   const replaceFoundNumber = (number) => {
@@ -364,7 +211,8 @@ const GameplayScreen = () => {
       
       // Nếu là Zen mode, xáo trộn grid sau khi chọn sai
       if (mode === 'zen') {
-        shuffleGridNumbers();
+        const shuffled = shuffleGridNumbers(gridNumbers);
+        setGridNumbers(shuffled);
       }
     }
   };
@@ -387,7 +235,8 @@ const GameplayScreen = () => {
   
       // Nếu là Zen mode, chỉ xáo trộn vị trí các số
       if (mode === 'zen') {
-        shuffleFreeNumbers();
+        const shuffled = shuffleFreeNumbers(freeNumbers);
+        setFreeNumbers(shuffled);
       }
     }
   };
