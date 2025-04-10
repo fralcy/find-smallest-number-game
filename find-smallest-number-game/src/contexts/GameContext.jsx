@@ -2,7 +2,8 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import audioManager from '../utils/AudioManager';
 import GameHistoryManager from '../data/GameHistoryManager';
 import { setLanguage } from '../utils/languageUtils';
-
+import { DIFFICULTY_LEVELS } from '../constants/difficulty';
+import { getDifficultyByLevel } from '../utils/difficultyUtils';
 
 // Tạo context
 const GameContext = createContext();
@@ -16,7 +17,8 @@ export const GameProvider = ({ children }) => {
     language: 'English',
     defaultGridSize: 5,
     defaultMaxNumbers: 20,
-    defaultTimePerNumber: 5
+    defaultTimePerNumber: 5,
+    defaultDifficulty: DIFFICULTY_LEVELS.EASY, // Thêm độ khó mặc định
   };
 
   // State cho cài đặt
@@ -27,7 +29,7 @@ export const GameProvider = ({ children }) => {
   const [freeLevels, setFreeLevels] = useState([]);
   const [highScores, setHighScores] = useState({});
 
-  // Khi khoi tạo context
+  // Khi khởi tạo context
   useEffect(() => {
     // Load dữ liệu từ GameHistoryManager
     setGridLevels(GameHistoryManager.loadProgress('grid'));
@@ -38,6 +40,15 @@ export const GameProvider = ({ children }) => {
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage) {
       setLanguage(savedLanguage);
+    }
+    
+    // Load cài đặt độ khó
+    const savedDifficulty = localStorage.getItem('difficulty');
+    if (savedDifficulty && Object.values(DIFFICULTY_LEVELS).includes(savedDifficulty)) {
+      setSettings(prev => ({
+        ...prev,
+        defaultDifficulty: savedDifficulty
+      }));
     }
   }, []);
 
@@ -71,6 +82,18 @@ export const GameProvider = ({ children }) => {
     setLanguage(language);
   };
   
+  // Lưu cài đặt độ khó vào localStorage
+  const saveDifficulty = (difficulty) => {
+    if (Object.values(DIFFICULTY_LEVELS).includes(difficulty)) {
+      setSettings((prev) => ({
+        ...prev,
+        defaultDifficulty: difficulty
+      }));
+      
+      // Lưu vào localStorage
+      localStorage.setItem('difficulty', difficulty);
+    }
+  };
 
   // Cập nhật tiến trình level sau khi hoàn thành một level
   const updateLevelProgress = (type, levelId, stars) => {
@@ -106,6 +129,30 @@ export const GameProvider = ({ children }) => {
     }
   };
 
+  // Lấy độ khó cho mode và level hiện tại
+  const getDifficulty = (type, mode, level = null) => {
+    if (mode === 'campaign' && level) {
+      // Dựa vào level để quyết định độ khó
+      return getDifficultyByLevel(level);
+    } else if (mode === 'zen') {
+      // Zen mode luôn sử dụng độ khó HARD
+      return DIFFICULTY_LEVELS.HARD;
+    } else if (mode === 'custom') {
+      // Custom mode sử dụng độ khó được lưu trong settings custom
+      try {
+        const customSettings = JSON.parse(localStorage.getItem('customGameSettings'));
+        if (customSettings && customSettings.difficulty) {
+          return customSettings.difficulty;
+        }
+      } catch (error) {
+        console.error('Error loading custom difficulty:', error);
+      }
+    }
+    
+    // Mặc định trả về độ khó được cài đặt trong settings
+    return settings.defaultDifficulty;
+  };
+
   // Lấy cài đặt cho game
   const getGameSettings = (type, mode, level = null) => {
     if (mode === 'campaign' && level) {
@@ -119,6 +166,9 @@ export const GameProvider = ({ children }) => {
             : levelData.maxNumbers;
 
         const totalTime = Math.round(levelData.timePerNumber * totalNumbers);
+        
+        // Thêm thông tin độ khó vào settings
+        const difficulty = getDifficulty(type, mode, level);
 
         return {
           minNumber: levelData.minNumber,
@@ -126,6 +176,7 @@ export const GameProvider = ({ children }) => {
           timePerNumber: levelData.timePerNumber,
           totalTime,
           level: levelData.id,
+          difficulty,
           ...(type === 'grid'
             ? { gridSize: levelData.gridSize }
             : { maxNumbers: levelData.maxNumbers })
@@ -135,19 +186,25 @@ export const GameProvider = ({ children }) => {
       try {
         const customSettings = JSON.parse(localStorage.getItem('customGameSettings'));
         if (customSettings && customSettings.type === type) {
+          // Đảm bảo có thông tin độ khó
+          if (!customSettings.difficulty) {
+            customSettings.difficulty = settings.defaultDifficulty;
+          }
           return customSettings;
         }
       } catch (error) {
         console.error('Error loading custom settings:', error);
       }
     } else if (mode === 'zen') {
+      // Zen mode luôn sử dụng độ khó HARD
       if (type === 'grid') {
         return {
           minNumber: 1,
           maxNumber: 100,
           gridSize: 9,
           timePerNumber: 0,
-          totalTime: 0
+          totalTime: 0,
+          difficulty: DIFFICULTY_LEVELS.HARD
         };
       } else {
         return {
@@ -155,11 +212,13 @@ export const GameProvider = ({ children }) => {
           maxNumber: 100,
           maxNumbers: 30,
           timePerNumber: 0,
-          totalTime: 0
+          totalTime: 0,
+          difficulty: DIFFICULTY_LEVELS.HARD
         };
       }
     }
 
+    // Thêm thông tin độ khó vào settings mặc định
     return {
       minNumber: 1,
       maxNumber: 100,
@@ -169,6 +228,7 @@ export const GameProvider = ({ children }) => {
         (type === 'grid'
           ? settings.defaultGridSize * settings.defaultGridSize
           : settings.defaultMaxNumbers),
+      difficulty: settings.defaultDifficulty,
       ...(type === 'grid'
         ? { gridSize: settings.defaultGridSize }
         : { maxNumbers: settings.defaultMaxNumbers })
@@ -177,6 +237,10 @@ export const GameProvider = ({ children }) => {
 
   // Lưu cài đặt cho custom mode
   const saveCustomSettings = (customSettings) => {
+    // Đảm bảo có trường difficulty
+    if (!customSettings.difficulty) {
+      customSettings.difficulty = settings.defaultDifficulty;
+    }
     localStorage.setItem('customGameSettings', JSON.stringify(customSettings));
   };
 
@@ -186,6 +250,8 @@ export const GameProvider = ({ children }) => {
         settings,
         saveAudioSettings,
         saveLanguage,
+        saveDifficulty,
+        getDifficulty,
         gridLevels,
         freeLevels,
         updateLevelProgress,
