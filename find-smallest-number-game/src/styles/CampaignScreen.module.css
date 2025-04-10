@@ -109,6 +109,12 @@
   text-transform: uppercase;
 }
 
+.levelInfo {
+  color: white;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
 .locked {
   opacity: 0.5;
   cursor: not-allowed;
@@ -121,6 +127,19 @@
   transform: translate(-50%, -50%);
   font-size: 2rem;
   color: white;
+}
+
+/* Màu sắc dựa trên độ khó */
+.easy {
+  background-color: #27AE60; /* Xanh lá - dễ */
+}
+
+.normal {
+  background-color: #F1C40F; /* Vàng - trung bình */
+}
+
+.hard {
+  background-color: #E74C3C; /* Đỏ - khó */
 }
 
 /* Scrollbar styling */

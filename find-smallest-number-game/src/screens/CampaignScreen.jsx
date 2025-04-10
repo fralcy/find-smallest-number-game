@@ -1,9 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import styles from '../styles/CampaignScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
 import { t } from '../utils/languageUtils';
+import { DIFFICULTY_LEVELS } from '../constants/difficulty';
+import { getDifficultyName, getDifficultyDescription } from '../utils/difficultyUtils';
 
 const CampaignScreen = () => {
   const navigate = useNavigate();
@@ -12,7 +14,7 @@ const CampaignScreen = () => {
   const { audioManager } = useGameContext();
 
   // Lấy dữ liệu màn chơi từ GameContext
-  const { gridLevels, freeLevels, updateLevelProgress } = useGameContext();
+  const { gridLevels, freeLevels } = useGameContext();
 
   // Chọn levels dựa trên type
   const levels = type === 'grid' ? gridLevels : freeLevels;
@@ -34,6 +36,7 @@ const CampaignScreen = () => {
       timePerNumber: level.timePerNumber,
       totalTime: totalTime,
       level: level.id,
+      difficulty: level.difficulty || DIFFICULTY_LEVELS.EASY, // Đảm bảo luôn có độ khó
       ...(type === 'grid' 
         ? { gridSize: level.gridSize } 
         : { maxNumbers: level.maxNumbers })
@@ -50,6 +53,16 @@ const CampaignScreen = () => {
   const handleBack = () => {
     audioManager.play('button');
     navigate(`/game-mode/${type}`);
+  };
+
+  // Tạo tooltip text cho level
+  const getLevelTooltip = (level) => {
+    if (!level.difficulty) return '';
+    
+    const difficultyName = getDifficultyName(level.difficulty);
+    const difficultyDesc = getDifficultyDescription(level.difficulty);
+    
+    return `${t('difficulty')} ${difficultyName}: ${difficultyDesc}`;
   };
 
   return (
@@ -76,19 +89,26 @@ const CampaignScreen = () => {
 
       <div className={styles.contentWrapper}>
         <div className={styles.levelGrid}>
-          {levels.map((level) => (
-            <div 
-              key={level.id} 
-              className={`${styles.levelCard} ${!level.unlocked ? styles.locked : ''}`}
-              onClick={() => handleLevelSelect(level)}
-            >
-              <span className={styles.levelLabel}>{t('level')} {level.id}</span>
-              <span className={styles.levelInfo}>
-                {type === 'grid' ? `${level.gridSize}x${level.gridSize}` : `${level.maxNumbers} nums`}
-              </span>
-              {!level.unlocked && <div className={styles.lockIcon}>🔒</div>}
-            </div>
-          ))}
+          {levels.map((level) => {
+            const difficultyClass = level.difficulty ? styles[level.difficulty] : '';
+            const tooltipText = getLevelTooltip(level);
+            
+            return (
+              <div 
+                key={level.id} 
+                className={`${styles.levelCard} ${difficultyClass} ${!level.unlocked ? styles.locked : ''}`}
+                onClick={() => handleLevelSelect(level)}
+                title={tooltipText}
+              >
+                <span className={styles.levelLabel}>{t('level')} {level.id}</span>
+                <span className={styles.levelInfo}>
+                  {type === 'grid' ? `${level.gridSize}x${level.gridSize}` : `${level.maxNumbers} nums`}
+                </span>
+                
+                {!level.unlocked && <div className={styles.lockIcon}>🔒</div>}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
