@@ -58,7 +58,17 @@ const translations = {
       'timeRemaining': 'Thời gian còn lại:',
       
       // Thông báo xoay máy
-      'rotateDevice': 'Vui lòng xoay thiết bị theo chiều ngang để có trải nghiệm tốt nhất'
+      'rotateDevice': 'Vui lòng xoay thiết bị theo chiều ngang để có trải nghiệm tốt nhất',
+
+      // Độ khó
+      'difficultyEasy': 'Dễ',
+      'difficultyNormal': 'Trung bình',
+      'difficultyHard': 'Khó',
+      'difficulty': 'Độ khó:',
+      'selectDifficulty': 'Chọn độ khó:',
+      'easyDescription': 'Dễ nhìn, thích hợp cho người mới',
+      'normalDescription': 'Số đã chọn sẽ bị ẩn',
+      'hardDescription': 'Nhiều số hơn, màu sắc đa dạng và hiệu ứng gây rối',
     },
     en: {
       // Common
@@ -118,7 +128,17 @@ const translations = {
       'timeRemaining': 'Time remaining:',
       
       // Rotate device notice
-      'rotateDevice': 'Please rotate your device horizontally for the best experience'
+      'rotateDevice': 'Please rotate your device horizontally for the best experience',
+
+      // Difficulty
+      'difficultyEasy': 'Easy',
+      'difficultyNormal': 'Normal',
+      'difficultyHard': 'Hard',
+      'difficulty': 'Difficulty:',
+      'selectDifficulty': 'Select difficulty:',
+      'easyDescription': 'Clear visibility, good for beginners',
+      'normalDescription': 'Found numbers will be hidden',
+      'hardDescription': 'More numbers, various colors and distractions',
     }
   };
   
