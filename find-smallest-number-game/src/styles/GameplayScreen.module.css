@@ -82,6 +82,13 @@
   font-size: 2rem;
 }
 
+.infoText {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
 .statsContainer {
   display: flex;
   flex-direction: column;
@@ -103,6 +110,32 @@
   padding: 20px;
   position: relative;
   overflow: hidden;
+}
+
+/* Combo Text */
+.comboText {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #F5A623;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  z-index: 5;
+  animation: pulseCombo 1s infinite alternate;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes pulseCombo {
+  0% {
+    transform: translateX(-50%) scale(1);
+  }
+  100% {
+    transform: translateX(-50%) scale(1.1);
+  }
 }
 
 /* Grid Mode Styles */
@@ -215,4 +248,17 @@
 
 .pauseMenu button:hover {
   background-color: #3A80D2;
+}
+
+/* Thêm styles cho các mức độ khó */
+.easy .grid {
+  gap: 4px; /* Khoảng cách lớn hơn để dễ nhìn */
+}
+
+.normal .grid {
+  gap: 3px;
+}
+
+.hard .grid {
+  gap: 2px; /* Khoảng cách nhỏ hơn để khó nhìn */
 }

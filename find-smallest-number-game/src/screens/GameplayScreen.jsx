@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import styles from '../styles/GameplayScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
@@ -15,16 +15,18 @@ const GameplayScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getGameSettings, saveHighScore, updateLevelProgress, audioManager } = useGameContext();
-
+  const [timeAdjustment, setTimeAdjustment] = useState(0); // Để điều chỉnh thời gian khi trả lời sai
+  
   // Load game settings
   const settings = location.state?.gameSettings || getGameSettings(type, mode, mode === 'campaign' ? 1 : null);
 
-  // Manage game state
+  // Quản lý trạng thái game
   const {
     isPaused,
     score,
     setScore,
     timeLeft,
+    setTimeLeft, // Thêm setTimeLeft để có thể điều chỉnh thời gian
     lives,
     setLives,
     gameStarted,
@@ -37,7 +39,7 @@ const GameplayScreen = () => {
     handlePauseClick,
   } = useGameState(settings, type, mode, audioManager, saveHighScore, updateLevelProgress);
 
-  // Manage numbers
+  // Quản lý số
   const {
     targetNumber,
     gridNumbers,
@@ -51,8 +53,15 @@ const GameplayScreen = () => {
     updateTargetNumber,
   } = useNumberGeneration(settings, type, mode);
 
-  // Handle game events
-  const { handleGridNumberClick, handleFreeNumberClick } = useGameEvents(
+  // Xử lý sự kiện game
+  const { 
+    handleGridNumberClick, 
+    handleFreeNumberClick,
+    showTargetNumber, // Thêm state để kiểm soát hiển thị target number
+    getDifficulty, // Thêm hàm để xác định độ khó hiện tại
+    comboCount, // Thêm biến để theo dõi combo
+    consecutiveWrong // Thêm biến để theo dõi số lần sai liên tiếp
+  } = useGameEvents(
     type,
     mode,
     audioManager,
@@ -73,10 +82,19 @@ const GameplayScreen = () => {
     generateGridNumbers,
     generateFreeNumbers,
     shuffleGridNumbers,
-    shuffleFreeNumbers
+    shuffleFreeNumbers,
+    settings // Truyền settings vào để useGameEvents có thể xác định độ khó
   );
+  
+  // Cập nhật thời gian dựa trên điều chỉnh
+  useEffect(() => {
+    if (timeAdjustment !== 0 && mode !== 'zen') {
+      setTimeLeft(prev => Math.max(1, prev + timeAdjustment));
+      setTimeAdjustment(0);
+    }
+  }, [timeAdjustment, mode, setTimeLeft]);
 
-  // Render game elements
+  // Render phần tử game
   const { renderGridMode, renderFreeMode } = useGameRenderer(
     type,
     mode,
@@ -87,10 +105,10 @@ const GameplayScreen = () => {
     foundNumbers,
     handleGridNumberClick,
     handleFreeNumberClick,
-    () => mode === 'campaign' && settings.level <= 3 ? 'easy' : mode === 'zen' ? 'hard' : 'normal'
+    getDifficulty
   );
 
-  // Initialize game
+  // Khởi tạo game
   useEffect(() => {
     if (type === 'grid') {
       generateGridNumbers();
@@ -99,6 +117,31 @@ const GameplayScreen = () => {
     }
     setGameStarted(true);
   }, [type, generateGridNumbers, generateFreeNumbers, setGameStarted]);
+  
+  // Hiển thị combo trên màn hình nếu có
+  const renderComboText = () => {
+    if (comboCount >= 3) {
+      const comboLevel = Math.floor(comboCount / 3);
+      return (
+        <div className={styles.comboText}>
+          Combo x{comboLevel + 1}
+        </div>
+      );
+    }
+    return null;
+  };
+  
+  // Hiển thị thông báo "Tìm thấy!" khi đã tìm thấy một số
+  const renderFoundText = () => {
+    if (numbersFound > 0 && !showTargetNumber) {
+      return (
+        <div className={styles.infoText}>
+          {t('findNext')}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className={styles.container}>
@@ -110,14 +153,22 @@ const GameplayScreen = () => {
           </button>
         </div>
         <div className={styles.middleSection}>
-          <div className={styles.instructionText}>
-            {t('find')} <span className={styles.targetNumber}>{targetNumber}</span>
-          </div>
+          {showTargetNumber ? (
+            <div className={styles.instructionText}>
+              {t('find')} <span className={styles.targetNumber}>{targetNumber}</span>
+            </div>
+          ) : (
+            renderFoundText()
+          )}
         </div>
         <div className={styles.rightSection}>
           <GameStats score={score} timeLeft={timeLeft} lives={lives} isZenMode={mode === 'zen'} />
         </div>
       </div>
+      
+      {/* Hiển thị combo */}
+      {renderComboText()}
+      
       <div className={styles.gameContent}>
         {type === 'grid' ? renderGridMode() : renderFreeMode()}
       </div>

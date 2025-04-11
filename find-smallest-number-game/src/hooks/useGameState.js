@@ -8,6 +8,7 @@
  */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { DIFFICULTY_LEVELS } from '../constants/difficulty';
 
 export const useGameState = (settings, type, mode, audioManager, saveHighScore, updateLevelProgress) => {
   const navigate = useNavigate();
@@ -20,6 +21,11 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
   const [gameStarted, setGameStarted] = useState(false);
   const [numbersFound, setNumbersFound] = useState(0);
   const [timer, setTimer] = useState(null);
+  
+  // Lấy mức độ khó từ settings
+  const getDifficulty = () => {
+    return settings?.difficulty || DIFFICULTY_LEVELS.NORMAL;
+  };
   
   // Start timer when game starts
   useEffect(() => {
@@ -142,19 +148,37 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
 
   // Helper function to calculate stars based on performance
   const calculateStars = () => {
+    // Đối với Zen mode, không tính sao
+    if (mode === 'zen') return 0;
+    
+    const difficulty = getDifficulty();
     const totalNumbers = type === 'grid' ? 
       settings.gridSize * settings.gridSize : 
       settings.maxNumbers;
       
+    // Tính tỷ lệ hoàn thành (%)
     const foundPercentage = (numbersFound / totalNumbers) * 100;
+    
+    // Tính tỷ lệ thời gian đã sử dụng (%)
     const timePercentage = ((settings.totalTime - timeLeft) / settings.totalTime) * 100;
   
-    // Combine found percentage and time usage for overall score
-    const performanceScore = (foundPercentage * 0.7) + ((100 - timePercentage) * 0.3);
+    // Tính điểm hiệu suất dựa trên số tìm thấy và thời gian sử dụng
+    // Số tìm thấy quan trọng hơn thời gian sử dụng (tỷ lệ 70/30)
+    let performanceScore = (foundPercentage * 0.7) + ((100 - timePercentage) * 0.3);
+    
+    // Điều chỉnh ngưỡng yêu cầu dựa trên độ khó
+    let thresholds = {
+      [DIFFICULTY_LEVELS.EASY]: { three: 85, two: 60, one: 30 },
+      [DIFFICULTY_LEVELS.NORMAL]: { three: 80, two: 50, one: 20 },
+      [DIFFICULTY_LEVELS.HARD]: { three: 70, two: 40, one: 10 }
+    };
+    
+    const threshold = thresholds[difficulty] || thresholds[DIFFICULTY_LEVELS.NORMAL];
   
-    if (performanceScore > 80) return 3;
-    if (performanceScore > 50) return 2;
-    return 1;
+    if (performanceScore >= threshold.three) return 3;
+    if (performanceScore >= threshold.two) return 2;
+    if (performanceScore >= threshold.one) return 1;
+    return 0;
   };
 
   // Reset game state
@@ -170,6 +194,7 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
     score,
     setScore,
     timeLeft,
+    setTimeLeft,
     lives,
     setLives,
     gameStarted,

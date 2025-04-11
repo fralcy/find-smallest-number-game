@@ -1,5 +1,5 @@
-// Kho ngôn ngữ đơn giản cho game tìm số nhỏ nhất
-const translations = {
+  // Kho ngôn ngữ đơn giản cho game tìm số nhỏ nhất
+  const translations = {
     vi: {
       // Chung
       'findSmallestNumber': 'Tìm số nhỏ nhất!',
@@ -47,8 +47,14 @@ const translations = {
       
       // Màn hình chơi
       'find': 'Tìm',
+      'findNext': 'Tìm số tiếp theo!',
+      'combo': 'Combo',
       'score': 'Điểm:',
       'time': 'Thời gian:',
+      'correctAnswer': 'Đúng!',
+      'wrongAnswer': 'Sai!',
+      'timePenalty': '-3 giây',
+      'bonusPoints': '+{0} điểm',
       
       // Màn hình kết quả
       'finish': 'Hoàn thành',
@@ -56,6 +62,8 @@ const translations = {
       'lifeout': 'Hết mạng',
       'usedTime': 'Thời gian sử dụng:',
       'timeRemaining': 'Thời gian còn lại:',
+      'levelComplete': 'Cấp độ hoàn thành!',
+      'newHighScore': 'Điểm cao mới!',
       
       // Thông báo xoay máy
       'rotateDevice': 'Vui lòng xoay thiết bị theo chiều ngang để có trải nghiệm tốt nhất',
@@ -117,8 +125,14 @@ const translations = {
       
       // Gameplay screen
       'find': 'Find',
+      'findNext': 'Find the next number!',
+      'combo': 'Combo',
       'score': 'Score:',
       'time': 'Time:',
+      'correctAnswer': 'Correct!',
+      'wrongAnswer': 'Wrong!',
+      'timePenalty': '-3 seconds',
+      'bonusPoints': '+{0} points',
       
       // Result screen
       'finish': 'Finish',
@@ -126,6 +140,8 @@ const translations = {
       'lifeout': 'Life out',
       'usedTime': 'Used time:',
       'timeRemaining': 'Time remaining:',
+      'levelComplete': 'Level Complete!',
+      'newHighScore': 'New High Score!',
       
       // Rotate device notice
       'rotateDevice': 'Please rotate your device horizontally for the best experience',
