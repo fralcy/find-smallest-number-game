@@ -13,6 +13,8 @@
   user-select: none;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .numberBox:hover {
@@ -25,6 +27,7 @@
   background-color: #4CEEAD;
   color: white;
   cursor: default;
+  opacity: 0.7;
   transform: none !important;
   box-shadow: none !important;
 }
@@ -33,34 +36,72 @@
   background-color: #e0e0e0;
 }
 
-.target {
-  /* Thực tế ta không cho người dùng biết số nào là target */
-  /* Nhưng có thể thêm CSS đặc biệt cho dev mode */
+/* Hiệu ứng khi tìm thấy số */
+@keyframes correctAnswer {
+  0% { transform: scale(1.2); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
 }
 
-/* Styling dựa vào level độ khó */
+.found.animation {
+  animation: correctAnswer 0.5s ease forwards;
+}
+
+/* Hiệu ứng khi chọn sai */
+@keyframes wrongAnswer {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+.wrong {
+  animation: wrongAnswer 0.4s ease;
+}
+
+/* ===== EASY MODE STYLES ===== */
 .easy {
   font-size: 1.3rem;
-  opacity: 1 !important;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.easy:hover {
+  border-color: #4A90E2;
+  background-color: #f8f8f8;
 }
 
 .easy.found {
   opacity: 0.9;
   color: white !important; /* Luôn hiện số rõ ràng ở chế độ dễ */
+  animation: correctAnswer 0.5s ease forwards;
 }
 
+/* ===== NORMAL MODE STYLES ===== */
 .normal {
   font-size: 1.1rem;
   transition: all 0.2s ease;
+  color: #444;
+}
+
+.normal:hover {
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
 }
 
 .normal.found {
-  /* Số sẽ được ẩn bằng JavaScript */
+  /* Số sẽ biến mất từ từ khi tìm thấy */
+  animation: fadeNumber 0.8s forwards;
   opacity: 0.7;
-  transition: all 0.3s ease;
 }
 
+@keyframes fadeNumber {
+  0% { color: white; }
+  100% { color: #4CEEAD; } /* Màu chữ giống màu nền -> biến mất */
+}
+
+/* ===== HARD MODE STYLES ===== */
 .hard {
   font-size: 1rem;
   color: #333;
@@ -71,18 +112,20 @@
   opacity: 0.5; /* Gần như biến mất */
 }
 
-/* Thêm hiệu ứng nhấp nháy cho hard mode */
+/* Hiệu ứng nhấp nháy cho hard mode */
 @keyframes flicker {
   0% { opacity: 1; }
-  50% { opacity: 0.7; }
+  25% { opacity: 0.8; }
+  50% { opacity: 0.6; }
+  75% { opacity: 0.9; }
   100% { opacity: 1; }
 }
 
 .hard:not(.found):hover {
-  animation: flicker 0.5s infinite;
+  animation: flicker 0.7s infinite;
 }
 
-/* Thêm hiệu ứng xoay cho hard mode */
+/* Hiệu ứng xoay cho hard mode */
 @keyframes wiggle {
   0% { transform: rotate(0deg); }
   25% { transform: rotate(1deg); }
@@ -93,4 +136,64 @@
 
 .hard:not(.found) {
   animation: wiggle 0.5s infinite;
+}
+
+/* Hiệu ứng đặc biệt cho hard mode */
+.hard::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+}
+
+.hard:hover::before {
+  animation: shine 1.5s infinite;
+}
+
+@keyframes shine {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Hiệu ứng phóng to cho hard mode khi hover */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.hard:not(.found):hover {
+  animation: pulse 0.8s infinite, flicker 0.7s infinite;
+}
+
+/* Hiệu ứng blur cho hard mode */
+@keyframes blurEffect {
+  0% { filter: blur(0px); }
+  50% { filter: blur(1px); }
+  100% { filter: blur(0px); }
+}
+
+.hard:not(.found):not(:hover) {
+  animation: blurEffect 2s infinite, wiggle 1s infinite;
+}
+
+/* Hiệu ứng găm nút khi sai ở hard mode */
+.hard.wrong {
+  animation: wrongAnswer 0.4s ease, pulse 0.5s infinite;
+}
+
+/* Giao diện màu khác nhau cho từng mức độ khó */
+.easy.found {
+  background-color: #27AE60; /* Xanh lá */
+}
+
+.normal.found {
+  background-color: #F1C40F; /* Vàng */
+}
+
+.hard.found {
+  background-color: #E74C3C; /* Đỏ cam */
 }

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from '../styles/NumberBox.module.css';
 import { DIFFICULTY_LEVELS } from '../constants/difficulty';
+import { generateRandomColor, getTextColorForBackground } from '../utils/colorUtils';
 
 const NumberBox = ({ 
   number, 
@@ -12,16 +13,19 @@ const NumberBox = ({
   const [isHovered, setIsHovered] = useState(false);
   const [randomOffset, setRandomOffset] = useState({ x: 0, y: 0 });
   const [randomColor, setRandomColor] = useState(null);
-  
-  // Với level khó, thêm hiệu ứng di chuyển khi hover và màu sắc ngẫu nhiên
+  const [isWrong, setIsWrong] = useState(false);
+  const [showAnimation, setShowAnimation] = useState(false);
+  const boxRef = useRef(null);
+
+  // Khởi tạo màu ngẫu nhiên cho chế độ hard
   useEffect(() => {
-    // Màu sắc ngẫu nhiên cho chế độ hard
     if (difficulty === DIFFICULTY_LEVELS.HARD && !randomColor) {
-      const hue = Math.floor(Math.random() * 360);
-      setRandomColor(`hsl(${hue}, 70%, 80%)`);
+      setRandomColor(generateRandomColor());
     }
-    
-    // Hiệu ứng di chuyển cho chế độ hard
+  }, [difficulty, randomColor]);
+  
+  // Hiệu ứng di chuyển cho chế độ hard
+  useEffect(() => {
     if (difficulty === DIFFICULTY_LEVELS.HARD && isHovered && !isFound) {
       // Tạo vị trí ngẫu nhiên trong phạm vi nhỏ
       const interval = setInterval(() => {
@@ -35,7 +39,21 @@ const NumberBox = ({
     } else {
       setRandomOffset({ x: 0, y: 0 });
     }
-  }, [isHovered, difficulty, isFound, randomColor]);
+  }, [isHovered, difficulty, isFound]);
+  
+  // Hiệu ứng khi tìm thấy số
+  useEffect(() => {
+    if (isFound) {
+      setShowAnimation(true);
+      
+      // Loại bỏ animation sau khi hoàn thành
+      const timer = setTimeout(() => {
+        setShowAnimation(false);
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isFound]);
   
   const getClassNames = () => {
     let classNames = styles.numberBox;
@@ -43,12 +61,20 @@ const NumberBox = ({
     // Thêm class dựa vào trạng thái
     if (isFound) {
       classNames += ` ${styles.found}`;
+      
+      if (showAnimation) {
+        classNames += ` ${styles.animation}`;
+      }
     } else if (isTarget) {
       classNames += ` ${styles.target}`;
     }
     
     if (isHovered && !isFound) {
       classNames += ` ${styles.hovered}`;
+    }
+    
+    if (isWrong) {
+      classNames += ` ${styles.wrong}`;
     }
     
     // Thêm style dựa vào mức độ khó
@@ -67,6 +93,16 @@ const NumberBox = ({
   
   const handleClick = () => {
     if (!isFound) {
+      // Nếu không phải số đích, hiển thị hiệu ứng sai
+      if (number !== isTarget) {
+        setIsWrong(true);
+        
+        // Tắt hiệu ứng sai sau 400ms
+        setTimeout(() => {
+          setIsWrong(false);
+        }, 400);
+      }
+      
       onClick(number);
     }
   };
@@ -80,7 +116,10 @@ const NumberBox = ({
     
     // Với chế độ hard, mỗi số có màu riêng
     if (difficulty === DIFFICULTY_LEVELS.HARD && !isFound) {
-      return { backgroundColor: randomColor };
+      return { 
+        backgroundColor: randomColor,
+        color: getTextColorForBackground(randomColor) // Đảm bảo màu text đủ tương phản
+      };
     }
     
     return {};
@@ -88,6 +127,7 @@ const NumberBox = ({
   
   return (
     <div
+      ref={boxRef}
       className={getClassNames()}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
