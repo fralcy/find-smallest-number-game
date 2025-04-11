@@ -51,6 +51,7 @@ const GameplayScreen = () => {
     shuffleGridNumbers,
     shuffleFreeNumbers,
     updateTargetNumber,
+    duplicateNumbers, // Thêm thông tin về số trùng lặp
   } = useNumberGeneration(settings, type, mode);
 
   // Xử lý sự kiện game
@@ -60,7 +61,8 @@ const GameplayScreen = () => {
     showTargetNumber, // Thêm state để kiểm soát hiển thị target number
     getDifficulty, // Thêm hàm để xác định độ khó hiện tại
     comboCount, // Thêm biến để theo dõi combo
-    consecutiveWrong // Thêm biến để theo dõi số lần sai liên tiếp
+    consecutiveWrong, // Thêm biến để theo dõi số lần sai liên tiếp
+    foundIndices, // Thêm danh sách vị trí đã tìm thấy
   } = useGameEvents(
     type,
     mode,
@@ -70,6 +72,7 @@ const GameplayScreen = () => {
     freeNumbers,
     foundNumbers,
     setFoundNumbers,
+    duplicateNumbers, // Truyền thông tin trùng lặp
     score,
     setScore,
     timeLeft,
@@ -103,6 +106,7 @@ const GameplayScreen = () => {
     gridNumbers,
     freeNumbers,
     foundNumbers,
+    foundIndices, // Truyền danh sách vị trí đã tìm thấy
     handleGridNumberClick,
     handleFreeNumberClick,
     getDifficulty
@@ -124,16 +128,16 @@ const GameplayScreen = () => {
       const comboLevel = Math.floor(comboCount / 3);
       return (
         <div className={styles.comboText}>
-          Combo x{comboLevel + 1}
+          {t('combo')} x{comboLevel + 1}
         </div>
       );
     }
     return null;
   };
   
-  // Hiển thị thông báo "Tìm thấy!" khi đã tìm thấy một số
-  const renderFoundText = () => {
-    if (numbersFound > 0 && !showTargetNumber) {
+  // Hiển thị thông báo "Tìm số tiếp theo!" khi số đích bị ẩn
+  const renderNextNumberText = () => {
+    if (!showTargetNumber) {
       return (
         <div className={styles.infoText}>
           {t('findNext')}
@@ -142,9 +146,21 @@ const GameplayScreen = () => {
     }
     return null;
   };
+  
+  // Hiển thị cảnh báo khi có số trùng lặp (chỉ cho chế độ Hard)
+  const renderDuplicateWarning = () => {
+    if (getDifficulty() === 'hard' && duplicateNumbers.length > 0) {
+      return (
+        <div className={styles.duplicateWarning}>
+          {t('duplicateNumbersWarning')}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${styles[getDifficulty()]}`}>
       <RotateDeviceNotice />
       <div className={styles.header}>
         <div className={styles.leftSection}>
@@ -158,7 +174,7 @@ const GameplayScreen = () => {
               {t('find')} <span className={styles.targetNumber}>{targetNumber}</span>
             </div>
           ) : (
-            renderFoundText()
+            renderNextNumberText()
           )}
         </div>
         <div className={styles.rightSection}>
@@ -168,6 +184,9 @@ const GameplayScreen = () => {
       
       {/* Hiển thị combo */}
       {renderComboText()}
+      
+      {/* Hiển thị cảnh báo trùng lặp */}
+      {renderDuplicateWarning()}
       
       <div className={styles.gameContent}>
         {type === 'grid' ? renderGridMode() : renderFreeMode()}
