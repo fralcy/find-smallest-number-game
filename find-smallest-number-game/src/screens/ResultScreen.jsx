@@ -4,6 +4,8 @@ import styles from '../styles/ResultScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
 import { t } from '../utils/languageUtils';
+import { DIFFICULTY_LEVELS } from '../constants/difficulty';
+import { getDifficultyName, getDifficultyColor } from '../utils/difficultyUtils';
 
 const ResultScreen = () => {
   const navigate = useNavigate();
@@ -19,8 +21,12 @@ const ResultScreen = () => {
     usedTime = 0,
     timeRemaining = 0,
     level = 1,
-    stars = 0
+    stars = 0,
+    gameSettings
   } = location.state || {};
+  
+  // Lấy thông tin độ khó từ gameSettings
+  const difficulty = gameSettings?.difficulty || DIFFICULTY_LEVELS.NORMAL;
   
   // Determine total levels based on type
   const totalLevels = type === 'grid' ? gridLevels.length : freeLevels.length;
@@ -66,13 +72,11 @@ const ResultScreen = () => {
   
   // Handle Replay button - replays the same level/game
   const handleReplay = () => {
-    const gameSettings = location.state?.gameSettings || getGameSettings(type, mode, level);
-
-    console.log('Replay - gameSettings:', gameSettings);
+    const settings = location.state?.gameSettings || getGameSettings(type, mode, level);
 
     navigate(`/game/${type}/${mode}/play`, { 
       state: { 
-        gameSettings,
+        gameSettings: settings,
         mode,
         type
       }
@@ -83,13 +87,11 @@ const ResultScreen = () => {
   const handleContinue = () => {
     if (mode === 'campaign') {
       const nextLevel = level + 1;
-      const gameSettings = getGameSettings(type, mode, nextLevel);
-
-      console.log('Continue - gameSettings:', gameSettings);
+      const settings = getGameSettings(type, mode, nextLevel);
 
       navigate(`/game/${type}/campaign/play`, { 
         state: { 
-          gameSettings,
+          gameSettings: settings,
           mode: 'campaign',
           type
         }
@@ -97,18 +99,74 @@ const ResultScreen = () => {
     }
   };
   
+  // Hiệu chỉnh thuật toán tính sao dựa trên độ khó
+  const calculateStars = () => {
+    if (stars > 0) return stars; // Nếu đã có stars (từ gameState), sử dụng giá trị đó
+    
+    // Các ngưỡng cho số sao dựa vào thời gian còn lại (%)
+    const difficultyThresholds = {
+      [DIFFICULTY_LEVELS.EASY]: {
+        3: 70, // Cần 70% thời gian còn lại để đạt 3 sao ở mức Easy
+        2: 50, // Cần 50% thời gian còn lại để đạt 2 sao ở mức Easy
+        1: 20  // Cần 20% thời gian còn lại để đạt 1 sao ở mức Easy
+      },
+      [DIFFICULTY_LEVELS.NORMAL]: {
+        3: 60, // Cần 60% thời gian còn lại để đạt 3 sao ở mức Normal
+        2: 40, // Cần 40% thời gian còn lại để đạt 2 sao ở mức Normal
+        1: 15  // Cần 15% thời gian còn lại để đạt 1 sao ở mức Normal
+      },
+      [DIFFICULTY_LEVELS.HARD]: {
+        3: 50, // Cần 50% thời gian còn lại để đạt 3 sao ở mức Hard
+        2: 30, // Cần 30% thời gian còn lại để đạt 2 sao ở mức Hard
+        1: 10  // Cần 10% thời gian còn lại để đạt 1 sao ở mức Hard
+      }
+    };
+    
+    const thresholds = difficultyThresholds[difficulty] || difficultyThresholds[DIFFICULTY_LEVELS.NORMAL];
+    
+    // Tính tỷ lệ thời gian còn lại
+    const totalTime = timeRemaining + usedTime;
+    const remainingPercentage = totalTime > 0 ? (timeRemaining / totalTime) * 100 : 0;
+    
+    // Xác định số sao dựa vào ngưỡng
+    if (remainingPercentage >= thresholds[3]) return 3;
+    if (remainingPercentage >= thresholds[2]) return 2;
+    if (remainingPercentage >= thresholds[1]) return 1;
+    return 0;
+  };
+  
   // Render stars based on performance (for campaign mode)
   const renderStars = () => {
+    const numStars = mode === 'campaign' ? calculateStars() : 0;
+    
     return (
       <div className={styles.starsContainer}>
         {[...Array(3)].map((_, index) => (
           <div 
             key={index} 
-            className={`${styles.star} ${index < stars ? styles.activeStar : styles.inactiveStar}`}
+            className={`${styles.star} ${index < numStars ? styles.activeStar : styles.inactiveStar}`}
           >
             ★
           </div>
         ))}
+      </div>
+    );
+  };
+
+  // Hiển thị thông tin về độ khó
+  const renderDifficultyInfo = () => {
+    const difficultyName = getDifficultyName(difficulty);
+    const difficultyColor = getDifficultyColor(difficulty);
+    
+    return (
+      <div className={styles.resultRow}>
+        <span className={styles.resultLabel}>{t('difficulty')}</span>
+        <span 
+          className={styles.resultValue}
+          style={{ color: difficultyColor }}
+        >
+          {difficultyName}
+        </span>
       </div>
     );
   };
@@ -126,6 +184,9 @@ const ResultScreen = () => {
           <span className={styles.resultLabel}>{t('score')}</span>
           <span className={styles.resultValue}>{score}</span>
         </div>
+        
+        {/* Hiển thị thông tin độ khó */}
+        {renderDifficultyInfo()}
         
         {/* Show time info except for zen mode */}
         {mode !== 'zen' && (

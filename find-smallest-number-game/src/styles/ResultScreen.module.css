@@ -70,6 +70,24 @@
   color: #4A90E2;
 }
 
+/* Độ khó */
+.difficultyValue {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.difficultyEasy {
+  color: #27AE60; /* Xanh lá - dễ */
+}
+
+.difficultyNormal {
+  color: #F1C40F; /* Vàng - trung bình */
+}
+
+.difficultyHard {
+  color: #E74C3C; /* Đỏ - khó */
+}
+
 .buttonsContainer {
   display: flex;
   justify-content: center;
