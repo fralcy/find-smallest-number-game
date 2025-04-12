@@ -10,14 +10,14 @@ import { getDifficultyName, getDifficultyDescription, getDifficultyColor } from 
 const CustomScreen = () => {
   const navigate = useNavigate();
   const { type } = useParams(); // 'grid' or 'free'
-  const { audioManager } = useGameContext();
+  const { audioManager, saveDifficulty, getDifficulty } = useGameContext();
   
   // Default settings
   const [range, setRange] = useState({ min: 1, max: 100 });
   const [gridSize, setGridSize] = useState(5); // For grid mode
   const [maxNumbers, setMaxNumbers] = useState(20); // For free mode
   const [timePerNumber, setTimePerNumber] = useState(5);
-  const [difficulty, setDifficulty] = useState(DIFFICULTY_LEVELS.NORMAL); // Thêm state cho độ khó
+  const [difficulty, setDifficulty] = useState(getDifficulty(type, 'custom') || DIFFICULTY_LEVELS.NORMAL); // Khởi tạo độ khó từ context
   
   const isGridMode = type === 'grid';
   
@@ -51,7 +51,7 @@ const CustomScreen = () => {
         console.error("Error loading saved settings:", error);
       }
     }
-  }, [type, isGridMode]);
+  }, [type, isGridMode, getDifficulty]);
   
   const handleBack = () => {
     audioManager.play('button');
@@ -70,7 +70,7 @@ const CustomScreen = () => {
       maxNumber: range.max,
       timePerNumber: timePerNumber,
       totalTime: totalTime,
-      difficulty: difficulty, // Thêm độ khó vào settings
+      difficulty: difficulty, // Đảm bảo độ khó được bao gồm
       ...(isGridMode ? { gridSize } : { maxNumbers }),
     };
     
@@ -136,6 +136,26 @@ const CustomScreen = () => {
   const handleDifficultyChange = (newDifficulty) => {
     setDifficulty(newDifficulty);
     audioManager.play('button');
+    
+    // Lưu độ khó vào cài đặt ngay lập tức
+    if (saveDifficulty && typeof saveDifficulty === 'function') {
+      saveDifficulty(newDifficulty);
+    }
+    
+    // Cập nhật cài đặt custom hiện tại với độ khó mới
+    try {
+      const savedSettings = localStorage.getItem('customGameSettings');
+      if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        // Chỉ cập nhật nếu cài đặt trùng với loại game hiện tại
+        if (settings.type === type) {
+          settings.difficulty = newDifficulty;
+          localStorage.setItem('customGameSettings', JSON.stringify(settings));
+        }
+      }
+    } catch (error) {
+      console.error("Error updating difficulty in custom settings:", error);
+    }
   };
   
   return (
