@@ -4,6 +4,8 @@ import styles from '../styles/CustomScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
 import { t } from '../utils/languageUtils';
+import { DIFFICULTY_LEVELS } from '../constants/difficulty';
+import { getDifficultyName, getDifficultyDescription, getDifficultyColor } from '../utils/difficultyUtils';
 
 const CustomScreen = () => {
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ const CustomScreen = () => {
   const [gridSize, setGridSize] = useState(5); // For grid mode
   const [maxNumbers, setMaxNumbers] = useState(20); // For free mode
   const [timePerNumber, setTimePerNumber] = useState(5);
+  const [difficulty, setDifficulty] = useState(DIFFICULTY_LEVELS.NORMAL); // Thêm state cho độ khó
   
   const isGridMode = type === 'grid';
   
@@ -36,6 +39,12 @@ const CustomScreen = () => {
             setGridSize(parsedSettings.gridSize);
           } else if (!isGridMode && parsedSettings.maxNumbers) {
             setMaxNumbers(parsedSettings.maxNumbers);
+          }
+          
+          // Khôi phục độ khó đã lưu
+          if (parsedSettings.difficulty && 
+              Object.values(DIFFICULTY_LEVELS).includes(parsedSettings.difficulty)) {
+            setDifficulty(parsedSettings.difficulty);
           }
         }
       } catch (error) {
@@ -61,6 +70,7 @@ const CustomScreen = () => {
       maxNumber: range.max,
       timePerNumber: timePerNumber,
       totalTime: totalTime,
+      difficulty: difficulty, // Thêm độ khó vào settings
       ...(isGridMode ? { gridSize } : { maxNumbers }),
     };
     
@@ -122,6 +132,12 @@ const CustomScreen = () => {
     audioManager.play('button');
   };
   
+  // Xử lý khi thay đổi độ khó
+  const handleDifficultyChange = (newDifficulty) => {
+    setDifficulty(newDifficulty);
+    audioManager.play('button');
+  };
+  
   return (
     <div className={styles.container}>
       <RotateDeviceNotice />
@@ -148,6 +164,84 @@ const CustomScreen = () => {
       </div>
 
       <div className={styles.settingsContainer}>
+        {/* Phần chọn độ khó sử dụng radio buttons được style như buttons */}
+        <div className={styles.settingGroup}>
+          <label className={styles.settingLabel}>{t('difficulty')}</label>
+          <div className={styles.difficultyButtons}>
+            <div className={styles.radioButtonWrapper}>
+              <input
+                type="radio"
+                id="easy"
+                name="difficulty"
+                value={DIFFICULTY_LEVELS.EASY}
+                checked={difficulty === DIFFICULTY_LEVELS.EASY}
+                onChange={() => handleDifficultyChange(DIFFICULTY_LEVELS.EASY)}
+                className={styles.radioInput}
+              />
+              <label 
+                htmlFor="easy" 
+                className={styles.radioLabel}
+                style={{
+                  backgroundColor: difficulty === DIFFICULTY_LEVELS.EASY ? getDifficultyColor(DIFFICULTY_LEVELS.EASY) : 'transparent',
+                  color: difficulty === DIFFICULTY_LEVELS.EASY ? 'white' : getDifficultyColor(DIFFICULTY_LEVELS.EASY),
+                  borderColor: getDifficultyColor(DIFFICULTY_LEVELS.EASY)
+                }}
+                title={getDifficultyDescription(DIFFICULTY_LEVELS.EASY)}
+              >
+                {getDifficultyName(DIFFICULTY_LEVELS.EASY)}
+              </label>
+            </div>
+            
+            <div className={styles.radioButtonWrapper}>
+              <input
+                type="radio"
+                id="normal"
+                name="difficulty"
+                value={DIFFICULTY_LEVELS.NORMAL}
+                checked={difficulty === DIFFICULTY_LEVELS.NORMAL}
+                onChange={() => handleDifficultyChange(DIFFICULTY_LEVELS.NORMAL)}
+                className={styles.radioInput}
+              />
+              <label 
+                htmlFor="normal" 
+                className={styles.radioLabel}
+                style={{
+                  backgroundColor: difficulty === DIFFICULTY_LEVELS.NORMAL ? getDifficultyColor(DIFFICULTY_LEVELS.NORMAL) : 'transparent',
+                  color: difficulty === DIFFICULTY_LEVELS.NORMAL ? 'white' : getDifficultyColor(DIFFICULTY_LEVELS.NORMAL),
+                  borderColor: getDifficultyColor(DIFFICULTY_LEVELS.NORMAL)
+                }}
+                title={getDifficultyDescription(DIFFICULTY_LEVELS.NORMAL)}
+              >
+                {getDifficultyName(DIFFICULTY_LEVELS.NORMAL)}
+              </label>
+            </div>
+            
+            <div className={styles.radioButtonWrapper}>
+              <input
+                type="radio"
+                id="hard"
+                name="difficulty"
+                value={DIFFICULTY_LEVELS.HARD}
+                checked={difficulty === DIFFICULTY_LEVELS.HARD}
+                onChange={() => handleDifficultyChange(DIFFICULTY_LEVELS.HARD)}
+                className={styles.radioInput}
+              />
+              <label 
+                htmlFor="hard" 
+                className={styles.radioLabel}
+                style={{
+                  backgroundColor: difficulty === DIFFICULTY_LEVELS.HARD ? getDifficultyColor(DIFFICULTY_LEVELS.HARD) : 'transparent',
+                  color: difficulty === DIFFICULTY_LEVELS.HARD ? 'white' : getDifficultyColor(DIFFICULTY_LEVELS.HARD),
+                  borderColor: getDifficultyColor(DIFFICULTY_LEVELS.HARD)
+                }}
+                title={getDifficultyDescription(DIFFICULTY_LEVELS.HARD)}
+              >
+                {getDifficultyName(DIFFICULTY_LEVELS.HARD)}
+              </label>
+            </div>
+          </div>
+        </div>
+
         <div className={styles.settingGroup}>
           <label className={styles.settingLabel}>{t('numberRange')}</label>
           <div className={styles.rangeControls}>
