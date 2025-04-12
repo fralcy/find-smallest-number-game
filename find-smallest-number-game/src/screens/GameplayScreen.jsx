@@ -9,6 +9,7 @@ import { useGameState } from '../hooks/useGameState';
 import { useGameEvents } from '../hooks/useGameEvents';
 import { useNumberGeneration } from '../hooks/useNumberGeneration';
 import { useGameRenderer } from '../hooks/useGameRenderer';
+import { DIFFICULTY_LEVELS } from '../constants/difficulty';
 
 const GameplayScreen = () => {
   const { type, mode } = useParams();
@@ -20,13 +21,22 @@ const GameplayScreen = () => {
   // Load game settings
   const settings = location.state?.gameSettings || getGameSettings(type, mode, mode === 'campaign' ? 1 : null);
 
+  // Thêm state để theo dõi thông tin về độ khó
+  const [shouldShowTargetNumber, setShouldShowTargetNumber] = useState(true);
+  const [distractingWarningVisible, setDistractingWarningVisible] = useState(false);
+  
+  // Lấy độ khó từ settings
+  const getDifficulty = () => {
+    return settings?.difficulty || DIFFICULTY_LEVELS.NORMAL;
+  };
+
   // Quản lý trạng thái game
   const {
     isPaused,
     score,
     setScore,
     timeLeft,
-    setTimeLeft, // Thêm setTimeLeft để có thể điều chỉnh thời gian
+    setTimeLeft,
     lives,
     setLives,
     gameStarted,
@@ -46,23 +56,23 @@ const GameplayScreen = () => {
     freeNumbers,
     foundNumbers,
     setFoundNumbers,
+    distractingNumbers,
     generateGridNumbers,
     generateFreeNumbers,
     shuffleGridNumbers,
     shuffleFreeNumbers,
     updateTargetNumber,
-    duplicateNumbers, // Thêm thông tin về số trùng lặp
   } = useNumberGeneration(settings, type, mode);
 
   // Xử lý sự kiện game
   const { 
     handleGridNumberClick, 
     handleFreeNumberClick,
-    showTargetNumber, // Thêm state để kiểm soát hiển thị target number
-    getDifficulty, // Thêm hàm để xác định độ khó hiện tại
-    comboCount, // Thêm biến để theo dõi combo
-    consecutiveWrong, // Thêm biến để theo dõi số lần sai liên tiếp
-    foundIndices, // Thêm danh sách vị trí đã tìm thấy
+    showTargetNumber, // State để kiểm soát hiển thị target number
+    comboCount, // Biến để theo dõi combo
+    consecutiveWrong, // Biến để theo dõi số lần sai liên tiếp
+    foundIndices, // Danh sách vị trí đã tìm thấy
+    getDistractingWarning // Hàm lấy thông báo về số gây xao nhãng
   } = useGameEvents(
     type,
     mode,
@@ -72,7 +82,7 @@ const GameplayScreen = () => {
     freeNumbers,
     foundNumbers,
     setFoundNumbers,
-    duplicateNumbers, // Truyền thông tin trùng lặp
+    distractingNumbers,
     score,
     setScore,
     timeLeft,
@@ -86,7 +96,7 @@ const GameplayScreen = () => {
     generateFreeNumbers,
     shuffleGridNumbers,
     shuffleFreeNumbers,
-    settings // Truyền settings vào để useGameEvents có thể xác định độ khó
+    settings
   );
   
   // Cập nhật thời gian dựa trên điều chỉnh
@@ -106,7 +116,7 @@ const GameplayScreen = () => {
     gridNumbers,
     freeNumbers,
     foundNumbers,
-    foundIndices, // Truyền danh sách vị trí đã tìm thấy
+    foundIndices,
     handleGridNumberClick,
     handleFreeNumberClick,
     getDifficulty
@@ -120,7 +130,41 @@ const GameplayScreen = () => {
       generateFreeNumbers();
     }
     setGameStarted(true);
-  }, [type, generateGridNumbers, generateFreeNumbers, setGameStarted]);
+    
+    // Xử lý hiển thị target number dựa vào độ khó
+    const difficulty = getDifficulty();
+    if (difficulty === DIFFICULTY_LEVELS.EASY) {
+      setShouldShowTargetNumber(true);
+    } else if (difficulty === DIFFICULTY_LEVELS.NORMAL || difficulty === DIFFICULTY_LEVELS.HARD) {
+      // Với normal và hard, không hiển thị target number ngay từ đầu
+      setShouldShowTargetNumber(false);
+    }
+  }, [type, generateGridNumbers, generateFreeNumbers, setGameStarted, getDifficulty]);
+  
+  // Hiệu ứng để kiểm soát hiển thị target number dựa vào số đã tìm thấy và độ khó
+  useEffect(() => {
+    const difficulty = getDifficulty();
+    
+    // Ẩn target number cho Normal và Hard
+    if ((difficulty === DIFFICULTY_LEVELS.NORMAL || difficulty === DIFFICULTY_LEVELS.HARD) && foundNumbers.length >= 0) {
+      setShouldShowTargetNumber(false);
+    }
+  }, [foundNumbers.length, getDifficulty]);
+  
+  // Hiệu ứng để hiển thị cảnh báo số gây xao nhãng
+  useEffect(() => {
+    const warning = getDistractingWarning();
+    if (warning) {
+      setDistractingWarningVisible(true);
+      
+      // Ẩn cảnh báo sau 5 giây
+      const timer = setTimeout(() => {
+        setDistractingWarningVisible(false);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [getDistractingWarning, distractingNumbers]);
   
   // Hiển thị combo trên màn hình nếu có
   const renderComboText = () => {
@@ -137,7 +181,7 @@ const GameplayScreen = () => {
   
   // Hiển thị thông báo "Tìm số tiếp theo!" khi số đích bị ẩn
   const renderNextNumberText = () => {
-    if (!showTargetNumber) {
+    if (!shouldShowTargetNumber || !showTargetNumber) {
       return (
         <div className={styles.infoText}>
           {t('findNext')}
@@ -147,11 +191,11 @@ const GameplayScreen = () => {
     return null;
   };
   
-  // Hiển thị cảnh báo khi có số trùng lặp (chỉ cho chế độ Hard)
-  const renderDuplicateWarning = () => {
-    if (getDifficulty() === 'hard' && duplicateNumbers.length > 0) {
+  // Hiển thị cảnh báo khi có số trùng lặp hoặc số gây xao nhãng
+  const renderDistractingWarning = () => {
+    if (distractingWarningVisible && distractingNumbers.length > 0) {
       return (
-        <div className={styles.duplicateWarning}>
+        <div className={styles.distractingWarning}>
           {t('duplicateNumbersWarning')}
         </div>
       );
@@ -159,8 +203,14 @@ const GameplayScreen = () => {
     return null;
   };
 
+  // Lấy class CSS dựa vào độ khó
+  const getDifficultyClass = () => {
+    const difficulty = getDifficulty();
+    return styles[difficulty] || '';
+  };
+
   return (
-    <div className={`${styles.container} ${styles[getDifficulty()]}`}>
+    <div className={`${styles.container} ${getDifficultyClass()}`}>
       <RotateDeviceNotice />
       <div className={styles.header}>
         <div className={styles.leftSection}>
@@ -169,16 +219,23 @@ const GameplayScreen = () => {
           </button>
         </div>
         <div className={styles.middleSection}>
-          {showTargetNumber ? (
+          {(shouldShowTargetNumber && showTargetNumber) ? (
             <div className={styles.instructionText}>
               {t('find')} <span className={styles.targetNumber}>{targetNumber}</span>
             </div>
           ) : (
-            renderNextNumberText()
+            <div className={styles.instructionText}>
+              {t('findSmallestNumber')}
+            </div>
           )}
         </div>
         <div className={styles.rightSection}>
-          <GameStats score={score} timeLeft={timeLeft} lives={lives} isZenMode={mode === 'zen'} />
+          <GameStats 
+            score={score} 
+            timeLeft={timeLeft} 
+            lives={lives} 
+            isZenMode={mode === 'zen'} 
+          />
         </div>
       </div>
       
@@ -186,7 +243,7 @@ const GameplayScreen = () => {
       {renderComboText()}
       
       {/* Hiển thị cảnh báo trùng lặp */}
-      {renderDuplicateWarning()}
+      {renderDistractingWarning()}
       
       <div className={styles.gameContent}>
         {type === 'grid' ? renderGridMode() : renderFreeMode()}
