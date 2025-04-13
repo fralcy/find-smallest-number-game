@@ -18,7 +18,8 @@
 }
 
 .numberBox:hover {
-  transform: scale(1.05);
+  animation: none;
+  transform: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   z-index: 2;
 }
@@ -104,7 +105,7 @@
 .hard {
   font-size: 1rem;
   color: #333;
-  transition: transform 0.1s ease;
+  transition: none; /* Loại bỏ hiệu ứng chuyển đổi */
 }
 
 .hard.found {
@@ -112,77 +113,22 @@
   opacity: 0.5; /* Gần như biến mất */
 }
 
-/* Hiệu ứng nhấp nháy cho hard mode */
-@keyframes flicker {
-  0% { opacity: 1; }
-  25% { opacity: 0.8; }
-  50% { opacity: 0.6; }
-  75% { opacity: 0.9; }
-  100% { opacity: 1; }
-}
-
+/* Loại bỏ các hiệu ứng hover và animation */
 .hard:not(.found):hover {
-  animation: flicker 0.7s infinite;
-}
-
-/* Hiệu ứng xoay cho hard mode */
-@keyframes wiggle {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(1deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(-1deg); }
-  100% { transform: rotate(0deg); }
+  animation: none !important;
 }
 
 .hard:not(.found) {
-  animation: wiggle 0.5s infinite;
+  animation: none !important;
 }
 
-/* Hiệu ứng đặc biệt cho hard mode */
-.hard::before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transform: translateX(-100%);
-}
-
-.hard:hover::before {
-  animation: shine 1.5s infinite;
-}
-
-@keyframes shine {
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* Hiệu ứng phóng to cho hard mode khi hover */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.hard:not(.found):hover {
-  animation: pulse 0.8s infinite, flicker 0.7s infinite;
-}
-
-/* Hiệu ứng blur cho hard mode */
-@keyframes blurEffect {
-  0% { filter: blur(0px); }
-  50% { filter: blur(1px); }
-  100% { filter: blur(0px); }
-}
-
-.hard:not(.found):not(:hover) {
-  animation: blurEffect 2s infinite, wiggle 1s infinite;
-}
-
-/* Hiệu ứng găm nút khi sai ở hard mode */
 .hard.wrong {
-  animation: wrongAnswer 0.4s ease, pulse 0.5s infinite;
+  animation: wrongAnswer 0.4s ease; /* Giữ lại hiệu ứng sai */
+}
+
+/* Loại bỏ hiệu ứng đặc biệt */
+.hard::before {
+  content: none; /* Không hiển thị hiệu ứng ánh sáng */
 }
 
 /* Giao diện màu khác nhau cho từng mức độ khó */

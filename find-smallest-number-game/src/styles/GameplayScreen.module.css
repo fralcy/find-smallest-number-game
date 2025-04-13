@@ -322,8 +322,24 @@
   color: #E74C3C; /* Đỏ cho HARD */
 }
 
+/* Hiệu ứng đặc biệt - ĐÃ BỎ */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-1px); }
+  50% { transform: translateX(0); }
+  75% { transform: translateX(1px); }
+  100% { transform: translateX(0); }
+}
+
+/* ĐÃ BỎ hiệu ứng rung lắc */
+.hard .gridContainer, .hard .freeContainer {
+  /* animation: shake 0.3s infinite; */
+  animation: none;
+  animation-play-state: paused;
+}
+
 .hard .gridContainer:hover, .hard .freeContainer:hover {
-  animation-play-state: running;
+  animation-play-state: paused;
 }
 
 /* Số gây xao nhãng và trùng lặp */

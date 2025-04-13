@@ -39,6 +39,21 @@ export const useGameEvents = (
   const [showTargetNumber, setShowTargetNumber] = useState(true);
   const [foundIndices, setFoundIndices] = useState([]); // Lưu các vị trí đã tìm thấy
   
+  // Thêm biến theo dõi tổng số đã tìm thấy
+  const [totalNumbersFound, setTotalNumbersFound] = useState(0);
+  
+  // Thêm biến để lưu tổng số cần tìm
+  const totalRequiredNumbers = useRef(getTotalRequiredNumbers());
+  
+  // Hàm để lấy tổng số cần tìm dựa vào cấu hình game
+  function getTotalRequiredNumbers() {
+    if (type === 'grid') {
+      return settings.gridSize * settings.gridSize;
+    } else {
+      return settings.maxNumbers;
+    }
+  }
+  
   // Thêm các tham chiếu để ngăn vòng lặp vô tận
   const isProcessingClick = useRef(false);
   const pendingGridUpdate = useRef(false);
@@ -110,6 +125,14 @@ export const useGameEvents = (
     }
   }, [comboCount, foundNumbers.length, freeNumbers.length, mode]);
   
+  // Kiểm tra hoàn thành màn chơi dựa trên tổng số đã tìm thấy
+  useEffect(() => {
+    // Kiểm tra xem game đã hoàn thành chưa dựa trên tổng số tìm thấy
+    if (totalNumbersFound >= totalRequiredNumbers.current && totalRequiredNumbers.current > 0) {
+      handleGameComplete();
+    }
+  }, [totalNumbersFound, handleGameComplete]);
+  
   // Xử lý khi người chơi nhấp vào số trong chế độ lưới
   const handleGridNumberClick = (number, index) => {
     // Tránh xử lý nhiều lần cùng lúc
@@ -117,7 +140,6 @@ export const useGameEvents = (
     isProcessingClick.current = true;
     
     const difficulty = getDifficulty();
-    const isZenMode = mode === 'zen';
     
     // Kiểm tra nếu vị trí này đã được tìm thấy
     if (foundIndices.includes(index)) {
@@ -135,12 +157,13 @@ export const useGameEvents = (
       // Số sai
       handleWrongNumber(number);
       
-      // Trong Zen mode, không cần xáo trộn khi chọn sai
-      if (!isZenMode && difficulty === DIFFICULTY_LEVELS.HARD) {
+      // Hành vi xáo trộn khi trả lời sai tùy thuộc vào độ khó
+      if (difficulty === DIFFICULTY_LEVELS.HARD) {
         // Hard mode: xáo trộn ngay lập tức
         shuffleGridNumbers();
         setFoundIndices([]); // Reset foundIndices khi xáo trộn
       }
+      // Đã loại bỏ việc xáo trộn ở độ khó NORMAL khi chọn sai nhiều lần liên tiếp
     }
     
     // Reset processing flag sau 100ms để tránh click dồn
@@ -156,7 +179,6 @@ export const useGameEvents = (
     isProcessingClick.current = true;
     
     const difficulty = getDifficulty();
-    const isZenMode = mode === 'zen';
     
     // Kiểm tra nếu vị trí này đã được tìm thấy
     if (foundIndices.includes(index)) {
@@ -174,12 +196,13 @@ export const useGameEvents = (
       // Số sai
       handleWrongNumber(numberObj.value);
       
-      // Trong Zen mode, không cần xáo trộn khi chọn sai
-      if (!isZenMode && difficulty === DIFFICULTY_LEVELS.HARD) {
+      // Hành vi xáo trộn khi trả lời sai tùy thuộc vào độ khó
+      if (difficulty === DIFFICULTY_LEVELS.HARD) {
         // Hard mode: xáo trộn ngay lập tức
         shuffleFreeNumbers();
         setFoundIndices([]); // Reset foundIndices khi xáo trộn
       }
+      // Đã loại bỏ việc xáo trộn ở độ khó NORMAL khi chọn sai nhiều lần liên tiếp
     }
     
     // Reset processing flag sau 100ms để tránh click dồn
@@ -199,6 +222,9 @@ export const useGameEvents = (
     
     // Lưu lại vị trí đã tìm thấy
     setFoundIndices(prev => [...prev, index]);
+    
+    // Tăng tổng số đã tìm thấy
+    setTotalNumbersFound(prev => prev + 1);
     
     if (mode === 'zen') {
       // Trong chế độ zen, tăng điểm cho mỗi câu trả lời đúng
@@ -246,12 +272,7 @@ export const useGameEvents = (
     setScore(prevScore => prevScore + totalPoints);
     setNumbersFound(prev => prev + 1);
   
-    // Kiểm tra xem game đã hoàn thành chưa
-    if (type === 'grid' && foundIndices.length + 1 === gridNumbers.length) {
-      handleGameComplete();
-    } else if (type === 'free' && foundIndices.length + 1 === freeNumbers.length) {
-      handleGameComplete();
-    }
+    // Kiểm tra hoàn thành game đã được chuyển sang effect riêng để theo dõi totalNumbersFound
   };
   
   // Xử lý khi người chơi nhấp vào số sai
