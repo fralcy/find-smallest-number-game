@@ -112,12 +112,11 @@
   overflow: hidden;
 }
 
-/* Combo Text */
+/* Combo Text - chuyển sang góc phải */
 .comboText {
   position: absolute;
   top: 70px;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 20px; /* Thay đổi từ left thành right và bỏ transform */
   background-color: #F5A623;
   color: white;
   padding: 5px 15px;
@@ -154,10 +153,10 @@
 
 @keyframes pulseCombo {
   0% {
-    transform: translateX(-50%) scale(1);
+    transform: scale(1);
   }
   100% {
-    transform: translateX(-50%) scale(1.1);
+    transform: scale(1.1);
   }
 }
 

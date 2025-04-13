@@ -85,15 +85,8 @@ export const useGameEvents = (
             setFoundIndices([]); // Reset foundIndices khi tạo lưới mới
           }
         }, 500);
-      } else if (difficulty === DIFFICULTY_LEVELS.NORMAL) {
-        // Normal mode: xáo trộn sau mỗi 3 câu trả lời đúng liên tiếp
-        if (comboCount > 0 && comboCount % 3 === 0) {
-          setTimeout(() => {
-            shuffleGridNumbers();
-            setFoundIndices([]); // Reset foundIndices khi xáo trộn
-          }, 500);
-        }
       }
+      // Đã loại bỏ trường hợp xáo trộn cho NORMAL mode
     }
   }, [comboCount, foundNumbers.length, gridNumbers.length, mode]);
   
@@ -112,15 +105,8 @@ export const useGameEvents = (
             setFoundIndices([]); // Reset foundIndices khi tạo vị trí mới
           }
         }, 500);
-      } else if (difficulty === DIFFICULTY_LEVELS.NORMAL) {
-        // Normal mode: xáo trộn sau mỗi 3 câu trả lời đúng liên tiếp
-        if (comboCount > 0 && comboCount % 3 === 0) {
-          setTimeout(() => {
-            shuffleFreeNumbers();
-            setFoundIndices([]); // Reset foundIndices khi xáo trộn
-          }, 500);
-        }
       }
+      // Đã loại bỏ trường hợp xáo trộn cho NORMAL mode
     }
   }, [comboCount, foundNumbers.length, freeNumbers.length, mode]);
   
@@ -153,12 +139,8 @@ export const useGameEvents = (
         // Hard mode: xáo trộn ngay lập tức
         shuffleGridNumbers();
         setFoundIndices([]); // Reset foundIndices khi xáo trộn
-      } else if (difficulty === DIFFICULTY_LEVELS.NORMAL && consecutiveWrong >= 2) {
-        // Normal mode: xáo trộn sau 2 lần sai liên tiếp
-        shuffleGridNumbers();
-        setFoundIndices([]); // Reset foundIndices khi xáo trộn
-        setConsecutiveWrong(0);
       }
+      // Đã loại bỏ việc xáo trộn ở độ khó NORMAL khi chọn sai nhiều lần liên tiếp
     }
     
     // Reset processing flag sau 100ms để tránh click dồn
@@ -196,12 +178,8 @@ export const useGameEvents = (
         // Hard mode: xáo trộn ngay lập tức
         shuffleFreeNumbers();
         setFoundIndices([]); // Reset foundIndices khi xáo trộn
-      } else if (difficulty === DIFFICULTY_LEVELS.NORMAL && consecutiveWrong >= 2) {
-        // Normal mode: xáo trộn sau 2 lần sai liên tiếp
-        shuffleFreeNumbers();
-        setFoundIndices([]); // Reset foundIndices khi xáo trộn
-        setConsecutiveWrong(0);
       }
+      // Đã loại bỏ việc xáo trộn ở độ khó NORMAL khi chọn sai nhiều lần liên tiếp
     }
     
     // Reset processing flag sau 100ms để tránh click dồn
@@ -240,15 +218,16 @@ export const useGameEvents = (
       
       // Cập nhật số mục tiêu dựa trên số còn lại
       if (type === 'grid') {
+        // Sửa lại logic để loại bỏ số đã tìm thấy chính xác hơn
         const remainingNumbers = gridNumbers.filter((num, idx) => 
-          !foundIndices.includes(idx) && !updatedFoundNumbers.includes(num) && idx !== index
+          !foundIndices.includes(idx) && idx !== index
         );
         updateTargetNumber(remainingNumbers);
       } else if (type === 'free') {
+        // Sửa lại logic để loại bỏ số đã tìm thấy chính xác hơn
         const remainingNumbers = freeNumbers
           .filter((numObj, idx) => !foundIndices.includes(idx) && idx !== index)
-          .map(numObj => numObj.value)
-          .filter(num => !updatedFoundNumbers.includes(num));
+          .map(numObj => numObj.value);
         updateTargetNumber(remainingNumbers);
       }
   

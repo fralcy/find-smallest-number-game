@@ -109,8 +109,16 @@ const NumberBox = ({
   
   // Lấy background color dựa vào độ khó
   const getBackgroundStyle = () => {
-    // Nếu số đã tìm thấy và ở chế độ normal hoặc hard, ẩn số (background và số cùng màu)
-    if (isFound && (difficulty === DIFFICULTY_LEVELS.NORMAL || difficulty === DIFFICULTY_LEVELS.HARD)) {
+    // Nếu số đã tìm thấy và ở chế độ normal, chỉ đổi màu text thành xám như nền, không đổi màu nền
+    if (isFound && difficulty === DIFFICULTY_LEVELS.NORMAL) {
+      return { 
+        backgroundColor: '#f0f0f0', // Giữ nguyên màu nền
+        color: '#f0f0f0'  // Đổi màu text thành màu giống nền (xám)
+      };
+    }
+    
+    // Nếu số đã tìm thấy và ở chế độ hard, ẩn số (background và số cùng màu)
+    if (isFound && difficulty === DIFFICULTY_LEVELS.HARD) {
       return { backgroundColor: '#4CEEAD', color: '#4CEEAD' };
     } 
     

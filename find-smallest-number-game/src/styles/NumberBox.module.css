@@ -24,10 +24,7 @@
 }
 
 .found {
-  background-color: #4CEEAD;
-  color: white;
   cursor: default;
-  opacity: 0.7;
   transform: none !important;
   box-shadow: none !important;
 }
@@ -74,8 +71,9 @@
 }
 
 .easy.found {
-  opacity: 0.9;
+  background-color: #4CEEAD; /* Màu nền chuyển màu khi tìm thấy số ở mức EASY */
   color: white !important; /* Luôn hiện số rõ ràng ở chế độ dễ */
+  opacity: 0.9;
   animation: correctAnswer 0.5s ease forwards;
 }
 
@@ -91,14 +89,15 @@
 }
 
 .normal.found {
-  /* Số sẽ biến mất từ từ khi tìm thấy */
+  /* Số sẽ biến mất từ từ khi tìm thấy, nhưng không thay đổi màu nền */
   animation: fadeNumber 0.8s forwards;
   opacity: 0.7;
+  background-color: #f0f0f0; /* Giữ nguyên màu nền xám */
 }
 
 @keyframes fadeNumber {
-  0% { color: white; }
-  100% { color: #4CEEAD; } /* Màu chữ giống màu nền -> biến mất */
+  0% { color: #444; }
+  100% { color: #f0f0f0; } /* Màu chữ giống màu nền -> biến mất */
 }
 
 /* ===== HARD MODE STYLES ===== */
@@ -109,6 +108,7 @@
 }
 
 .hard.found {
+  background-color: #E74C3C; /* Đỏ cam cho HARD mode */
   opacity: 0.5; /* Gần như biến mất */
 }
 
@@ -190,9 +190,7 @@
   background-color: #27AE60; /* Xanh lá */
 }
 
-.normal.found {
-  background-color: #F1C40F; /* Vàng */
-}
+/* Đã loại bỏ màu nền khi tìm thấy cho normal */
 
 .hard.found {
   background-color: #E74C3C; /* Đỏ cam */
