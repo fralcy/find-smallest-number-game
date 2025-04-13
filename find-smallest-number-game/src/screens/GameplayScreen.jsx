@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import styles from '../styles/GameplayScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
@@ -19,16 +19,20 @@ const GameplayScreen = () => {
   const [timeAdjustment, setTimeAdjustment] = useState(0); // Để điều chỉnh thời gian khi trả lời sai
   
   // Load game settings
-  const settings = location.state?.gameSettings || getGameSettings(type, mode, mode === 'campaign' ? 1 : null);
+  const settings = useMemo(() => {
+    return location.state?.gameSettings || getGameSettings(type, mode, mode === 'campaign' ? 1 : null);
+  }, [location.state, getGameSettings, type, mode]);
 
   // Thêm state để theo dõi thông tin về độ khó
   const [shouldShowTargetNumber, setShouldShowTargetNumber] = useState(true);
   const [distractingWarningVisible, setDistractingWarningVisible] = useState(false);
+  const [gameInitialized, setGameInitialized] = useState(false); // Thêm state này để theo dõi việc khởi tạo
+  const [initialTarget, setInitialTarget] = useState(settings?.minNumber || 1); // Giá trị mặc định cho target
   
   // Lấy độ khó từ settings
-  const getDifficulty = () => {
+  const getDifficulty = useCallback(() => {
     return settings?.difficulty || DIFFICULTY_LEVELS.NORMAL;
-  };
+  }, [settings]);
 
   // Quản lý trạng thái game
   const {
@@ -62,7 +66,11 @@ const GameplayScreen = () => {
     shuffleGridNumbers,
     shuffleFreeNumbers,
     updateTargetNumber,
+    resetAndGenerateNew,
   } = useNumberGeneration(settings, type, mode);
+
+  // Đảm bảo luôn có giá trị hợp lệ cho targetNumber
+  const displayTargetNumber = targetNumber !== null ? targetNumber : initialTarget;
 
   // Xử lý sự kiện game
   const { 
@@ -77,7 +85,7 @@ const GameplayScreen = () => {
     type,
     mode,
     audioManager,
-    targetNumber,
+    displayTargetNumber, // Sử dụng displayTargetNumber
     gridNumbers,
     freeNumbers,
     foundNumbers,
@@ -112,7 +120,7 @@ const GameplayScreen = () => {
     type,
     mode,
     settings,
-    targetNumber,
+    displayTargetNumber, // Sử dụng displayTargetNumber
     gridNumbers,
     freeNumbers,
     foundNumbers,
@@ -122,24 +130,29 @@ const GameplayScreen = () => {
     getDifficulty
   );
 
-  // Khởi tạo game
+  // Khởi tạo game - Sửa để ngăn vòng lặp vô tận
   useEffect(() => {
-    if (type === 'grid') {
-      generateGridNumbers();
-    } else {
-      generateFreeNumbers();
+    // Chỉ khởi tạo một lần
+    if (!gameInitialized) {
+      // Sử dụng hàm resetAndGenerateNew thay vì gọi trực tiếp generateGridNumbers/generateFreeNumbers
+      resetAndGenerateNew();
+      setGameStarted(true);
+      
+      // Xử lý hiển thị target number dựa vào độ khó
+      const difficulty = getDifficulty();
+      setShouldShowTargetNumber(difficulty === DIFFICULTY_LEVELS.EASY);
+      
+      // Đánh dấu đã khởi tạo
+      setGameInitialized(true);
     }
-    setGameStarted(true);
-    
-    // Xử lý hiển thị target number dựa vào độ khó
-    const difficulty = getDifficulty();
-    if (difficulty === DIFFICULTY_LEVELS.EASY) {
-      setShouldShowTargetNumber(true);
-    } else if (difficulty === DIFFICULTY_LEVELS.NORMAL || difficulty === DIFFICULTY_LEVELS.HARD) {
-      // Với normal và hard, không hiển thị target number ngay từ đầu
-      setShouldShowTargetNumber(false);
+  }, [type, getDifficulty, resetAndGenerateNew, setGameStarted, gameInitialized]);
+
+  // Cập nhật initialTarget khi targetNumber thay đổi và khác null
+  useEffect(() => {
+    if (targetNumber !== null) {
+      setInitialTarget(targetNumber);
     }
-  }, [type, generateGridNumbers, generateFreeNumbers, setGameStarted, getDifficulty]);
+  }, [targetNumber]);
   
   // Hiệu ứng để kiểm soát hiển thị target number dựa vào số đã tìm thấy và độ khó
   useEffect(() => {
@@ -221,7 +234,7 @@ const GameplayScreen = () => {
         <div className={styles.middleSection}>
           {(shouldShowTargetNumber && showTargetNumber) ? (
             <div className={styles.instructionText}>
-              {t('find')} <span className={styles.targetNumber}>{targetNumber}</span>
+              {t('find')} <span className={styles.targetNumber}>{displayTargetNumber}</span>
             </div>
           ) : (
             <div className={styles.instructionText}>

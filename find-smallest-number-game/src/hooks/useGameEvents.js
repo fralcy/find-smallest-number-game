@@ -5,7 +5,7 @@
  * - Điều chỉnh logic game dựa vào độ khó
  * - Xử lý số gây xao nhãng và trùng lặp
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DIFFICULTY_LEVELS, DIFFICULTY_SCORE_MULTIPLIER } from '../constants/difficulty';
 
 export const useGameEvents = (
@@ -39,6 +39,11 @@ export const useGameEvents = (
   const [showTargetNumber, setShowTargetNumber] = useState(true);
   const [foundIndices, setFoundIndices] = useState([]); // Lưu các vị trí đã tìm thấy
   
+  // Thêm các tham chiếu để ngăn vòng lặp vô tận
+  const isProcessingClick = useRef(false);
+  const pendingGridUpdate = useRef(false);
+  const pendingFreeUpdate = useRef(false);
+  
   // Xác định độ khó hiện tại từ settings
   const getDifficulty = () => {
     return settings?.difficulty || DIFFICULTY_LEVELS.NORMAL;
@@ -63,20 +68,15 @@ export const useGameEvents = (
     if (difficulty === DIFFICULTY_LEVELS.HARD && foundNumbers.length >= 1) {
       setShowTargetNumber(false);
     }
-  }, [foundNumbers.length, getDifficulty]);
+  }, [foundNumbers.length]);
   
-  // Xử lý khi người chơi nhấp vào số trong chế độ lưới
-  const handleGridNumberClick = (number, index) => {
-    const difficulty = getDifficulty();
-    
-    // Kiểm tra nếu vị trí này đã được tìm thấy
-    if (foundIndices.includes(index)) return;
-    
-    if (number === targetNumber) {
-      // Số đúng
-      handleCorrectNumber(number, index);
+  // Thực hiện các thao tác trễ sau khi xử lý đúng
+  useEffect(() => {
+    // Xử lý cập nhật cho grid mode
+    if (pendingGridUpdate.current) {
+      pendingGridUpdate.current = false;
+      const difficulty = getDifficulty();
       
-      // Tùy theo độ khó mà có các hành vi khác nhau
       if (difficulty === DIFFICULTY_LEVELS.HARD || mode === 'zen') {
         // Hard mode: tạo lưới mới sau mỗi câu trả lời đúng
         setTimeout(() => {
@@ -94,36 +94,16 @@ export const useGameEvents = (
           }, 500);
         }
       }
-    } else {
-      // Số sai
-      handleWrongNumber(number);
-      
-      // Hành vi xáo trộn khi trả lời sai tùy thuộc vào độ khó
-      if (difficulty === DIFFICULTY_LEVELS.HARD) {
-        // Hard mode: xáo trộn ngay lập tức
-        shuffleGridNumbers();
-        setFoundIndices([]); // Reset foundIndices khi xáo trộn
-      } else if (difficulty === DIFFICULTY_LEVELS.NORMAL && consecutiveWrong >= 2) {
-        // Normal mode: xáo trộn sau 2 lần sai liên tiếp
-        shuffleGridNumbers();
-        setFoundIndices([]); // Reset foundIndices khi xáo trộn
-        setConsecutiveWrong(0);
-      }
     }
-  };
+  }, [comboCount, foundNumbers.length, gridNumbers.length, mode]);
   
-  // Xử lý khi người chơi nhấp vào số trong chế độ tự do
-  const handleFreeNumberClick = (numberObj, index) => {
-    const difficulty = getDifficulty();
-    
-    // Kiểm tra nếu vị trí này đã được tìm thấy
-    if (foundIndices.includes(index)) return;
-    
-    if (numberObj.value === targetNumber) {
-      // Số đúng
-      handleCorrectNumber(numberObj.value, index);
+  // Thực hiện các thao tác trễ cho free mode
+  useEffect(() => {
+    // Xử lý cập nhật cho free mode
+    if (pendingFreeUpdate.current) {
+      pendingFreeUpdate.current = false;
+      const difficulty = getDifficulty();
       
-      // Tùy theo độ khó mà có các hành vi khác nhau
       if (difficulty === DIFFICULTY_LEVELS.HARD || mode === 'zen') {
         // Hard mode: tạo số mới sau mỗi câu trả lời đúng
         setTimeout(() => {
@@ -141,6 +121,72 @@ export const useGameEvents = (
           }, 500);
         }
       }
+    }
+  }, [comboCount, foundNumbers.length, freeNumbers.length, mode]);
+  
+  // Xử lý khi người chơi nhấp vào số trong chế độ lưới
+  const handleGridNumberClick = (number, index) => {
+    // Tránh xử lý nhiều lần cùng lúc
+    if (isProcessingClick.current) return;
+    isProcessingClick.current = true;
+    
+    const difficulty = getDifficulty();
+    
+    // Kiểm tra nếu vị trí này đã được tìm thấy
+    if (foundIndices.includes(index)) {
+      isProcessingClick.current = false;
+      return;
+    }
+    
+    if (number === targetNumber) {
+      // Số đúng
+      handleCorrectNumber(number, index);
+      
+      // Đánh dấu là cần cập nhật grid sau khi xử lý
+      pendingGridUpdate.current = true;
+    } else {
+      // Số sai
+      handleWrongNumber(number);
+      
+      // Hành vi xáo trộn khi trả lời sai tùy thuộc vào độ khó
+      if (difficulty === DIFFICULTY_LEVELS.HARD) {
+        // Hard mode: xáo trộn ngay lập tức
+        shuffleGridNumbers();
+        setFoundIndices([]); // Reset foundIndices khi xáo trộn
+      } else if (difficulty === DIFFICULTY_LEVELS.NORMAL && consecutiveWrong >= 2) {
+        // Normal mode: xáo trộn sau 2 lần sai liên tiếp
+        shuffleGridNumbers();
+        setFoundIndices([]); // Reset foundIndices khi xáo trộn
+        setConsecutiveWrong(0);
+      }
+    }
+    
+    // Reset processing flag sau 100ms để tránh click dồn
+    setTimeout(() => {
+      isProcessingClick.current = false;
+    }, 100);
+  };
+  
+  // Xử lý khi người chơi nhấp vào số trong chế độ tự do
+  const handleFreeNumberClick = (numberObj, index) => {
+    // Tránh xử lý nhiều lần cùng lúc
+    if (isProcessingClick.current) return;
+    isProcessingClick.current = true;
+    
+    const difficulty = getDifficulty();
+    
+    // Kiểm tra nếu vị trí này đã được tìm thấy
+    if (foundIndices.includes(index)) {
+      isProcessingClick.current = false;
+      return;
+    }
+    
+    if (numberObj.value === targetNumber) {
+      // Số đúng
+      handleCorrectNumber(numberObj.value, index);
+      
+      // Đánh dấu là cần cập nhật free numbers sau khi xử lý
+      pendingFreeUpdate.current = true;
     } else {
       // Số sai
       handleWrongNumber(numberObj.value);
@@ -157,6 +203,11 @@ export const useGameEvents = (
         setConsecutiveWrong(0);
       }
     }
+    
+    // Reset processing flag sau 100ms để tránh click dồn
+    setTimeout(() => {
+      isProcessingClick.current = false;
+    }, 100);
   };
   
   // Xử lý khi người chơi tìm thấy số đúng
@@ -190,12 +241,12 @@ export const useGameEvents = (
       // Cập nhật số mục tiêu dựa trên số còn lại
       if (type === 'grid') {
         const remainingNumbers = gridNumbers.filter((num, idx) => 
-          !foundIndices.includes(idx) && !updatedFoundNumbers.includes(num)
+          !foundIndices.includes(idx) && !updatedFoundNumbers.includes(num) && idx !== index
         );
         updateTargetNumber(remainingNumbers);
       } else if (type === 'free') {
         const remainingNumbers = freeNumbers
-          .filter((numObj, idx) => !foundIndices.includes(idx))
+          .filter((numObj, idx) => !foundIndices.includes(idx) && idx !== index)
           .map(numObj => numObj.value)
           .filter(num => !updatedFoundNumbers.includes(num));
         updateTargetNumber(remainingNumbers);
@@ -261,25 +312,20 @@ export const useGameEvents = (
       const basePenalty = 10;
       const totalPenalty = Math.round(basePenalty * penaltyMultiplier * consecutivePenalty * distractionPenalty);
       setScore(prev => Math.max(0, prev - totalPenalty));
-      
-      // Ở chế độ hard, giảm thêm thời gian khi trả lời sai
-      if (difficulty === DIFFICULTY_LEVELS.HARD && mode !== 'zen') {
-        // Giảm 3 giây khi trả lời sai (chỉ dành cho normal và campaign mode)
-        // Chú ý: Bạn cần thêm callback trong component GameplayScreen để cho phép giảm thời gian
-        // setTimeLeft(prev => Math.max(1, prev - 3));
-      }
     }
   };
 
   // Reset foundIndices khi số lượng grid hoặc free numbers thay đổi
   useEffect(() => {
-    setFoundIndices([]);
+    if (gridNumbers.length > 0 || freeNumbers.length > 0) {
+      setFoundIndices([]);
+    }
   }, [gridNumbers.length, freeNumbers.length]);
 
   // Tạo thông báo về số gây xao nhãng
   const getDistractingWarning = () => {
     if (getDifficulty() === DIFFICULTY_LEVELS.HARD && distractingNumbers.length > 0) {
-      if (distractingNumbers.some(n => n < settings.minNumber || n > settings.maxNumber)) {
+      if (distractingNumbers.some(n => Array.isArray(n) ? false : (n < settings.minNumber || n > settings.maxNumber))) {
         return 'outOfRangeNumbers';
       }
       return null;

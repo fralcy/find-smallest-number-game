@@ -52,8 +52,14 @@ export const getDifficultyColor = (difficulty) => {
  * @returns {string} - Độ khó từ DIFFICULTY_LEVELS
  */
 export const getDifficultyByLevel = (level) => {
-  if (level <= 4) return DIFFICULTY_LEVELS.EASY;
-  if (level <= 8) return DIFFICULTY_LEVELS.NORMAL;
+  // Chuyển đổi level sang kiểu số nếu là chuỗi
+  const levelNum = parseInt(level);
+  if (isNaN(levelNum)) {
+    return DIFFICULTY_LEVELS.EASY;
+  }
+  
+  if (levelNum <= 4) return DIFFICULTY_LEVELS.EASY;
+  if (levelNum <= 8) return DIFFICULTY_LEVELS.NORMAL;
   return DIFFICULTY_LEVELS.HARD;
 };
 

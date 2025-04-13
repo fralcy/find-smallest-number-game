@@ -4,7 +4,7 @@
  * - Tracking the target number (smallest number)
  * - Handling distracting numbers and duplicates
  */
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { DIFFICULTY_LEVELS, HARD_MODE_DISTRACTION_COUNT } from '../constants/difficulty';
 import { generateContrastingColors } from '../utils/colorUtils';
 
@@ -15,6 +15,9 @@ export const useNumberGeneration = (settings, type, mode) => {
   const [foundNumbers, setFoundNumbers] = useState([]);
   const [colors, setColors] = useState([]);
   const [distractingNumbers, setDistractingNumbers] = useState([]);
+  
+  // Thêm ref để theo dõi trạng thái đã khởi tạo
+  const isInitialized = useRef(false);
 
   // Generate contrasting colors for numbers
   useEffect(() => {
@@ -35,151 +38,73 @@ export const useNumberGeneration = (settings, type, mode) => {
     const { minNumber, maxNumber, gridSize, difficulty } = settings;
     let totalCells = gridSize * gridSize;
     const uniqueNumbers = new Set();
-    
-    // Độ khó ảnh hưởng đến cách sinh số
-    const isHardMode = difficulty === DIFFICULTY_LEVELS.HARD;
-    
-    // Số lượng số nhiễu và số trùng lặp
-    const distractionCount = isHardMode ? HARD_MODE_DISTRACTION_COUNT : 0;
-    const duplicateCount = isHardMode ? 2 : 0; // Thêm số trùng lặp ở hard mode
-    
-    // Mảng lưu các loại số
-    const distractingNums = [];
-    const duplicateNums = [];
-    
+
     // Đảm bảo số nhỏ nhất được tạo trước
-    let smallestNumber;
-    
-    // Với hard mode, thêm khả năng số nhỏ nhất nằm ngoài phạm vi
-    if (isHardMode && Math.random() > 0.7) {
-      // 30% khả năng số nhỏ nhất nằm ngoài phạm vi (nhưng vẫn lớn hơn 0)
-      smallestNumber = Math.max(1, Math.floor(Math.random() * (minNumber - 1)));
-    } else {
-      // Số nhỏ nhất nằm trong phạm vi
-      smallestNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-    }
-    
-    // Thêm số nhỏ nhất vào mảng
+    let smallestNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
     uniqueNumbers.add(smallestNumber);
-    
+
     // Sinh các số cơ bản trong phạm vi (không trùng với số nhỏ nhất)
-    while (uniqueNumbers.size < totalCells - distractionCount - duplicateCount) {
+    while (uniqueNumbers.size < totalCells) {
       const newNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-      
-      // Đảm bảo số này không phải là số nhỏ nhất
-      if (newNumber !== smallestNumber) {
-        uniqueNumbers.add(newNumber);
-      }
+      uniqueNumbers.add(newNumber);
     }
-    
+
     // Chuyển set thành mảng để dễ thao tác
     const numbersArray = Array.from(uniqueNumbers);
-    
-    // Thêm số nhiễu ngoài phạm vi cho hard mode
-    if (isHardMode) {
-      for (let i = 0; i < distractionCount; i++) {
-        // Tạo số lớn hơn maxNumber
-        const largerNumber = Math.floor(Math.random() * 1000) + maxNumber;
-        distractingNums.push(largerNumber);
-      }
-      
-      // Thêm số trùng lặp (chỉ trùng lặp số trong mảng nhưng không phải số nhỏ nhất)
-      for (let i = 0; i < duplicateCount; i++) {
-        if (numbersArray.length > 1) { // Đảm bảo có ít nhất 2 số để chọn
-          // Lấy số ngẫu nhiên từ mảng (không lấy phần tử đầu tiên là số nhỏ nhất)
-          const randomIndex = Math.floor(Math.random() * (numbersArray.length - 1)) + 1;
-          const numberToDuplicate = numbersArray[randomIndex];
-          duplicateNums.push(numberToDuplicate);
-        }
-      }
-    }
-    
-    // Lưu trữ thông tin số gây xao nhãng
-    setDistractingNumbers([...distractingNums, ...duplicateNums]);
-    
-    // Kết hợp tất cả số và xáo trộn
-    const allNumbers = [...numbersArray, ...distractingNums, ...duplicateNums];
-    const shuffled = shuffleArray([...allNumbers]);
-    
-    // Cập nhật các state
+
+    // Đảm bảo smallestNumber là số nhỏ nhất
+    smallestNumber = Math.min(...numbersArray);
+
+    // Xáo trộn các số
+    const shuffled = shuffleArray(numbersArray);
+
+    // Cập nhật state
     setGridNumbers(shuffled);
     setTargetNumber(smallestNumber);
     setFoundNumbers([]);
   }, [settings]);
 
   const generateFreeNumbers = useCallback(() => {
-    const { minNumber, maxNumber, maxNumbers, difficulty } = settings;
+    const { minNumber, maxNumber, maxNumbers } = settings;
     const uniqueNumbers = new Set();
-    
-    // Độ khó ảnh hưởng đến cách sinh số
-    const isHardMode = difficulty === DIFFICULTY_LEVELS.HARD;
-    
-    // Số lượng số nhiễu và số trùng lặp
-    const distractionCount = isHardMode ? HARD_MODE_DISTRACTION_COUNT : 0;
-    const duplicateCount = isHardMode ? 2 : 0; // Thêm số trùng lặp ở hard mode
-    
-    // Mảng lưu các loại số
-    const distractingNums = [];
-    const duplicateNums = [];
-    
+
     // Đảm bảo số nhỏ nhất được tạo trước
-    let smallestNumber;
-    
-    // Với hard mode, thêm khả năng số nhỏ nhất nằm ngoài phạm vi
-    if (isHardMode && Math.random() > 0.7) {
-      // 30% khả năng số nhỏ nhất nằm ngoài phạm vi (nhưng vẫn lớn hơn 0)
-      smallestNumber = Math.max(1, Math.floor(Math.random() * (minNumber - 1)));
-    } else {
-      // Số nhỏ nhất nằm trong phạm vi
-      smallestNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-    }
-    
-    // Thêm số nhỏ nhất vào mảng
+    let smallestNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
     uniqueNumbers.add(smallestNumber);
-    
+
     // Sinh các số cơ bản trong phạm vi (không trùng với số nhỏ nhất)
-    while (uniqueNumbers.size < maxNumbers - distractionCount - duplicateCount) {
+    while (uniqueNumbers.size < maxNumbers) {
       const newNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
-      
-      // Đảm bảo số này không phải là số nhỏ nhất
-      if (newNumber !== smallestNumber) {
-        uniqueNumbers.add(newNumber);
-      }
+      uniqueNumbers.add(newNumber);
     }
-    
+
     // Chuyển set thành mảng để dễ thao tác
     const numbersArray = Array.from(uniqueNumbers);
-    
-    // Thêm số nhiễu ngoài phạm vi cho hard mode
-    if (isHardMode) {
-      for (let i = 0; i < distractionCount; i++) {
-        // Tạo số lớn hơn maxNumber
-        const largerNumber = Math.floor(Math.random() * 1000) + maxNumber;
-        distractingNums.push(largerNumber);
-      }
-      
-      // Thêm số trùng lặp (chỉ trùng lặp số trong mảng nhưng không phải số nhỏ nhất)
-      for (let i = 0; i < duplicateCount; i++) {
-        if (numbersArray.length > 1) { // Đảm bảo có ít nhất 2 số để chọn
-          // Lấy số ngẫu nhiên từ mảng (không lấy phần tử đầu tiên là số nhỏ nhất)
-          const randomIndex = Math.floor(Math.random() * (numbersArray.length - 1)) + 1;
-          const numberToDuplicate = numbersArray[randomIndex];
-          duplicateNums.push(numberToDuplicate);
-        }
-      }
-    }
-    
-    // Lưu trữ thông tin số gây xao nhãng
-    setDistractingNumbers([...distractingNums, ...duplicateNums]);
-    
-    // Kết hợp tất cả số
-    const allNumbers = [...numbersArray, ...distractingNums, ...duplicateNums];
-    
-    // Tạo vị trí tốt hơn với phần phối đều
-    setFreeNumbers(distributeNumbersEvenly(allNumbers, isHardMode));
+
+    // Đảm bảo smallestNumber là số nhỏ nhất
+    smallestNumber = Math.min(...numbersArray);
+
+    // Tạo vị trí ngẫu nhiên cho các số
+    const distributedNumbers = distributeNumbersEvenly(numbersArray, false);
+
+    // Cập nhật state
+    setFreeNumbers(distributedNumbers);
     setTargetNumber(smallestNumber);
     setFoundNumbers([]);
   }, [settings]);
+
+  // Khởi tạo số dựa trên type, chỉ chạy một lần
+  useEffect(() => {
+    // Chỉ khởi tạo nếu chưa được khởi tạo
+    if (!isInitialized.current) {
+      if (type === 'grid') {
+        generateGridNumbers();
+      } else {
+        generateFreeNumbers();
+      }
+      isInitialized.current = true;
+    }
+  }, [type, generateGridNumbers, generateFreeNumbers]);
   
   // Shuffle grid numbers
   const shuffleGridNumbers = useCallback(() => {
@@ -252,6 +177,20 @@ export const useNumberGeneration = (settings, type, mode) => {
       setFreeNumbers(distributeNumbersEvenly(values, isHardMode));
     }
   }, [freeNumbers, settings, targetNumber, distractingNumbers]);
+  
+  // Reset state and reinitialize numbers (sử dụng khi cần khởi tạo lại)
+  const resetAndGenerateNew = useCallback(() => {
+    setFoundNumbers([]);
+    isInitialized.current = false;
+
+    if (type === 'grid') {
+      generateGridNumbers();
+    } else {
+      generateFreeNumbers();
+    }
+
+    isInitialized.current = true;
+  }, [type, generateGridNumbers, generateFreeNumbers]);
   
   // Update target number based on remaining numbers
   const updateTargetNumber = useCallback((remainingNumbers) => {
@@ -351,5 +290,6 @@ export const useNumberGeneration = (settings, type, mode) => {
     shuffleGridNumbers,
     shuffleFreeNumbers,
     updateTargetNumber,
+    resetAndGenerateNew,
   };
 };
