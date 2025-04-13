@@ -192,18 +192,6 @@ const GameplayScreen = () => {
     return null;
   };
   
-  // Hiển thị thông báo "Tìm số tiếp theo!" khi số đích bị ẩn
-  const renderNextNumberText = () => {
-    if (!shouldShowTargetNumber || !showTargetNumber) {
-      return (
-        <div className={styles.infoText}>
-          {t('findNext')}
-        </div>
-      );
-    }
-    return null;
-  };
-  
   // Hiển thị cảnh báo khi có số trùng lặp hoặc số gây xao nhãng
   const renderDistractingWarning = () => {
     if (distractingWarningVisible && distractingNumbers.length > 0) {

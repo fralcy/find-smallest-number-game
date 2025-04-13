@@ -17,18 +17,34 @@ export const generateRandomColor = (
   lightnessMin = 75,
   lightnessMax = 90
 ) => {
-  // Tạo hue ngẫu nhiên (0-360)
-  const hue = Math.floor(Math.random() * 360);
-  
-  // Saturation và lightness ngẫu nhiên trong khoảng cho phép
-  const saturation = Math.floor(
-    Math.random() * (saturationMax - saturationMin) + saturationMin
-  );
-  const lightness = Math.floor(
-    Math.random() * (lightnessMax - lightnessMin) + lightnessMin
-  );
-  
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  try {
+    // Đảm bảo các tham số là số hợp lệ
+    saturationMin = Math.max(0, Math.min(100, saturationMin || 65));
+    saturationMax = Math.max(0, Math.min(100, saturationMax || 85));
+    lightnessMin = Math.max(0, Math.min(100, lightnessMin || 75));
+    lightnessMax = Math.max(0, Math.min(100, lightnessMax || 90));
+    
+    // Đảm bảo min <= max
+    if (saturationMin > saturationMax) [saturationMin, saturationMax] = [saturationMax, saturationMin];
+    if (lightnessMin > lightnessMax) [lightnessMin, lightnessMax] = [lightnessMax, lightnessMin];
+    
+    // Tạo hue ngẫu nhiên (0-360)
+    const hue = Math.floor(Math.random() * 360);
+    
+    // Saturation và lightness ngẫu nhiên trong khoảng cho phép
+    const saturation = Math.floor(
+      Math.random() * (saturationMax - saturationMin) + saturationMin
+    );
+    const lightness = Math.floor(
+      Math.random() * (lightnessMax - lightnessMin) + lightnessMin
+    );
+    
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  } catch (error) {
+    console.error("Error generating random color:", error);
+    // Trả về màu mặc định an toàn nếu có lỗi
+    return '#f0f0f0';
+  }
 };
 
 /**
@@ -74,9 +90,17 @@ export const getBackgroundColorByDifficulty = (difficulty) => {
  * @returns {string} - Màu chữ nên dùng ('black' hoặc 'white')
  */
 export const getTextColorForBackground = (backgroundColor) => {
+  // Kiểm tra null hoặc undefined
+  if (!backgroundColor) {
+    return '#333'; // Màu mặc định an toàn
+  }
+  
+  // Đảm bảo backgroundColor là chuỗi
+  const bgColor = String(backgroundColor);
+  
   // Với các màu HSL
-  if (backgroundColor.includes('hsl')) {
-    const matches = backgroundColor.match(/hsl\(\s*\d+\s*,\s*\d+%\s*,\s*(\d+)%\s*\)/);
+  if (bgColor.includes('hsl')) {
+    const matches = bgColor.match(/hsl\(\s*\d+\s*,\s*\d+%\s*,\s*(\d+)%\s*\)/);
     if (matches && matches[1]) {
       const lightness = parseInt(matches[1], 10);
       return lightness > 70 ? '#333' : 'white';
@@ -84,8 +108,8 @@ export const getTextColorForBackground = (backgroundColor) => {
   }
   
   // Với các màu RGB hoặc RGBA
-  if (backgroundColor.includes('rgb')) {
-    const matches = backgroundColor.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*[\d.]+)?\s*\)/);
+  if (bgColor.includes('rgb')) {
+    const matches = bgColor.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*[\d.]+)?\s*\)/);
     if (matches && matches[1] && matches[2] && matches[3]) {
       const r = parseInt(matches[1], 10);
       const g = parseInt(matches[2], 10);
@@ -94,6 +118,35 @@ export const getTextColorForBackground = (backgroundColor) => {
       // Tính toán độ sáng theo công thức tiêu chuẩn
       const brightness = (r * 299 + g * 587 + b * 114) / 1000;
       return brightness > 128 ? '#333' : 'white';
+    }
+  }
+  
+  // Với các màu đơn giản (ví dụ: 'red', 'blue', v.v.)
+  const simpleColors = {
+    red: 'white',
+    blue: 'white',
+    green: 'white',
+    black: 'white',
+    white: '#333',
+    yellow: '#333',
+    purple: 'white',
+    cyan: '#333',
+    magenta: 'white',
+    lime: '#333',
+    pink: '#333',
+    gray: 'white',
+    grey: 'white',
+    silver: '#333',
+    maroon: 'white',
+    olive: 'white',
+    navy: 'white',
+    teal: 'white'
+  };
+  
+  // Kiểm tra nếu màu nền là màu đơn giản
+  for (const color in simpleColors) {
+    if (bgColor.toLowerCase() === color) {
+      return simpleColors[color];
     }
   }
   

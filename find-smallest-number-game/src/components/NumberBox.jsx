@@ -8,7 +8,8 @@ const NumberBox = ({
   isTarget, 
   isFound, 
   onClick,
-  difficulty = DIFFICULTY_LEVELS.NORMAL // 'easy', 'normal', 'hard'
+  difficulty = DIFFICULTY_LEVELS.NORMAL, // 'easy', 'normal', 'hard'
+  isZenMode = false // Thêm prop isZenMode
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [randomOffset, setRandomOffset] = useState({ x: 0, y: 0 });
@@ -17,16 +18,16 @@ const NumberBox = ({
   const [showAnimation, setShowAnimation] = useState(false);
   const boxRef = useRef(null);
 
-  // Khởi tạo màu ngẫu nhiên cho chế độ hard
+  // Khởi tạo màu ngẫu nhiên cho chế độ hard và zen mode
   useEffect(() => {
-    if (difficulty === DIFFICULTY_LEVELS.HARD && !randomColor) {
+    if ((difficulty === DIFFICULTY_LEVELS.HARD || isZenMode) && !randomColor) {
       setRandomColor(generateRandomColor());
     }
-  }, [difficulty, randomColor]);
-  
-  // Hiệu ứng di chuyển cho chế độ hard
+  }, [difficulty, randomColor, isZenMode]);
+
+  // Hiệu ứng di chuyển cho chế độ hard (không áp dụng cho zen mode)
   useEffect(() => {
-    if (difficulty === DIFFICULTY_LEVELS.HARD && isHovered && !isFound) {
+    if (difficulty === DIFFICULTY_LEVELS.HARD && !isZenMode && isHovered && !isFound) {
       // Tạo vị trí ngẫu nhiên trong phạm vi nhỏ
       const interval = setInterval(() => {
         setRandomOffset({
@@ -39,7 +40,7 @@ const NumberBox = ({
     } else {
       setRandomOffset({ x: 0, y: 0 });
     }
-  }, [isHovered, difficulty, isFound]);
+  }, [isHovered, difficulty, isFound, isZenMode]);
   
   // Hiệu ứng khi tìm thấy số
   useEffect(() => {
@@ -57,6 +58,11 @@ const NumberBox = ({
   
   const getClassNames = () => {
     let classNames = styles.numberBox;
+    
+    // Thêm class zen mode nếu cần
+    if (isZenMode) {
+      classNames += ` ${styles.zenMode}`;
+    }
     
     // Thêm class dựa vào trạng thái
     if (isFound) {
@@ -94,7 +100,7 @@ const NumberBox = ({
   const handleClick = () => {
     if (!isFound) {
       // Nếu không phải số đích, hiển thị hiệu ứng sai
-      if (number !== isTarget) {
+      if (!isTarget) {
         setIsWrong(true);
         
         // Tắt hiệu ứng sai sau 400ms
@@ -106,11 +112,32 @@ const NumberBox = ({
       onClick(number);
     }
   };
+  // Hàm tạo màu chữ khác với màu nền
+  const getContrastingTextColor = (backgroundColor) => {
+    if (!backgroundColor) return '#333333';
+    
+    // Chuyển đổi màu nền thành dạng chuỗi
+    const bgColor = String(backgroundColor);
+    
+    // Nếu màu nền là HSL, tạo một màu HSL khác
+    if (bgColor.includes('hsl')) {
+      const matches = bgColor.match(/hsl\(\s*(\d+)\s*,\s*\d+%\s*,\s*\d+%\s*\)/);
+      if (matches && matches[1]) {
+        // Đảo ngược hue
+        const hue = (parseInt(matches[1], 10) + 180) % 360;
+        return `hsl(${hue}, 100%, 30%)`;
+      }
+    }
+    
+    // Màu mặc định
+    const colors = ['#FF5733', '#33FF57', '#3357FF', '#F033FF', '#FF33A8', '#33FFF6'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
   
-  // Lấy background color dựa vào độ khó
+  // Lấy background color dựa vào độ khó và chế độ
   const getBackgroundStyle = () => {
     // Nếu số đã tìm thấy và ở chế độ normal, chỉ đổi màu text thành xám như nền, không đổi màu nền
-    if (isFound && difficulty === DIFFICULTY_LEVELS.NORMAL) {
+    if (isFound && difficulty === DIFFICULTY_LEVELS.NORMAL && !isZenMode) {
       return { 
         backgroundColor: '#f0f0f0', // Giữ nguyên màu nền
         color: '#f0f0f0'  // Đổi màu text thành màu giống nền (xám)
@@ -118,15 +145,46 @@ const NumberBox = ({
     }
     
     // Nếu số đã tìm thấy và ở chế độ hard, ẩn số (background và số cùng màu)
-    if (isFound && difficulty === DIFFICULTY_LEVELS.HARD) {
+    if (isFound && difficulty === DIFFICULTY_LEVELS.HARD && !isZenMode) {
       return { backgroundColor: '#4CEEAD', color: '#4CEEAD' };
-    } 
+    }
+    
+    // Nếu là Zen mode, mỗi số có màu ngẫu nhiên riêng
+    if (isZenMode) {
+      if (isFound) {
+        return { backgroundColor: '#4CEEAD', color: 'white' };
+      }
+      
+      // Đảm bảo có màu ngẫu nhiên cho nền
+      const bgColor = randomColor || generateRandomColor();
+      
+      // Nếu vẫn chưa có màu, dùng màu mặc định
+      if (!bgColor) {
+        return { backgroundColor: '#f0f0f0', color: '#333' };
+      }
+      
+      // Tạo màu chữ khác với màu nền
+      const textColor = getContrastingTextColor(bgColor);
+      
+      return { 
+        backgroundColor: bgColor,
+        color: textColor
+      };
+    }
     
     // Với chế độ hard, mỗi số có màu riêng
     if (difficulty === DIFFICULTY_LEVELS.HARD && !isFound) {
+      // Đảm bảo có màu ngẫu nhiên
+      const bgColor = randomColor || generateRandomColor();
+      
+      // Nếu vẫn chưa có màu, dùng màu mặc định
+      if (!bgColor) {
+        return { backgroundColor: '#f0f0f0', color: '#333' };
+      }
+      
       return { 
-        backgroundColor: randomColor,
-        color: getTextColorForBackground(randomColor) // Đảm bảo màu text đủ tương phản
+        backgroundColor: bgColor,
+        color: getTextColorForBackground(bgColor) // Đảm bảo màu text đủ tương phản
       };
     }
     

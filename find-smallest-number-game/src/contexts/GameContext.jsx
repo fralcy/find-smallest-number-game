@@ -14,7 +14,7 @@ export const GameProvider = ({ children }) => {
   const DEFAULT_SETTINGS = {
     volume: 50,
     music: 50,
-    language: 'English',
+    language: 'Tiếng Việt',
     defaultGridSize: 5,
     defaultMaxNumbers: 20,
     defaultTimePerNumber: 5,

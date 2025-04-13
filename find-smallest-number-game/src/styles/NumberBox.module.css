@@ -195,3 +195,38 @@
 .hard.found {
   background-color: #E74C3C; /* Đỏ cam */
 }
+
+/* Zen Mode Styles */
+.zenMode {
+  font-size: 1.4rem; /* Kích thước chữ lớn hơn cho dễ nhìn */
+  border-radius: 12px; /* Bo góc hơn */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Đổ bóng rõ hơn */
+  transition: transform 0.2s ease; /* Hiệu ứng hover mượt mà */
+  border: none;
+  /* Loại bỏ các animation gây khó chịu */
+  animation: none !important; /* Đảm bảo không có animation từ các class khác */
+  transform: none !important; /* Loại bỏ transform từ các hiệu ứng wiggle */
+  filter: none !important; /* Loại bỏ hiệu ứng blur */
+}
+
+.zenMode:hover {
+  transform: scale(1.05) !important; /* Cho phép phóng to khi hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.zenMode.found {
+  background-color: #4CEEAD !important; /* Màu xanh lá khi tìm thấy */
+  color: white !important; /* Đảm bảo chữ màu trắng */
+  opacity: 0.9;
+}
+
+/* Hiệu ứng khi tìm đúng trong Zen mode */
+@keyframes zenCorrect {
+  0% { transform: scale(1.2); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.zenMode.found.animation {
+  animation: zenCorrect 0.5s ease forwards !important; /* Cho phép animation này */
+}

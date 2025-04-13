@@ -37,61 +37,134 @@ export const useNumberGeneration = (settings, type, mode) => {
   const generateGridNumbers = useCallback(() => {
     const { minNumber, maxNumber, gridSize, difficulty } = settings;
     let totalCells = gridSize * gridSize;
+    
+    // Kiểm tra xem có phải Zen mode không
+    const isZenMode = mode === 'zen';
+  
+    // Nếu là Zen mode, tạo số với các số trùng lặp
+    if (isZenMode) {
+      // Tạo một số ngẫu nhiên làm số nhỏ nhất (target)
+      const smallestNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+      
+      // Tạo một mảng số với số nhỏ nhất đảm bảo xuất hiện đúng một lần
+      const numbersArray = [smallestNumber];
+      
+      // Sinh các số còn lại (có thể trùng lặp)
+      for (let i = 1; i < totalCells; i++) {
+        const newNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+        // Đảm bảo số không nhỏ hơn smallestNumber
+        if (newNumber < smallestNumber) {
+          numbersArray.push(smallestNumber + Math.floor(Math.random() * 10) + 1);
+        } else {
+          numbersArray.push(newNumber);
+        }
+      }
+      
+      // Xáo trộn mảng
+      const shuffled = shuffleArray(numbersArray);
+      
+      // Cập nhật state
+      setGridNumbers(shuffled);
+      setTargetNumber(smallestNumber);
+      setFoundNumbers([]);
+      return;
+    }
+  
+    // Logic hiện tại cho các chế độ khác
     const uniqueNumbers = new Set();
-
+  
     // Đảm bảo số nhỏ nhất được tạo trước
     let smallestNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
     uniqueNumbers.add(smallestNumber);
-
+  
     // Sinh các số cơ bản trong phạm vi (không trùng với số nhỏ nhất)
     while (uniqueNumbers.size < totalCells) {
       const newNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
       uniqueNumbers.add(newNumber);
     }
-
+  
     // Chuyển set thành mảng để dễ thao tác
     const numbersArray = Array.from(uniqueNumbers);
-
+  
     // Đảm bảo smallestNumber là số nhỏ nhất
     smallestNumber = Math.min(...numbersArray);
-
+  
     // Xáo trộn các số
     const shuffled = shuffleArray(numbersArray);
-
+  
     // Cập nhật state
     setGridNumbers(shuffled);
     setTargetNumber(smallestNumber);
     setFoundNumbers([]);
-  }, [settings]);
+  }, [settings, mode]);
 
   const generateFreeNumbers = useCallback(() => {
     const { minNumber, maxNumber, maxNumbers } = settings;
-    const uniqueNumbers = new Set();
+    
+    // Kiểm tra xem có phải Zen mode không
+    const isZenMode = mode === 'zen';
+  
+    // Nếu là Zen mode, tạo số với các số trùng lặp
+    if (isZenMode) {
+      // Tạo một số ngẫu nhiên làm số nhỏ nhất (target)
+      const smallestNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+      
+      // Tạo một mảng số với số nhỏ nhất đảm bảo xuất hiện đúng một lần
+      const numbersArray = [smallestNumber];
+      
+      // Sinh các số còn lại (có thể trùng lặp)
+      for (let i = 1; i < maxNumbers; i++) {
+        let newNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+        
+        // Đảm bảo số không nhỏ hơn smallestNumber
+        if (newNumber < smallestNumber) {
+          newNumber = smallestNumber + Math.floor(Math.random() * 10) + 1;
+        }
+        
+        numbersArray.push(newNumber);
+      }
 
+      // Đảm bảo smallestNumber chỉ xuất hiện một lần
+      const filteredNumbers = numbersArray.filter(num => num !== smallestNumber);
+      filteredNumbers.unshift(smallestNumber); // Đặt smallestNumber ở đầu mảng
+
+      // Tạo vị trí ngẫu nhiên cho các số
+      const distributedNumbers = distributeNumbersEvenly(filteredNumbers, true);
+      
+      // Cập nhật state
+      setFreeNumbers(distributedNumbers);
+      setTargetNumber(smallestNumber);
+      setFoundNumbers([]);
+      return;
+    }
+  
+    // Logic hiện tại cho các chế độ khác
+    const uniqueNumbers = new Set();
+  
     // Đảm bảo số nhỏ nhất được tạo trước
     let smallestNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
     uniqueNumbers.add(smallestNumber);
-
+  
     // Sinh các số cơ bản trong phạm vi (không trùng với số nhỏ nhất)
     while (uniqueNumbers.size < maxNumbers) {
       const newNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
       uniqueNumbers.add(newNumber);
     }
-
+  
     // Chuyển set thành mảng để dễ thao tác
     const numbersArray = Array.from(uniqueNumbers);
-
+  
     // Đảm bảo smallestNumber là số nhỏ nhất
     smallestNumber = Math.min(...numbersArray);
-
+  
     // Tạo vị trí ngẫu nhiên cho các số
     const distributedNumbers = distributeNumbersEvenly(numbersArray, false);
-
+  
     // Cập nhật state
     setFreeNumbers(distributedNumbers);
     setTargetNumber(smallestNumber);
     setFoundNumbers([]);
-  }, [settings]);
+  }, [settings, mode]);
 
   // Khởi tạo số dựa trên type, chỉ chạy một lần
   useEffect(() => {

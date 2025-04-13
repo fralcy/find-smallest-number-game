@@ -117,6 +117,7 @@ export const useGameEvents = (
     isProcessingClick.current = true;
     
     const difficulty = getDifficulty();
+    const isZenMode = mode === 'zen';
     
     // Kiểm tra nếu vị trí này đã được tìm thấy
     if (foundIndices.includes(index)) {
@@ -134,13 +135,12 @@ export const useGameEvents = (
       // Số sai
       handleWrongNumber(number);
       
-      // Hành vi xáo trộn khi trả lời sai tùy thuộc vào độ khó
-      if (difficulty === DIFFICULTY_LEVELS.HARD) {
+      // Trong Zen mode, không cần xáo trộn khi chọn sai
+      if (!isZenMode && difficulty === DIFFICULTY_LEVELS.HARD) {
         // Hard mode: xáo trộn ngay lập tức
         shuffleGridNumbers();
         setFoundIndices([]); // Reset foundIndices khi xáo trộn
       }
-      // Đã loại bỏ việc xáo trộn ở độ khó NORMAL khi chọn sai nhiều lần liên tiếp
     }
     
     // Reset processing flag sau 100ms để tránh click dồn
@@ -156,6 +156,7 @@ export const useGameEvents = (
     isProcessingClick.current = true;
     
     const difficulty = getDifficulty();
+    const isZenMode = mode === 'zen';
     
     // Kiểm tra nếu vị trí này đã được tìm thấy
     if (foundIndices.includes(index)) {
@@ -173,13 +174,12 @@ export const useGameEvents = (
       // Số sai
       handleWrongNumber(numberObj.value);
       
-      // Hành vi xáo trộn khi trả lời sai tùy thuộc vào độ khó
-      if (difficulty === DIFFICULTY_LEVELS.HARD) {
+      // Trong Zen mode, không cần xáo trộn khi chọn sai
+      if (!isZenMode && difficulty === DIFFICULTY_LEVELS.HARD) {
         // Hard mode: xáo trộn ngay lập tức
         shuffleFreeNumbers();
         setFoundIndices([]); // Reset foundIndices khi xáo trộn
       }
-      // Đã loại bỏ việc xáo trộn ở độ khó NORMAL khi chọn sai nhiều lần liên tiếp
     }
     
     // Reset processing flag sau 100ms để tránh click dồn

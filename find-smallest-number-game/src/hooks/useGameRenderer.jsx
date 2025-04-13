@@ -28,6 +28,7 @@ export const useGameRenderer = (
   // Render grid mode
   const renderGridMode = () => {
     const difficulty = getDifficulty();
+    const isZenMode = mode === 'zen';
     const gridSizeClass = 
       difficulty === DIFFICULTY_LEVELS.EASY 
         ? styles.easyGrid 
@@ -41,7 +42,8 @@ export const useGameRenderer = (
           className={`${styles.grid} ${gridSizeClass}`}
           style={{ 
             gridTemplateColumns: `repeat(${settings.gridSize}, 1fr)`,
-            gridTemplateRows: `repeat(${settings.gridSize}, 1fr)`
+            gridTemplateRows: `repeat(${settings.gridSize}, 1fr)`,
+            animation: isZenMode ? 'none' : undefined // Loại bỏ hiệu ứng rung lắc trong Zen mode
           }}
         >
           {gridNumbers.map((number, index) => (
@@ -52,6 +54,7 @@ export const useGameRenderer = (
               isFound={foundIndices.includes(index)}
               onClick={() => handleGridNumberClick(number, index)}
               difficulty={difficulty}
+              isZenMode={isZenMode}
             />
           ))}
         </div>
@@ -62,6 +65,7 @@ export const useGameRenderer = (
   // Render free mode
   const renderFreeMode = () => {
     const difficulty = getDifficulty();
+    const isZenMode = mode === 'zen';
     const containerClass = 
       difficulty === DIFFICULTY_LEVELS.EASY 
         ? styles.easyFreeContainer 
@@ -70,7 +74,12 @@ export const useGameRenderer = (
           : styles.hardFreeContainer;
     
     return (
-      <div className={`${styles.freeContainer} ${containerClass}`}>
+      <div 
+        className={`${styles.freeContainer} ${containerClass}`}
+        style={{
+          animation: isZenMode ? 'none' : undefined // Loại bỏ hiệu ứng rung lắc trong Zen mode
+        }}
+      >
         {freeNumbers.map((numberObj, index) => (
           <div
             key={index}
@@ -86,6 +95,7 @@ export const useGameRenderer = (
               isFound={foundIndices.includes(index)}
               onClick={() => handleFreeNumberClick(numberObj, index)}
               difficulty={difficulty}
+              isZenMode={isZenMode}
             />
           </div>
         ))}
