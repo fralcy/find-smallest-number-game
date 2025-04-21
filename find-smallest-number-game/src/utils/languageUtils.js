@@ -92,6 +92,7 @@
       'noHistoryYet': 'Chưa có lịch sử chơi',
       'sortByDate': 'Sắp xếp theo ngày',
       'sortByScore': 'Sắp xếp theo điểm',
+      'loading': 'Đang tải',
     },
     en: {
       // Common
@@ -185,6 +186,7 @@
       'noHistoryYet': 'No play history yet',
       'sortByDate': 'Sort by date',
       'sortByScore': 'Sort by score',
+      'loading': 'Loading',
     }
   };
   

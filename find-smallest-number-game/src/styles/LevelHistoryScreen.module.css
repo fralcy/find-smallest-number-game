@@ -50,6 +50,11 @@
   font-size: 1.5rem;
   color: #4A90E2;
   cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.backButton:hover {
+  transform: scale(1.1);
 }
 
 .title {
@@ -121,6 +126,9 @@
   background-color: #4A90E2;
   color: white;
   font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .headerCell {
@@ -129,6 +137,7 @@
   text-align: center;
   cursor: pointer;
   transition: background-color 0.2s;
+  user-select: none;
 }
 
 .headerCell:hover {
@@ -142,26 +151,42 @@
 .tableBody {
   max-height: 250px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .tableRow {
   display: flex;
   border-bottom: 1px solid #E0E0E0;
   transition: background-color 0.2s;
+  background-color: rgba(255, 255, 255, 0.9); /* Đảm bảo nền rõ ràng */
+}
+
+.tableRow:nth-child(odd) {
+  background-color: rgba(245, 245, 245, 0.9); /* Màu xám nhạt cho hàng lẻ */
 }
 
 .tableRow:hover {
-  background-color: #F5F5F5;
+  background-color: rgba(230, 240, 250, 0.9); /* Màu xanh nhạt khi hover */
 }
 
 .tableRow:last-child {
   border-bottom: none;
 }
 
+/* Thêm style cho hàng hoàn thành và thất bại */
+.completedRow {
+  border-left: 3px solid #27AE60;
+}
+
+.failedRow {
+  border-left: 3px solid #E74C3C;
+}
+
 .cell {
   flex: 1;
   padding: 10px;
   text-align: center;
+  color: #333333; /* Đảm bảo màu chữ đậm để dễ đọc */
 }
 
 .starIcon {
@@ -174,6 +199,20 @@
   text-align: center;
   color: #757575;
   font-style: italic;
+}
+
+.loadingState {
+  padding: 30px;
+  text-align: center;
+  color: #4A90E2;
+  font-style: italic;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }
 
 /* Scrollbar styling */
@@ -214,5 +253,9 @@
   
   .tableBody {
     max-height: 200px;
+  }
+  
+  .title {
+    font-size: 1.4rem;
   }
 }

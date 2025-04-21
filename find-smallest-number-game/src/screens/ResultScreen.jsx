@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/ResultScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
@@ -17,6 +17,9 @@ const ResultScreen = () => {
     freeLevels, 
     saveGameResult  // Thêm saveGameResult từ context
   } = useGameContext();
+  
+  // State để theo dõi đã lưu kết quả hay chưa
+  const [savedResult, setSavedResult] = useState(false);
   
   // Get data from location state
   const { 
@@ -46,21 +49,36 @@ const ResultScreen = () => {
   
   // Lưu kết quả game vào lịch sử khi kết thúc game
   useEffect(() => {
-    // Chỉ lưu kết quả cho campaign mode
-    if (mode === 'campaign' && level && location.state) {
+    // Chỉ lưu kết quả cho campaign mode và chỉ lưu một lần
+    if (mode === 'campaign' && level && location.state && !savedResult) {
+      // Đánh dấu đã lưu để tránh lưu nhiều lần
+      setSavedResult(true);
+
       // Tạo object kết quả
       const gameResult = {
         score,
         usedTime,
         timeRemaining,
         stars,
-        outcome
+        outcome,
       };
-      
+
       // Lưu kết quả vào lịch sử
       saveGameResult(type, level, gameResult);
     }
-  }, [type, mode, level, score, usedTime, timeRemaining, stars, outcome, saveGameResult, location.state]);
+  }, [
+    mode,
+    level,
+    location.state,
+    savedResult,
+    type,
+    score,
+    usedTime,
+    timeRemaining,
+    stars,
+    outcome,
+    saveGameResult,
+  ]);
   
   // Phát âm thanh tương ứng khi hiển thị kết quả
   useEffect(() => {
@@ -96,6 +114,7 @@ const ResultScreen = () => {
   
   // Handle Replay button - replays the same level/game
   const handleReplay = () => {
+    audioManager.play('button');
     const settings = location.state?.gameSettings || getGameSettings(type, mode, level);
 
     navigate(`/game/${type}/${mode}/play`, { 
@@ -109,6 +128,7 @@ const ResultScreen = () => {
   
   // Handle Continue button - only for campaign mode, goes to next level
   const handleContinue = () => {
+    audioManager.play('button');
     if (mode === 'campaign') {
       const nextLevel = level + 1;
       const settings = getGameSettings(type, mode, nextLevel);

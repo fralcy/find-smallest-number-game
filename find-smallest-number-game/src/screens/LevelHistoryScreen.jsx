@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from '../styles/LevelHistoryScreen.module.css';
 import { useGameContext } from '../contexts/GameContext';
@@ -16,14 +16,17 @@ const LevelHistoryScreen = () => {
   } = useGameContext();
   
   const [history, setHistory] = useState([]);
-  const [sortBy, setSortBy] = useState('timestamp'); // 'timestamp' hoặc 'score'
+  const [sortBy, setSortBy] = useState('timestamp'); // 'timestamp', 'score', 'timeUsed' hoặc 'stars'
   const [sortDirection, setSortDirection] = useState('desc'); // 'asc' hoặc 'desc'
   const [highestScore, setHighestScore] = useState(0);
   const [maxStars, setMaxStars] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Lấy ID level đã được chuyển đổi thành số
+  const levelIdNumber = parseInt(levelId, 10);
   
   useEffect(() => {
-    // Chuyển đổi levelId từ string sang number
-    const levelIdNumber = parseInt(levelId, 10);
+    setIsLoading(true);
     
     // Lấy dữ liệu lịch sử
     const levelHistory = getLevelHistory(type, levelIdNumber);
@@ -34,9 +37,13 @@ const LevelHistoryScreen = () => {
     
     // Lấy số sao cao nhất
     setMaxStars(getMaxStarsForLevel(type, levelIdNumber));
-  }, [type, levelId, getLevelHistory, getHighestScoreForLevel, getMaxStarsForLevel]);
+    
+    setIsLoading(false);
+  }, [type, levelIdNumber, getLevelHistory, getHighestScoreForLevel, getMaxStarsForLevel]);
   
   const handleSort = (field) => {
+    audioManager.play('button');
+    
     if (sortBy === field) {
       // Đổi hướng sắp xếp
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -47,17 +54,27 @@ const LevelHistoryScreen = () => {
     }
   };
   
-  const sortedHistory = [...history].sort((a, b) => {
-    const multiplier = sortDirection === 'asc' ? 1 : -1;
+  // Sử dụng useMemo để tránh tính toán lại khi không cần thiết
+  const sortedHistory = useMemo(() => {
+    if (!history.length) return [];
     
-    if (sortBy === 'timestamp') {
-      return multiplier * (a.timestamp - b.timestamp);
-    } else if (sortBy === 'score') {
-      return multiplier * (a.score - b.score);
-    }
-    
-    return 0;
-  });
+    return [...history].sort((a, b) => {
+      const multiplier = sortDirection === 'asc' ? 1 : -1;
+      
+      switch (sortBy) {
+        case 'timestamp':
+          return multiplier * (a.timestamp - b.timestamp);
+        case 'score':
+          return multiplier * (a.score - b.score);
+        case 'timeUsed':
+          return multiplier * (a.timeUsed - b.timeUsed);
+        case 'stars':
+          return multiplier * ((a.stars || 0) - (b.stars || 0));
+        default:
+          return multiplier * (a.timestamp - b.timestamp);
+      }
+    });
+  }, [history, sortBy, sortDirection]);
   
   const handleBack = () => {
     audioManager.play('button');
@@ -67,13 +84,48 @@ const LevelHistoryScreen = () => {
   // Hàm định dạng thời gian
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleString();
+    
+    // Định dạng ngày giờ theo locale của người dùng
+    const options = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    };
+    
+    return date.toLocaleDateString(undefined, options);
   };
   
   // Tạo tiêu đề trang theo định dạng mới
   const getScreenTitle = () => {
     const modeText = type === 'grid' ? t('gridMode') : t('freeMode');
     return `${modeText} - ${t('level')} ${levelId}`;
+  };
+  
+  // Tạo hoạt ảnh khi chưa có dữ liệu
+  const renderEmptyState = () => {
+    if (isLoading) {
+      return (
+        <div className={styles.loadingState}>
+          {t('loading')}...
+        </div>
+      );
+    }
+    
+    return (
+      <div className={styles.emptyState}>
+        {t('noHistoryYet')}
+      </div>
+    );
+  };
+  
+  // Hiển thị icon sắp xếp
+  const getSortIcon = (field) => {
+    if (sortBy === field) {
+      return sortDirection === 'asc' ? '↑' : '↓';
+    }
+    return null;
   };
   
   return (
@@ -123,27 +175,38 @@ const LevelHistoryScreen = () => {
             <div 
               className={`${styles.headerCell} ${sortBy === 'timestamp' ? styles.sorted : ''}`}
               onClick={() => handleSort('timestamp')}
+              aria-label={t('sortByDate')}
             >
-              {t('date')} {sortBy === 'timestamp' && (sortDirection === 'asc' ? '↑' : '↓')}
+              {t('date')} {getSortIcon('timestamp')}
             </div>
             <div 
               className={`${styles.headerCell} ${sortBy === 'score' ? styles.sorted : ''}`}
               onClick={() => handleSort('score')}
+              aria-label={t('sortByScore')}
             >
-              {t('score')} {sortBy === 'score' && (sortDirection === 'asc' ? '↑' : '↓')}
+              {t('score')} {getSortIcon('score')}
             </div>
-            <div className={styles.headerCell}>
-              {t('time')}
+            <div 
+              className={`${styles.headerCell} ${sortBy === 'timeUsed' ? styles.sorted : ''}`}
+              onClick={() => handleSort('timeUsed')}
+            >
+              {t('time')} {getSortIcon('timeUsed')}
             </div>
-            <div className={styles.headerCell}>
-              {t('stars')}
+            <div 
+              className={`${styles.headerCell} ${sortBy === 'stars' ? styles.sorted : ''}`}
+              onClick={() => handleSort('stars')}
+            >
+              {t('stars')} {getSortIcon('stars')}
             </div>
           </div>
           
           <div className={styles.tableBody}>
             {sortedHistory.length > 0 ? (
               sortedHistory.map((item, index) => (
-                <div key={index} className={styles.tableRow}>
+                <div 
+                  key={index} 
+                  className={`${styles.tableRow} ${item.completed ? styles.completedRow : styles.failedRow}`}
+                >
                   <div className={styles.cell}>
                     {formatDate(item.timestamp)}
                   </div>
@@ -161,9 +224,7 @@ const LevelHistoryScreen = () => {
                 </div>
               ))
             ) : (
-              <div className={styles.emptyState}>
-                {t('noHistoryYet')}
-              </div>
+              renderEmptyState()
             )}
           </div>
         </div>

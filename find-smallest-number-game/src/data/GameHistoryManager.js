@@ -124,57 +124,99 @@ const saveHighScore = (type, mode, score) => {
 
 // Hàm lưu kết quả game vào lịch sử
 const saveGameResult = (type, levelId, result) => {
+  // Xây dựng key cho localStorage
   const key = `${type}_${levelId}`;
-  let history = localStorage.getItem(`${STORAGE_KEYS.LEVEL_HISTORY}_${key}`);
-  
-  if (history) {
+  const storageKey = `${STORAGE_KEYS.LEVEL_HISTORY}_${key}`;
+
+  // Lấy lịch sử hiện tại từ localStorage
+  let history = [];
+  const storedHistory = localStorage.getItem(storageKey);
+
+  if (storedHistory) {
     try {
-      history = JSON.parse(history);
+      history = JSON.parse(storedHistory);
+
+      // Kiểm tra xem dữ liệu đã parse có phải là mảng không
+      if (!Array.isArray(history)) {
+        console.error('History data is not an array, resetting');
+        history = [];
+      }
     } catch (error) {
       console.error('Error parsing level history:', error);
       history = [];
     }
-  } else {
-    history = [];
   }
-  
-  // Thêm kết quả mới
+
+  // Tạo kết quả mới
   const newResult = {
     timestamp: Date.now(),
     score: result.score || 0,
     timeUsed: result.usedTime || 0,
     timeRemaining: result.timeRemaining || 0,
     stars: result.stars || 0,
-    completed: result.outcome === 'finish'
+    completed: result.outcome === 'finish',
   };
-  
-  // Thêm vào đầu mảng để dễ lấy ra kết quả mới nhất
-  history.unshift(newResult);
-  
-  // Giới hạn 20 kết quả gần nhất
-  if (history.length > 20) {
-    history = history.slice(0, 20);
+
+  // Kiểm tra xem kết quả này đã được lưu chưa
+  const isDuplicate = history.some(
+    (item) =>
+      item.score === newResult.score &&
+      item.timeUsed === newResult.timeUsed &&
+      item.timeRemaining === newResult.timeRemaining &&
+      item.stars === newResult.stars &&
+      Math.abs(item.timestamp - newResult.timestamp) < 1000 // Kiểm tra timestamp gần nhau
+  );
+
+  // Chỉ thêm vào nếu chưa có bản ghi tương tự
+  if (!isDuplicate) {
+    // Thêm vào đầu mảng để dễ lấy ra kết quả mới nhất
+    history.unshift(newResult);
+
+    // Giới hạn 20 kết quả gần nhất
+    if (history.length > 20) {
+      history = history.slice(0, 20);
+    }
+
+    // Lưu vào localStorage
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(history));
+    } catch (error) {
+      console.error('Error saving game result:', error);
+    }
+  } else {
+    console.log('Skipping duplicate entry');
   }
-  
-  localStorage.setItem(`${STORAGE_KEYS.LEVEL_HISTORY}_${key}`, JSON.stringify(history));
-  
+
   return newResult;
 };
 
 // Hàm lấy lịch sử của level
 const getLevelHistory = (type, levelId) => {
+  // Xây dựng key cho localStorage
   const key = `${type}_${levelId}`;
-  const history = localStorage.getItem(`${STORAGE_KEYS.LEVEL_HISTORY}_${key}`);
+  const storageKey = `${STORAGE_KEYS.LEVEL_HISTORY}_${key}`;
   
-  if (history) {
+  // Lấy dữ liệu từ localStorage
+  const storedHistory = localStorage.getItem(storageKey);
+  
+  if (storedHistory) {
     try {
-      return JSON.parse(history);
+      const parsedHistory = JSON.parse(storedHistory);
+      
+      // Kiểm tra xem dữ liệu đã parse có phải là mảng không
+      if (!Array.isArray(parsedHistory)) {
+        console.error('History data is not an array, returning empty array');
+        return [];
+      }
+      
+      return parsedHistory;
     } catch (error) {
       console.error('Error parsing level history:', error);
       return [];
     }
   }
   
+  // Nếu không có dữ liệu hoặc có lỗi, trả về mảng rỗng
   return [];
 };
 
