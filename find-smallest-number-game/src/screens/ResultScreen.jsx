@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/ResultScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
@@ -15,11 +15,11 @@ const ResultScreen = () => {
     getGameSettings, 
     gridLevels, 
     freeLevels, 
-    saveGameResult  // Thêm saveGameResult từ context
+    saveGameResult
   } = useGameContext();
   
-  // State để theo dõi đã lưu kết quả hay chưa
-  const [savedResult, setSavedResult] = useState(false);
+  // Dùng useRef để theo dõi đã lưu kết quả hay chưa
+  const resultSaved = useRef(false);
   
   // Get data from location state
   const { 
@@ -47,12 +47,12 @@ const ResultScreen = () => {
     }
   }, [location, navigate]);
   
-  // Lưu kết quả game vào lịch sử khi kết thúc game
+  // Lưu kết quả game vào lịch sử khi kết thúc game (chỉ một lần duy nhất)
   useEffect(() => {
-    // Chỉ lưu kết quả cho campaign mode và chỉ lưu một lần
-    if (mode === 'campaign' && level && location.state && !savedResult) {
+    // Chỉ lưu kết quả cho campaign mode và chỉ lưu một lần duy nhất
+    if (mode === 'campaign' && level && location.state && !resultSaved.current) {
       // Đánh dấu đã lưu để tránh lưu nhiều lần
-      setSavedResult(true);
+      resultSaved.current = true;
 
       // Tạo object kết quả
       const gameResult = {
@@ -61,6 +61,8 @@ const ResultScreen = () => {
         timeRemaining,
         stars,
         outcome,
+        // Thêm một trường unique để đảm bảo không trùng lặp
+        uniqueId: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       };
 
       // Lưu kết quả vào lịch sử
@@ -70,7 +72,6 @@ const ResultScreen = () => {
     mode,
     level,
     location.state,
-    savedResult,
     type,
     score,
     usedTime,

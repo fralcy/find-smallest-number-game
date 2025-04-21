@@ -148,24 +148,37 @@ const saveGameResult = (type, levelId, result) => {
   }
 
   // Tạo kết quả mới
+  const timestamp = Date.now();
   const newResult = {
-    timestamp: Date.now(),
+    timestamp: timestamp,
     score: result.score || 0,
     timeUsed: result.usedTime || 0,
     timeRemaining: result.timeRemaining || 0,
     stars: result.stars || 0,
     completed: result.outcome === 'finish',
+    uniqueId: result.uniqueId || `${timestamp}-${Math.random().toString(36).substr(2, 9)}`
   };
 
-  // Kiểm tra xem kết quả này đã được lưu chưa
-  const isDuplicate = history.some(
-    (item) =>
-      item.score === newResult.score &&
-      item.timeUsed === newResult.timeUsed &&
-      item.timeRemaining === newResult.timeRemaining &&
-      item.stars === newResult.stars &&
-      Math.abs(item.timestamp - newResult.timestamp) < 1000 // Kiểm tra timestamp gần nhau
-  );
+  // Kiểm tra xem kết quả này đã được lưu chưa - kiểm tra chặt chẽ hơn
+  const isDuplicate = history.some(item => {
+    // Nếu có cùng uniqueId, chắc chắn là trùng lặp
+    if (item.uniqueId && newResult.uniqueId && item.uniqueId === newResult.uniqueId) {
+      return true;
+    }
+    
+    // Kiểm tra các thông số quan trọng
+    const sameScore = item.score === newResult.score;
+    const sameTimeUsed = item.timeUsed === newResult.timeUsed;
+    const sameTimeRemaining = item.timeRemaining === newResult.timeRemaining;
+    const sameStars = item.stars === newResult.stars;
+    const sameCompletion = item.completed === newResult.completed;
+    
+    // Kiểm tra thời gian - nếu thời gian quá gần nhau (trong vòng 5 giây) 
+    // và tất cả các thuộc tính khác đều giống nhau => trùng lặp
+    const timeClose = Math.abs(item.timestamp - timestamp) < 5000; // 5 giây
+    
+    return timeClose && sameScore && sameTimeUsed && sameTimeRemaining && sameStars && sameCompletion;
+  });
 
   // Chỉ thêm vào nếu chưa có bản ghi tương tự
   if (!isDuplicate) {
@@ -183,8 +196,6 @@ const saveGameResult = (type, levelId, result) => {
     } catch (error) {
       console.error('Error saving game result:', error);
     }
-  } else {
-    console.log('Skipping duplicate entry');
   }
 
   return newResult;

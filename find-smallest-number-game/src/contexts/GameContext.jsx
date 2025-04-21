@@ -139,15 +139,34 @@ export const GameProvider = ({ children }) => {
   const saveGameResult = (type, levelId, result) => {
     const savedResult = GameHistoryManager.saveGameResult(type, levelId, result);
     
-    // Cập nhật state
+    // Cập nhật state một cách chính xác hơn
     setLevelHistory(prev => {
       const key = `${type}_${levelId}`;
       const currentHistory = prev[key] || [];
       
-      return {
-        ...prev,
-        [key]: [savedResult, ...currentHistory.slice(0, 19)] // Giữ tối đa 20 kết quả
-      };
+      // Kiểm tra xem kết quả đã tồn tại trong state chưa
+      const resultExists = currentHistory.some(item => {
+        if (savedResult.uniqueId && item.uniqueId) {
+          return item.uniqueId === savedResult.uniqueId;
+        }
+        
+        const timeClose = Math.abs(item.timestamp - savedResult.timestamp) < 2000;
+        const sameScore = item.score === savedResult.score;
+        const sameTimeUsed = item.timeUsed === savedResult.timeUsed;
+        
+        return timeClose && sameScore && sameTimeUsed;
+      });
+      
+      // Chỉ thêm vào nếu chưa tồn tại
+      if (!resultExists) {
+        return {
+          ...prev,
+          [key]: [savedResult, ...currentHistory.slice(0, 19)] // Giữ tối đa 20 kết quả
+        };
+      }
+      
+      // Trả về state cũ nếu kết quả đã tồn tại
+      return prev;
     });
     
     return savedResult;
