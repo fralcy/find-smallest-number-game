@@ -78,6 +78,20 @@
       'normalDescription': 'Số đã chọn sẽ bị ẩn',
       'hardDescription': 'Nhiều số hơn, màu sắc đa dạng và hiệu ứng gây rối',
       'duplicateNumbersWarning': 'Cẩn thận! Có số nằm ngoài khoảng.',
+
+      // Lịch sử chơi
+      'levelHistory': 'Lịch sử chơi',
+      'viewHistory': 'Xem lịch sử',
+      'date': 'Ngày giờ',
+      'highestScore': 'Điểm cao nhất',
+      'highestStars': 'Số sao cao nhất',
+      'time': 'Thời gian',
+      'completionStatus': 'Trạng thái',
+      'completed': 'Hoàn thành',
+      'failed': 'Thất bại',
+      'noHistoryYet': 'Chưa có lịch sử chơi',
+      'sortByDate': 'Sắp xếp theo ngày',
+      'sortByScore': 'Sắp xếp theo điểm',
     },
     en: {
       // Common
@@ -157,6 +171,20 @@
       'normalDescription': 'Found numbers will be hidden',
       'hardDescription': 'More numbers, various colors and distractions',
       'duplicateNumbersWarning': 'Warning! Some numbers are out of range.',
+
+      // Game history
+      'levelHistory': 'Play History',
+      'viewHistory': 'View History',
+      'date': 'Date & Time',
+      'highestScore': 'Highest Score',
+      'highestStars': 'Highest Stars',
+      'time': 'Time',
+      'completionStatus': 'Status',
+      'completed': 'Completed',
+      'failed': 'Failed',
+      'noHistoryYet': 'No play history yet',
+      'sortByDate': 'Sort by date',
+      'sortByScore': 'Sort by score',
     }
   };
   

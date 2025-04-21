@@ -5,7 +5,8 @@ import { gridLevelsData, freeLevelsData } from './CampaignLevelsData';
 const STORAGE_KEYS = {
   GRID_LEVELS: 'campaign_levels_grid',
   FREE_LEVELS: 'campaign_levels_free',
-  HIGH_SCORES: 'highScores'
+  HIGH_SCORES: 'highScores',
+  LEVEL_HISTORY: 'level_history'
 };
 
 // Hàm khởi tạo dữ liệu mặc định
@@ -85,6 +86,23 @@ const resetProgress = (type = null) => {
     const defaultFreeLevels = initializeLevels('free');
     saveProgress('free', defaultFreeLevels);
   }
+  
+  // Thêm reset lịch sử level khi reset tiến trình
+  if (!type) {
+    // Xóa tất cả lịch sử
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith(STORAGE_KEYS.LEVEL_HISTORY)) {
+        localStorage.removeItem(key);
+      }
+    });
+  } else {
+    // Xóa lịch sử của loại level cụ thể
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith(`${STORAGE_KEYS.LEVEL_HISTORY}_${type}`)) {
+        localStorage.removeItem(key);
+      }
+    });
+  }
 };
 
 // Hàm tải điểm cao
@@ -104,6 +122,88 @@ const saveHighScore = (type, mode, score) => {
   }
 };
 
+// Hàm lưu kết quả game vào lịch sử
+const saveGameResult = (type, levelId, result) => {
+  const key = `${type}_${levelId}`;
+  let history = localStorage.getItem(`${STORAGE_KEYS.LEVEL_HISTORY}_${key}`);
+  
+  if (history) {
+    try {
+      history = JSON.parse(history);
+    } catch (error) {
+      console.error('Error parsing level history:', error);
+      history = [];
+    }
+  } else {
+    history = [];
+  }
+  
+  // Thêm kết quả mới
+  const newResult = {
+    timestamp: Date.now(),
+    score: result.score || 0,
+    timeUsed: result.usedTime || 0,
+    timeRemaining: result.timeRemaining || 0,
+    stars: result.stars || 0,
+    completed: result.outcome === 'finish'
+  };
+  
+  // Thêm vào đầu mảng để dễ lấy ra kết quả mới nhất
+  history.unshift(newResult);
+  
+  // Giới hạn 20 kết quả gần nhất
+  if (history.length > 20) {
+    history = history.slice(0, 20);
+  }
+  
+  localStorage.setItem(`${STORAGE_KEYS.LEVEL_HISTORY}_${key}`, JSON.stringify(history));
+  
+  return newResult;
+};
+
+// Hàm lấy lịch sử của level
+const getLevelHistory = (type, levelId) => {
+  const key = `${type}_${levelId}`;
+  const history = localStorage.getItem(`${STORAGE_KEYS.LEVEL_HISTORY}_${key}`);
+  
+  if (history) {
+    try {
+      return JSON.parse(history);
+    } catch (error) {
+      console.error('Error parsing level history:', error);
+      return [];
+    }
+  }
+  
+  return [];
+};
+
+// Hàm lấy điểm cao nhất của level
+const getHighestScoreForLevel = (type, levelId) => {
+  const history = getLevelHistory(type, levelId);
+  
+  if (history.length === 0) return 0;
+  
+  // Lọc các kết quả đã hoàn thành và lấy điểm cao nhất
+  const completedResults = history.filter(item => item.completed);
+  if (completedResults.length === 0) return 0;
+  
+  return Math.max(...completedResults.map(item => item.score));
+};
+
+// Hàm lấy số sao cao nhất của level
+const getMaxStarsForLevel = (type, levelId) => {
+  const history = getLevelHistory(type, levelId);
+  
+  if (history.length === 0) return 0;
+  
+  // Lọc các kết quả đã hoàn thành và lấy số sao cao nhất
+  const completedResults = history.filter(item => item.completed);
+  if (completedResults.length === 0) return 0;
+  
+  return Math.max(...completedResults.map(item => item.stars || 0));
+};
+
 // Export các hàm tiện ích
 const GameHistoryManager = {
   loadProgress,
@@ -111,7 +211,11 @@ const GameHistoryManager = {
   updateLevelProgress,
   resetProgress,
   loadHighScores,
-  saveHighScore
+  saveHighScore,
+  saveGameResult,
+  getLevelHistory,
+  getHighestScoreForLevel,
+  getMaxStarsForLevel
 };
 
 export default GameHistoryManager;

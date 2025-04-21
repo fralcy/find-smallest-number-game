@@ -28,6 +28,9 @@ export const GameProvider = ({ children }) => {
   const [gridLevels, setGridLevels] = useState([]);
   const [freeLevels, setFreeLevels] = useState([]);
   const [highScores, setHighScores] = useState({});
+  
+  // THÊM MỚI: State cho lịch sử level
+  const [levelHistory, setLevelHistory] = useState({});
 
   // Khi khởi tạo context
   useEffect(() => {
@@ -127,6 +130,58 @@ export const GameProvider = ({ children }) => {
     if (!type) {
       setHighScores(GameHistoryManager.loadHighScores());
     }
+    
+    // Cập nhật state khi reset lịch sử
+    setLevelHistory({});
+  };
+
+  // Lưu kết quả game vào lịch sử
+  const saveGameResult = (type, levelId, result) => {
+    const savedResult = GameHistoryManager.saveGameResult(type, levelId, result);
+    
+    // Cập nhật state
+    setLevelHistory(prev => {
+      const key = `${type}_${levelId}`;
+      const currentHistory = prev[key] || [];
+      
+      return {
+        ...prev,
+        [key]: [savedResult, ...currentHistory.slice(0, 19)] // Giữ tối đa 20 kết quả
+      };
+    });
+    
+    return savedResult;
+  };
+  
+  // Lấy lịch sử của level
+  const getLevelHistory = (type, levelId) => {
+    const key = `${type}_${levelId}`;
+    
+    // Kiểm tra xem đã có trong state chưa
+    if (levelHistory[key]) {
+      return levelHistory[key];
+    }
+    
+    // Nếu chưa có, load từ localStorage và cập nhật state
+    const history = GameHistoryManager.getLevelHistory(type, levelId);
+    
+    // Cập nhật state
+    setLevelHistory(prev => ({
+      ...prev,
+      [key]: history
+    }));
+    
+    return history;
+  };
+  
+  // Lấy điểm cao nhất của level
+  const getHighestScoreForLevel = (type, levelId) => {
+    return GameHistoryManager.getHighestScoreForLevel(type, levelId);
+  };
+  
+  // Lấy số sao cao nhất của level
+  const getMaxStarsForLevel = (type, levelId) => {
+    return GameHistoryManager.getMaxStarsForLevel(type, levelId);
   };
 
   // Lấy độ khó cho mode và level hiện tại
@@ -260,7 +315,12 @@ export const GameProvider = ({ children }) => {
         saveHighScore,
         getGameSettings,
         saveCustomSettings,
-        audioManager
+        audioManager,
+        // THÊM MỚI: Export các phương thức mới
+        saveGameResult,
+        getLevelHistory,
+        getHighestScoreForLevel,
+        getMaxStarsForLevel
       }}
     >
       {children}
