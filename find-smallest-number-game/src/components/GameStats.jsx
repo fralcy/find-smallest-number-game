@@ -22,7 +22,7 @@ const GameStats = ({
       {/* Row 1: Score */}
       <div className={styles.row}>
         <div className={styles.scoreContainer}>
-          <span className={styles.scoreValue}>{t('score')} {score}</span>
+          <span className={styles.scoreValue}>{t('score')+":"} {score}</span>
         </div>
       </div>
 
@@ -30,7 +30,7 @@ const GameStats = ({
       <div className={styles.row}>
         {!isZenMode ? (
           <div className={styles.timeContainer}>
-            <span className={styles.timeValue}>{t('time')} {formatTime(timeLeft)}</span>
+            <span className={styles.timeValue}>{t('time')+":"} {formatTime(timeLeft)}</span>
           </div>
         ) : (
           <div className={styles.livesContainer}>

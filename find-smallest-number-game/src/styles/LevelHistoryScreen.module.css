@@ -66,7 +66,7 @@
 
 .contentContainer {
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
   overflow: hidden;
@@ -144,6 +144,19 @@
   background-color: #3A80D2;
 }
 
+.headerCell:nth-child(1) {
+  flex: 2.5;
+}
+
+.headerCell:nth-child(2), 
+.headerCell:nth-child(3) {
+  flex: 1;
+}
+
+.headerCell:nth-child(4) {
+  flex: 0.8;
+}
+
 .sorted {
   background-color: #3A80D2;
 }
@@ -187,6 +200,19 @@
   padding: 10px;
   text-align: center;
   color: #333333; /* Đảm bảo màu chữ đậm để dễ đọc */
+}
+
+.cell:nth-child(1) {
+  flex: 2.5;
+}
+
+.cell:nth-child(2), 
+.cell:nth-child(3) {
+  flex: 1;
+}
+
+.cell:nth-child(4) {
+  flex: 0.8;
 }
 
 .starIcon {

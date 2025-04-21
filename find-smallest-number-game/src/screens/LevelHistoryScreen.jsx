@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from '../styles/LevelHistoryScreen.module.css';
 import { useGameContext } from '../contexts/GameContext';
-import { t } from '../utils/languageUtils';
+import { t, getCurrentLanguage } from '../utils/languageUtils';
 import RotateDeviceNotice from './RotateDeviceNotice';
 
 const LevelHistoryScreen = () => {
@@ -81,11 +81,14 @@ const LevelHistoryScreen = () => {
     navigate(`/game/${type}/campaign`);
   };
   
-  // Hàm định dạng thời gian
+  // Hàm định dạng thời gian theo ngôn ngữ của ứng dụng
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     
-    // Định dạng ngày giờ theo locale của người dùng
+    // Lấy ngôn ngữ hiện tại của ứng dụng
+    const currentLanguage = getCurrentLanguage();
+    
+    // Định dạng ngày giờ theo ngôn ngữ của ứng dụng
     const options = { 
       year: 'numeric', 
       month: 'short', 
@@ -94,7 +97,20 @@ const LevelHistoryScreen = () => {
       minute: '2-digit' 
     };
     
-    return date.toLocaleDateString(undefined, options);
+    // Chỉ định rõ locale dựa vào ngôn ngữ của ứng dụng
+    let locale;
+    switch (currentLanguage) {
+      case 'vi':
+        locale = 'vi-VN';
+        break;
+      case 'en':
+        locale = 'en-US';
+        break;
+      default:
+        locale = 'vi-VN'; // Mặc định là tiếng Việt
+    }
+    
+    return date.toLocaleDateString(locale, options);
   };
   
   // Tạo tiêu đề trang theo định dạng mới
@@ -196,7 +212,7 @@ const LevelHistoryScreen = () => {
               className={`${styles.headerCell} ${sortBy === 'stars' ? styles.sorted : ''}`}
               onClick={() => handleSort('stars')}
             >
-              {t('stars')} {getSortIcon('stars')}
+              {t('rating')} {getSortIcon('stars')}
             </div>
           </div>
           
