@@ -9,6 +9,7 @@ import CampaignScreen from './screens/CampaignScreen';
 import CustomScreen from './screens/CustomScreen';
 import GameplayScreen from './screens/GameplayScreen';
 import ResultScreen from './screens/ResultScreen';
+import LevelHistoryScreen from './screens/LevelHistoryScreen';
 import { GameProvider, useGameContext } from './contexts/GameContext';
 import { setLanguage } from './utils/languageUtils';
 import './App.css';
@@ -58,6 +59,7 @@ const AppContent = () => {
         <Route path="/game/:type/custom" element={<CustomScreen />} />
         <Route path="/game/:type/:mode/play" element={<GameplayScreen />} />
         <Route path="/result" element={<ResultScreen />} />
+        <Route path="/game/:type/level/:levelId/history" element={<LevelHistoryScreen />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
