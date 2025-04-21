@@ -50,6 +50,12 @@ const CampaignScreen = () => {
     });
   };
 
+  // Hàm xử lý click nút lịch sử
+  const handleViewHistory = (levelId) => {
+    audioManager.play('button');
+    navigate(`/game/${type}/level/${levelId}/history`);
+  };
+
   const handleBack = () => {
     audioManager.play('button');
     navigate(`/game-mode/${type}`);
@@ -104,6 +110,19 @@ const CampaignScreen = () => {
                 <span className={styles.levelInfo}>
                   {type === 'grid' ? `${level.gridSize}x${level.gridSize}` : `${level.maxNumbers} nums`}
                 </span>
+                
+                {level.unlocked && (
+                  <button 
+                    className={styles.historyButton}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Ngăn chặn sự kiện click lan ra card
+                      handleViewHistory(level.id);
+                    }}
+                    title={t('viewHistory')}
+                  >
+                    <span className={styles.historyIcon}>⏱️</span>
+                  </button>
+                )}
                 
                 {!level.unlocked && <div className={styles.lockIcon}>🔒</div>}
               </div>

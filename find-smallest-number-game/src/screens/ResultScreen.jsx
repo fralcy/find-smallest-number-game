@@ -10,7 +10,13 @@ import { getDifficultyName, getDifficultyColor } from '../utils/difficultyUtils'
 const ResultScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { audioManager, getGameSettings, gridLevels, freeLevels } = useGameContext();
+  const { 
+    audioManager, 
+    getGameSettings, 
+    gridLevels, 
+    freeLevels, 
+    saveGameResult  // Thêm saveGameResult từ context
+  } = useGameContext();
   
   // Get data from location state
   const { 
@@ -37,6 +43,24 @@ const ResultScreen = () => {
       navigate('/');
     }
   }, [location, navigate]);
+  
+  // Lưu kết quả game vào lịch sử khi kết thúc game
+  useEffect(() => {
+    // Chỉ lưu kết quả cho campaign mode
+    if (mode === 'campaign' && level && location.state) {
+      // Tạo object kết quả
+      const gameResult = {
+        score,
+        usedTime,
+        timeRemaining,
+        stars,
+        outcome
+      };
+      
+      // Lưu kết quả vào lịch sử
+      saveGameResult(type, level, gameResult);
+    }
+  }, [type, mode, level, score, usedTime, timeRemaining, stars, outcome, saveGameResult, location.state]);
   
   // Phát âm thanh tương ứng khi hiển thị kết quả
   useEffect(() => {
