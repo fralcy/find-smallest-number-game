@@ -2,6 +2,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-user-select: none;  /* Safari */
+  -ms-user-select: none;      /* IE 10 và Edge */
+  user-select: none;          /* Standard - Ngăn chọn text */
 }
 
 html, body {
@@ -36,6 +39,13 @@ button {
 
 button:focus {
   outline: none;
+}
+
+/* Cho phép chọn text trong input và textarea */
+input, textarea {
+  -webkit-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
 }
 
 /* Disable default styling */
