@@ -2,15 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/game-icon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/find-smallest-number-game/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Find the Smallest Number</title>
-    <meta name="theme-color" content="#4A90E2">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#4A90E2" />
+    <meta name="description" content="Find the smallest number - Brain training game" />
+    <meta name="description" lang="vi" content="Tìm số nhỏ nhất - Game rèn luyện trí não" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/find-smallest-number-game/public/pwa-192x192.png" sizes="192x192" />
+    <link rel="mask-icon" href="/find-smallest-number-game/public/favicon.svg" color="#4A90E2" />
+    <title>Find the smallest number</title>
+    <link rel="alternate" hreflang="vi" href="/find-smallest-number-game/" />
+    <link rel="alternate" hreflang="en" href="/find-smallest-number-game/" />
   </head>
   <body>
     <div id="root"></div>
+    <!-- Script nhỏ để đảm bảo ngôn ngữ được thiết lập ngay trước khi React tải -->
+    <script>
+      // Thiết lập ngôn ngữ ngay lập tức để tránh nhấp nháy
+      (function() {
+        var savedLang = localStorage.getItem('language');
+        if (savedLang) {
+          document.documentElement.lang = savedLang;
+        } else {
+          // Mặc định là tiếng Việt nếu chưa có ngôn ngữ nào được lưu
+          localStorage.setItem('language', 'vi');
+          document.documentElement.lang = 'vi';
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

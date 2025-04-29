@@ -191,31 +191,63 @@
       'loading': 'Loading',
     }
   };
-  
+
   // Lấy ngôn ngữ từ local storage hoặc sử dụng tiếng Việt là mặc định
   let currentLanguage = localStorage.getItem('language') || 'vi';
-  
+
+  // Tạo sự kiện tùy chỉnh cho việc thay đổi ngôn ngữ
+  const languageChangedEvent = new Event('languageChanged');
+
   // Hàm lấy chuỗi dịch
   export const t = (key) => {
     const langData = translations[currentLanguage];
     return langData && langData[key] ? langData[key] : key;
   };
-  
+
   // Hàm đổi ngôn ngữ
   export const setLanguage = (langCode) => {
     if (translations[langCode]) {
       currentLanguage = langCode;
       localStorage.setItem('language', langCode);
+      
+      // Cập nhật lang attribute của thẻ HTML
+      document.documentElement.lang = langCode;
+      
+      // Phát sự kiện thay đổi ngôn ngữ để các component khác biết
+      document.dispatchEvent(languageChangedEvent);
+      
       return true;
     }
     return false;
   };
-  
+
   // Hàm lấy ngôn ngữ hiện tại
   export const getCurrentLanguage = () => {
     return currentLanguage;
   };
-  
+
+  // Khởi tạo ngôn ngữ khi tải trang
+  export const initLanguage = () => {
+    // Lấy ngôn ngữ từ localStorage hoặc sử dụng tiếng Việt là mặc định
+    const savedLanguage = localStorage.getItem('language');
+    
+    // Kiểm tra xem có ngôn ngữ được lưu và hợp lệ không
+    if (savedLanguage && translations[savedLanguage]) {
+      currentLanguage = savedLanguage;
+      
+      // Cập nhật lang attribute của thẻ HTML
+      document.documentElement.lang = savedLanguage;
+    } else {
+      // Nếu không có hoặc không hợp lệ, luôn sử dụng tiếng Việt mặc định
+      currentLanguage = 'vi';
+      localStorage.setItem('language', 'vi');
+      document.documentElement.lang = 'vi';
+    }
+    
+    // Đảm bảo tiêu đề được cập nhật ngay lập tức
+    document.title = t('findSmallestNumber');
+  };
+
   // Danh sách ngôn ngữ hỗ trợ
   export const SUPPORTED_LANGUAGES = [
     { code: 'vi', name: 'Tiếng Việt' },

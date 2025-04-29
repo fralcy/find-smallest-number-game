@@ -52,9 +52,10 @@ const SettingsScreen = () => {
   const handleLanguageChange = (e) => {
     const newLanguage = e.target.value;
     setLanguageState(newLanguage);
-    localStorage.setItem('language', newLanguage);
     
-    // Cập nhật ngôn ngữ trong hệ thống
+    // Sử dụng hàm setLanguage đã được cải tiến
+    // Hàm này sẽ cập nhật localStorage, lang attribute của HTML,
+    // và kích hoạt sự kiện để cập nhật tiêu đề trang
     setLanguage(newLanguage);
     
     // Lưu trong context

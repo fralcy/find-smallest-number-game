@@ -11,7 +11,7 @@ import GameplayScreen from './screens/GameplayScreen';
 import ResultScreen from './screens/ResultScreen';
 import LevelHistoryScreen from './screens/LevelHistoryScreen';
 import { GameProvider, useGameContext } from './contexts/GameContext';
-import { setLanguage } from './utils/languageUtils';
+import { setLanguage, initLanguage } from './utils/languageUtils';
 import './App.css';
 
 // Tạo component để khởi động AudioManager và cài đặt ngôn ngữ
@@ -20,15 +20,8 @@ const AppContent = () => {
 
   // Khởi tạo audio manager và ngôn ngữ khi app loads
   useEffect(() => {
-    // Khôi phục cài đặt ngôn ngữ
-    const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage) {
-      setLanguage(savedLanguage);
-    } else {
-      // Mặc định là tiếng Việt
-      setLanguage('vi');
-      localStorage.setItem('language', 'vi');
-    }
+    // Khởi tạo ngôn ngữ ngay khi ứng dụng chạy
+    initLanguage();
 
     // Đăng ký sự kiện để cho phép phát âm thanh trên tương tác người dùng đầu tiên
     const unlockAudio = () => {
