@@ -17,14 +17,12 @@
   color: #333;
   font-weight: bold;
   font-size: 2rem;
-  margin-bottom: 1rem;
   text-align: center;
 }
 
 .starsContainer {
   display: flex;
   justify-content: center;
-  margin-bottom: 2rem;
   gap: 1rem;
 }
 
@@ -48,7 +46,7 @@
   width: 100%;
   max-width: 350px;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .resultRow {
