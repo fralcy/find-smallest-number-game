@@ -46,11 +46,9 @@
 }
 
 .backButton {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #4A90E2;
-    cursor: pointer;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .title {

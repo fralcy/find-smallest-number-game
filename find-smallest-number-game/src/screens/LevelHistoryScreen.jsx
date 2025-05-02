@@ -4,6 +4,7 @@ import styles from '../styles/LevelHistoryScreen.module.css';
 import { useGameContext } from '../contexts/GameContext';
 import { t, getCurrentLanguage } from '../utils/languageUtils';
 import RotateDeviceNotice from './RotateDeviceNotice';
+import backButtonSvg from '../assets/back-button.svg';
 
 const LevelHistoryScreen = () => {
   const navigate = useNavigate();
@@ -153,7 +154,7 @@ const LevelHistoryScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            {t('back')}
+            <img src={backButtonSvg} alt="Back" width="30" height="30" />
           </button>
         </div>
         <div className={styles.middleSection}>

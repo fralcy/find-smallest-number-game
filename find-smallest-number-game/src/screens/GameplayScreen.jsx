@@ -10,6 +10,7 @@ import { useGameEvents } from '../hooks/useGameEvents';
 import { useNumberGeneration } from '../hooks/useNumberGeneration';
 import { useGameRenderer } from '../hooks/useGameRenderer';
 import { DIFFICULTY_LEVELS } from '../constants/difficulty';
+import pauseButtonSvg from '../assets/pause-button.svg';
 
 const GameplayScreen = () => {
   const { type, mode } = useParams();
@@ -216,7 +217,7 @@ const GameplayScreen = () => {
       <div className={styles.header}>
         <div className={styles.leftSection}>
           <button className={styles.pauseButton} onClick={handlePauseClick}>
-            ⏸️
+            <img src={pauseButtonSvg} alt="Pause" width="35" height="35" />
           </button>
         </div>
         <div className={styles.middleSection}>

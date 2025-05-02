@@ -47,14 +47,7 @@
 .backButton {
   background: none;
   border: none;
-  font-size: 1.5rem;
-  color: #4A90E2;
   cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.backButton:hover {
-  transform: scale(1.1);
 }
 
 .title {

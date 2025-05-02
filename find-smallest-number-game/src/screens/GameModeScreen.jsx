@@ -6,6 +6,7 @@ import gridModeImage from '../assets/grid-mode.png';
 import freeModeImage from '../assets/free-mode.png';
 import { useGameContext } from '../contexts/GameContext';
 import { t } from '../utils/languageUtils';
+import backButtonSvg from '../assets/back-button.svg';
 
 const GameModeScreen = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const GameModeScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            {t('back')}
+            <img src={backButtonSvg} alt="Back" width="30" height="30" />
           </button>
         </div>
         <div className={styles.middleSection}>

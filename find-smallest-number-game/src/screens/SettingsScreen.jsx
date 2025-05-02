@@ -4,6 +4,7 @@ import styles from '../styles/SettingsScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
 import { t, SUPPORTED_LANGUAGES, setLanguage } from '../utils/languageUtils';
+import backButtonSvg from '../assets/back-button.svg';
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ const SettingsScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            {t('back')}
+            <img src={backButtonSvg} alt="Back" width="30" height="30" />
           </button>
         </div>
         <div className={styles.middleSection}>

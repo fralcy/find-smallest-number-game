@@ -6,6 +6,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { t } from '../utils/languageUtils';
 import { DIFFICULTY_LEVELS } from '../constants/difficulty';
 import { getDifficultyName, getDifficultyDescription, getDifficultyColor } from '../utils/difficultyUtils';
+import backButtonSvg from '../assets/back-button.svg';
 
 const CustomScreen = () => {
   const navigate = useNavigate();
@@ -168,7 +169,7 @@ const CustomScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            {t('back')}
+            <img src={backButtonSvg} alt="Back" width="30" height="30" />
           </button>
         </div>
 

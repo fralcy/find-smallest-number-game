@@ -6,6 +6,7 @@ import { useGameContext } from '../contexts/GameContext';
 import { t } from '../utils/languageUtils';
 import { DIFFICULTY_LEVELS } from '../constants/difficulty';
 import { getDifficultyName, getDifficultyDescription } from '../utils/difficultyUtils';
+import backButtonSvg from '../assets/back-button.svg';
 
 const CampaignScreen = () => {
   const navigate = useNavigate();
@@ -80,7 +81,7 @@ const CampaignScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            {t('back')}
+            <img src={backButtonSvg} alt="Back" width="30" height="30" />
           </button>
         </div>
         <div className={styles.middleSection}>

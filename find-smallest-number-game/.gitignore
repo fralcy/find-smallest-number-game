@@ -13,6 +13,8 @@ dist-ssr
 dev-dist
 *.local
 
+sw.js
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

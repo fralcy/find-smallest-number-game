@@ -52,22 +52,15 @@
 }
 
 .pauseButton {
-  background-color: #4A90E2;
-  color: white;
+  background: none;
   border: none;
-  border-radius: 8px;
-  width: 35px;
-  height: 35px;
-  font-size: 1.2rem;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.pauseButton:hover {
-  background-color: #3A80D2;
+  padding: 0;
+  width: 30px;
+  height: 30px;
 }
 
 .instructionText {

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import { useGameContext } from '../contexts/GameContext';
 import { t } from '../utils/languageUtils';
+import backButtonSvg from '../assets/back-button.svg';
 
 const GameModeDetailScreen = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const GameModeDetailScreen = () => {
             className={styles.backButton}
             onClick={handleBack}
           >
-            {t('back')}
+            <img src={backButtonSvg} alt="Back" width="30" height="30" />
           </button>
         </div>
         <div className={styles.middleSection}>
