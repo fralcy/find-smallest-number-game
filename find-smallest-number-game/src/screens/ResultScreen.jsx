@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/ResultScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
@@ -17,6 +17,8 @@ const ResultScreen = () => {
     freeLevels, 
     saveGameResult
   } = useGameContext();
+
+  const [nextLevelUnlocked, setNextLevelUnlocked] = useState(false);
   
   // Dùng useRef để theo dõi đã lưu kết quả hay chưa
   const resultSaved = useRef(false);
@@ -216,6 +218,18 @@ const ResultScreen = () => {
     );
   };
 
+  // Kiểm tra xem level tiếp theo có được mở khóa không
+  useEffect(() => {
+    if (mode === 'campaign' && level < totalLevels) {
+      const nextLevel = level + 1;
+      const levels = type === 'grid' ? gridLevels : freeLevels;
+      const nextLevelData = levels.find(l => l.id === nextLevel);
+      
+      // Kiểm tra xem cấp độ tiếp theo đã được mở khóa chưa
+      setNextLevelUnlocked(nextLevelData && nextLevelData.unlocked);
+    }
+  }, [mode, level, totalLevels, type, gridLevels, freeLevels]);
+
   return (
     <div className={styles.container}>
       <RotateDeviceNotice />
@@ -265,7 +279,7 @@ const ResultScreen = () => {
         </button>
         
         {/* Only show Continue button for campaign mode */}
-        {mode === 'campaign' && level < totalLevels && (
+        {mode === 'campaign' && level < totalLevels && (outcome === 'finish' || nextLevelUnlocked) && (
           <button 
             className={`${styles.actionButton} ${styles.continueButton}`}
             onClick={handleContinue}
