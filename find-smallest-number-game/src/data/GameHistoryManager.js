@@ -188,7 +188,6 @@ const saveGameResult = (type, levelId, result) => {
     timeUsed: result.usedTime || 0,
     timeRemaining: result.timeRemaining || 0,
     stars: result.stars || 0,
-    completed: result.outcome === 'finish' || result.outcome === 'timeout', // Cả finish và timeout đều là completed
     uniqueId: result.uniqueId || `${timestamp}-${Math.random().toString(36).substr(2, 9)}`
   };
 
@@ -204,7 +203,6 @@ const saveGameResult = (type, levelId, result) => {
     const sameTimeUsed = item.timeUsed === newResult.timeUsed;
     const sameTimeRemaining = item.timeRemaining === newResult.timeRemaining;
     const sameStars = item.stars === newResult.stars;
-    const sameCompletion = item.completed === newResult.completed;
     
     // Kiểm tra thời gian - nếu thời gian quá gần nhau (trong vòng 5 giây) 
     // và tất cả các thuộc tính khác đều giống nhau => trùng lặp

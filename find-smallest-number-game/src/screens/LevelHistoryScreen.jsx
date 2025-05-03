@@ -220,7 +220,7 @@ const LevelHistoryScreen = () => {
               sortedHistory.map((item, index) => (
                 <div 
                   key={index} 
-                  className={`${styles.tableRow} ${item.completed ? styles.completedRow : styles.failedRow}`}
+                  className={`${styles.tableRow} ${(item.stars > 0) ? styles.completedRow : styles.failedRow}`}
                 >
                   <div className={styles.cell}>
                     {formatDate(item.timestamp)}
