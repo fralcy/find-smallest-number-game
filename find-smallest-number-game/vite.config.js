@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'game-icon.svg'],
       manifest: {
         name: 'Find the Smallest Number',
@@ -49,6 +49,8 @@ export default defineConfig({
         categories: ['games', 'education', 'entertainment']
       },
       workbox: {
+        clientsClaim: true,
+        skipWaiting: true,
         navigateFallback: '/find-smallest-number-game/index.html',
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
         runtimeCaching: [
