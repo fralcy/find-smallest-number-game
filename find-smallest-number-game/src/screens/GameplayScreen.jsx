@@ -225,18 +225,6 @@ const GameplayScreen = () => {
     }
     return null;
   };
-  
-  // Render distracting warning
-  const renderDistractingWarning = () => {
-    if (distractingWarningVisible && distractingNumbers.length > 0) {
-      return (
-        <div className={styles.distractingWarning}>
-          {t('duplicateNumbersWarning')}
-        </div>
-      );
-    }
-    return null;
-  };
 
   // Get CSS class based on difficulty
   const getDifficultyClass = () => {
@@ -295,7 +283,6 @@ const GameplayScreen = () => {
       </div>
       
       {renderComboText()}
-      {renderDistractingWarning()}
       
       <div className={styles.gameContent}>
         {type === 'grid' ? renderGridMode() : renderFreeMode()}

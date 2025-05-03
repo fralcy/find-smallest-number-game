@@ -109,8 +109,8 @@
 .comboText {
   position: absolute;
   top: 70px;
-  right: 20px; /* Thay đổi từ left thành right và bỏ transform */
-  background-color: #F5A623;
+  right: 20px;
+  background-color: rgba(245, 166, 35, 0.5);
   color: white;
   padding: 5px 15px;
   border-radius: 20px;

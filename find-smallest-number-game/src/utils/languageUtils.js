@@ -77,7 +77,6 @@
       'easyDescription': 'Dễ nhìn, thích hợp cho người mới',
       'normalDescription': 'Số đã chọn sẽ bị ẩn',
       'hardDescription': 'Nhiều số hơn, màu sắc đa dạng và hiệu ứng gây rối',
-      'duplicateNumbersWarning': 'Cẩn thận! Có số nằm ngoài khoảng.',
 
       // Lịch sử chơi
       'levelHistory': 'Lịch sử chơi',
@@ -172,7 +171,6 @@
       'easyDescription': 'Clear visibility, good for beginners',
       'normalDescription': 'Found numbers will be hidden',
       'hardDescription': 'More numbers, various colors and distractions',
-      'duplicateNumbersWarning': 'Warning! Some numbers are out of range.',
 
       // Game history
       'levelHistory': 'Play History',
