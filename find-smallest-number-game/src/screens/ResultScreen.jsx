@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from '../styles/ResultScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
@@ -63,6 +63,7 @@ const ResultScreen = () => {
         timeRemaining,
         stars,
         outcome,
+        completed: outcome === 'finish', // Thêm trường completed dựa vào outcome
         // Thêm một trường unique để đảm bảo không trùng lặp
         uniqueId: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       };
@@ -146,45 +147,20 @@ const ResultScreen = () => {
     }
   };
   
-  // Hiệu chỉnh thuật toán tính sao dựa trên độ khó
-  const calculateStars = () => {
-    if (stars > 0) return stars; // Nếu đã có stars (từ gameState), sử dụng giá trị đó
-    
-    // Các ngưỡng cho số sao dựa vào thời gian còn lại (%)
-    const difficultyThresholds = {
-      [DIFFICULTY_LEVELS.EASY]: {
-        3: 70, // Cần 70% thời gian còn lại để đạt 3 sao ở mức Easy
-        2: 50, // Cần 50% thời gian còn lại để đạt 2 sao ở mức Easy
-        1: 20  // Cần 20% thời gian còn lại để đạt 1 sao ở mức Easy
-      },
-      [DIFFICULTY_LEVELS.NORMAL]: {
-        3: 60, // Cần 60% thời gian còn lại để đạt 3 sao ở mức Normal
-        2: 40, // Cần 40% thời gian còn lại để đạt 2 sao ở mức Normal
-        1: 15  // Cần 15% thời gian còn lại để đạt 1 sao ở mức Normal
-      },
-      [DIFFICULTY_LEVELS.HARD]: {
-        3: 50, // Cần 50% thời gian còn lại để đạt 3 sao ở mức Hard
-        2: 30, // Cần 30% thời gian còn lại để đạt 2 sao ở mức Hard
-        1: 10  // Cần 10% thời gian còn lại để đạt 1 sao ở mức Hard
-      }
-    };
-    
-    const thresholds = difficultyThresholds[difficulty] || difficultyThresholds[DIFFICULTY_LEVELS.NORMAL];
-    
-    // Tính tỷ lệ thời gian còn lại
-    const totalTime = timeRemaining + usedTime;
-    const remainingPercentage = totalTime > 0 ? (timeRemaining / totalTime) * 100 : 0;
-    
-    // Xác định số sao dựa vào ngưỡng
-    if (remainingPercentage >= thresholds[3]) return 3;
-    if (remainingPercentage >= thresholds[2]) return 2;
-    if (remainingPercentage >= thresholds[1]) return 1;
-    return 0;
+  // Render info về điểm số
+  const renderScoreInfo = () => {
+    return (
+      <div className={styles.resultRow}>
+        <span className={styles.resultLabel}>{t('score')}</span>
+        <span className={styles.resultValue}>{score}</span>
+      </div>
+    );
   };
   
   // Render stars based on performance (for campaign mode)
   const renderStars = () => {
-    const numStars = mode === 'campaign' ? calculateStars() : 0;
+    // Sử dụng giá trị stars từ location.state, đã được tính toán trong useGameState
+    const numStars = mode === 'campaign' ? Math.max(0, Math.min(stars, 3)) : 0;
     
     return (
       <div className={styles.starsContainer}>
@@ -209,7 +185,7 @@ const ResultScreen = () => {
       <div className={styles.resultRow}>
         <span className={styles.resultLabel}>{t('difficulty')}</span>
         <span 
-          className={styles.resultValue}
+          className={`${styles.resultValue} ${styles[`difficulty${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`]}`}
           style={{ color: difficultyColor }}
         >
           {difficultyName}
@@ -239,10 +215,7 @@ const ResultScreen = () => {
       {mode === 'campaign' && renderStars()}
       
       <div className={styles.resultsContainer}>
-        <div className={styles.resultRow}>
-          <span className={styles.resultLabel}>{t('score')}</span>
-          <span className={styles.resultValue}>{score}</span>
-        </div>
+        {renderScoreInfo()}
         
         {/* Hiển thị thông tin độ khó */}
         {renderDifficultyInfo()}

@@ -75,15 +75,18 @@
 }
 
 .difficultyEasy {
-  color: #27AE60; /* Xanh lá - dễ */
+  color: #27AE60 !important; /* Xanh lá - dễ */
+  font-weight: bold;
 }
 
 .difficultyNormal {
-  color: #F1C40F; /* Vàng - trung bình */
+  color: #F1C40F !important; /* Vàng - trung bình */
+  font-weight: bold;
 }
 
 .difficultyHard {
-  color: #E74C3C; /* Đỏ - khó */
+  color: #E74C3C !important; /* Đỏ - khó */
+  font-weight: bold;
 }
 
 .buttonsContainer {
