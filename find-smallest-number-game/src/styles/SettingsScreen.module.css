@@ -151,3 +151,53 @@
 .endButton:active, .continueButton:active {
   transform: translateY(1px);
 }
+
+/* Modal mode styles */
+.modalMode {
+  min-height: auto;
+  background-color: white;
+  background-image: none;
+  border-radius: 16px;
+  padding: 15px;
+  max-width: 100%;
+  width: 100%;
+}
+
+.modalMode .contentWrapper {
+  padding: 0;
+}
+
+.modalMode .header {
+  margin-bottom: 15px;
+}
+
+.modalMode .title {
+  font-size: 1.6rem;
+}
+
+/* Make sure buttons are more prominent in modal mode */
+.modalMode .gameplayButtons {
+  margin-top: 20px;
+}
+
+.modalMode .endButton,
+.modalMode .continueButton {
+  padding: 12px;
+  font-size: 1.1rem;
+}
+
+.modalMode .endButton {
+  background-color: #E74C3C;
+}
+
+.modalMode .endButton:hover {
+  background-color: #C0392B;
+}
+
+.modalMode .continueButton {
+  background-color: #27AE60;
+}
+
+.modalMode .continueButton:hover {
+  background-color: #219653;
+}

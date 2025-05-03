@@ -22,7 +22,7 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
   const [numbersFound, setNumbersFound] = useState(0);
   const [timer, setTimer] = useState(null);
   
-  // Lấy mức độ khó từ settings
+  // Get difficulty from settings
   const getDifficulty = () => {
     return settings?.difficulty || DIFFICULTY_LEVELS.NORMAL;
   };
@@ -149,7 +149,7 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
 
   // Helper function to calculate stars based on performance
   const calculateStars = () => {
-    // Đối với Zen mode, không tính sao
+    // For Zen mode, no stars
     if (mode === 'zen') return 0;
     
     const difficulty = getDifficulty();
@@ -157,17 +157,17 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
       settings.gridSize * settings.gridSize : 
       settings.maxNumbers;
       
-    // Tính tỷ lệ hoàn thành (%)
+    // Calculate completion percentage (%)
     const foundPercentage = (numbersFound / totalNumbers) * 100;
     
-    // Tính tỷ lệ thời gian đã sử dụng (%)
+    // Calculate used time percentage (%)
     const timePercentage = ((settings.totalTime - timeLeft) / settings.totalTime) * 100;
   
-    // Tính điểm hiệu suất dựa trên số tìm thấy và thời gian sử dụng
-    // Số tìm thấy quan trọng hơn thời gian sử dụng (tỷ lệ 70/30)
+    // Calculate performance score based on found numbers and time used
+    // Found numbers more important than time used (70/30 ratio)
     let performanceScore = (foundPercentage * 0.7) + ((100 - timePercentage) * 0.3);
     
-    // Điều chỉnh ngưỡng yêu cầu dựa trên độ khó
+    // Adjust thresholds based on difficulty
     let thresholds = {
       [DIFFICULTY_LEVELS.EASY]: { three: 85, two: 60, one: 30 },
       [DIFFICULTY_LEVELS.NORMAL]: { three: 80, two: 50, one: 20 },
@@ -192,6 +192,7 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
 
   return {
     isPaused,
+    setIsPaused,
     score,
     setScore,
     timeLeft,

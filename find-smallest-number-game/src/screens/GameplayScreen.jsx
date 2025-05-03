@@ -3,6 +3,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import styles from '../styles/GameplayScreen.module.css';
 import RotateDeviceNotice from './RotateDeviceNotice';
 import GameStats from '../components/GameStats';
+import SettingsScreen from '../screens/SettingsScreen';
 import { useGameContext } from '../contexts/GameContext';
 import { t } from '../utils/languageUtils';
 import { useGameState } from '../hooks/useGameState';
@@ -17,27 +18,29 @@ const GameplayScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getGameSettings, saveHighScore, updateLevelProgress, audioManager } = useGameContext();
-  const [timeAdjustment, setTimeAdjustment] = useState(0); // Để điều chỉnh thời gian khi trả lời sai
+  const [timeAdjustment, setTimeAdjustment] = useState(0);
+  const [isPauseModalOpen, setIsPauseModalOpen] = useState(false);
   
   // Load game settings
   const settings = useMemo(() => {
     return location.state?.gameSettings || getGameSettings(type, mode, mode === 'campaign' ? 1 : null);
   }, [location.state, getGameSettings, type, mode]);
 
-  // Thêm state để theo dõi thông tin về độ khó
+  // Other state variables
   const [shouldShowTargetNumber, setShouldShowTargetNumber] = useState(true);
   const [distractingWarningVisible, setDistractingWarningVisible] = useState(false);
-  const [gameInitialized, setGameInitialized] = useState(false); // Thêm state này để theo dõi việc khởi tạo
-  const [initialTarget, setInitialTarget] = useState(settings?.minNumber || 1); // Giá trị mặc định cho target
+  const [gameInitialized, setGameInitialized] = useState(false);
+  const [initialTarget, setInitialTarget] = useState(settings?.minNumber || 1);
   
-  // Lấy độ khó từ settings
+  // Get difficulty from settings
   const getDifficulty = useCallback(() => {
     return settings?.difficulty || DIFFICULTY_LEVELS.NORMAL;
   }, [settings]);
 
-  // Quản lý trạng thái game
+  // Manage game state
   const {
     isPaused,
+    setIsPaused,
     score,
     setScore,
     timeLeft,
@@ -51,10 +54,46 @@ const GameplayScreen = () => {
     handleGameComplete,
     handleTimeout,
     handleLifeOut,
-    handlePauseClick,
   } = useGameState(settings, type, mode, audioManager, saveHighScore, updateLevelProgress);
 
-  // Quản lý số
+  // Define our new pause handler that uses the modal
+  const handlePauseClick = () => {
+    audioManager.play('button');
+    setIsPaused(true); // Pause the game using the setter from the hook
+    setIsPauseModalOpen(true); // Show the settings modal
+  };
+
+  // Handle resume when the modal is closed
+  const handleResumeGame = () => {
+    setIsPauseModalOpen(false);
+    setIsPaused(false); // Resume the game
+  };
+
+  // Handle end game from the settings modal
+  const handleEndGame = () => {
+    if (mode === 'zen') {
+      // For Zen mode: navigate to result screen
+      navigate('/result', {
+        state: {
+          type,
+          mode,
+          outcome: 'finish', // Player actively ended the game
+          score,
+          usedTime: 0,
+          timeRemaining: 0,
+          gameSettings: {
+            ...settings,
+            difficulty: DIFFICULTY_LEVELS.HARD
+          }
+        }
+      });
+    } else {
+      // For Campaign and Custom mode
+      navigate(`/game/${type}/${mode}`);
+    }
+  };
+
+  // Manage numbers
   const {
     targetNumber,
     gridNumbers,
@@ -70,23 +109,23 @@ const GameplayScreen = () => {
     resetAndGenerateNew,
   } = useNumberGeneration(settings, type, mode);
 
-  // Đảm bảo luôn có giá trị hợp lệ cho targetNumber
+  // Ensure targetNumber is valid
   const displayTargetNumber = targetNumber !== null ? targetNumber : initialTarget;
 
-  // Xử lý sự kiện game
+  // Handle game events
   const { 
     handleGridNumberClick, 
     handleFreeNumberClick,
-    showTargetNumber, // State để kiểm soát hiển thị target number
-    comboCount, // Biến để theo dõi combo
-    consecutiveWrong, // Biến để theo dõi số lần sai liên tiếp
-    foundIndices, // Danh sách vị trí đã tìm thấy
-    getDistractingWarning // Hàm lấy thông báo về số gây xao nhãng
+    showTargetNumber,
+    comboCount,
+    consecutiveWrong,
+    foundIndices,
+    getDistractingWarning
   } = useGameEvents(
     type,
     mode,
     audioManager,
-    displayTargetNumber, // Sử dụng displayTargetNumber
+    displayTargetNumber,
     gridNumbers,
     freeNumbers,
     foundNumbers,
@@ -108,7 +147,7 @@ const GameplayScreen = () => {
     settings
   );
   
-  // Cập nhật thời gian dựa trên điều chỉnh
+  // Update time based on adjustment
   useEffect(() => {
     if (timeAdjustment !== 0 && mode !== 'zen') {
       setTimeLeft(prev => Math.max(1, prev + timeAdjustment));
@@ -116,12 +155,12 @@ const GameplayScreen = () => {
     }
   }, [timeAdjustment, mode, setTimeLeft]);
 
-  // Render phần tử game
+  // Render game elements
   const { renderGridMode, renderFreeMode } = useGameRenderer(
     type,
     mode,
     settings,
-    displayTargetNumber, // Sử dụng displayTargetNumber
+    displayTargetNumber,
     gridNumbers,
     freeNumbers,
     foundNumbers,
@@ -131,47 +170,41 @@ const GameplayScreen = () => {
     getDifficulty
   );
 
-  // Khởi tạo game - Sửa để ngăn vòng lặp vô tận
+  // Initialize game
   useEffect(() => {
-    // Chỉ khởi tạo một lần
     if (!gameInitialized) {
-      // Sử dụng hàm resetAndGenerateNew thay vì gọi trực tiếp generateGridNumbers/generateFreeNumbers
       resetAndGenerateNew();
       setGameStarted(true);
       
-      // Xử lý hiển thị target number dựa vào độ khó
       const difficulty = getDifficulty();
       setShouldShowTargetNumber(difficulty === DIFFICULTY_LEVELS.EASY);
       
-      // Đánh dấu đã khởi tạo
       setGameInitialized(true);
     }
   }, [type, getDifficulty, resetAndGenerateNew, setGameStarted, gameInitialized]);
 
-  // Cập nhật initialTarget khi targetNumber thay đổi và khác null
+  // Update initialTarget when targetNumber changes
   useEffect(() => {
     if (targetNumber !== null) {
       setInitialTarget(targetNumber);
     }
   }, [targetNumber]);
   
-  // Hiệu ứng để kiểm soát hiển thị target number dựa vào số đã tìm thấy và độ khó
+  // Control target number visibility based on found numbers and difficulty
   useEffect(() => {
     const difficulty = getDifficulty();
     
-    // Ẩn target number cho Normal và Hard
     if ((difficulty === DIFFICULTY_LEVELS.NORMAL || difficulty === DIFFICULTY_LEVELS.HARD) && foundNumbers.length >= 0) {
       setShouldShowTargetNumber(false);
     }
   }, [foundNumbers.length, getDifficulty]);
   
-  // Hiệu ứng để hiển thị cảnh báo số gây xao nhãng
+  // Show distracting number warning
   useEffect(() => {
     const warning = getDistractingWarning();
     if (warning) {
       setDistractingWarningVisible(true);
       
-      // Ẩn cảnh báo sau 5 giây
       const timer = setTimeout(() => {
         setDistractingWarningVisible(false);
       }, 5000);
@@ -180,7 +213,7 @@ const GameplayScreen = () => {
     }
   }, [getDistractingWarning, distractingNumbers]);
   
-  // Hiển thị combo trên màn hình nếu có
+  // Render combo text
   const renderComboText = () => {
     if (comboCount >= 3) {
       const comboLevel = Math.floor(comboCount / 3);
@@ -193,7 +226,7 @@ const GameplayScreen = () => {
     return null;
   };
   
-  // Hiển thị cảnh báo khi có số trùng lặp hoặc số gây xao nhãng
+  // Render distracting warning
   const renderDistractingWarning = () => {
     if (distractingWarningVisible && distractingNumbers.length > 0) {
       return (
@@ -205,7 +238,7 @@ const GameplayScreen = () => {
     return null;
   };
 
-  // Lấy class CSS dựa vào độ khó
+  // Get CSS class based on difficulty
   const getDifficultyClass = () => {
     const difficulty = getDifficulty();
     return styles[difficulty] || '';
@@ -214,6 +247,26 @@ const GameplayScreen = () => {
   return (
     <div className={`${styles.container} ${getDifficultyClass()}`}>
       <RotateDeviceNotice />
+      
+      {/* Settings Modal Overlay */}
+      {isPauseModalOpen && (
+        <div className={styles.pauseOverlay} onClick={() => handleResumeGame()}>
+          <div className={styles.settingsModalWrapper} onClick={e => e.stopPropagation()}>
+            <SettingsScreen 
+              fromGameplay={true} 
+              type={type} 
+              mode={mode} 
+              score={score} 
+              timeLeft={timeLeft}
+              lives={lives}
+              settings={settings}
+              onContinue={handleResumeGame}
+              onEndGame={handleEndGame}
+            />
+          </div>
+        </div>
+      )}
+      
       <div className={styles.header}>
         <div className={styles.leftSection}>
           <button className={styles.pauseButton} onClick={handlePauseClick}>
@@ -241,10 +294,7 @@ const GameplayScreen = () => {
         </div>
       </div>
       
-      {/* Hiển thị combo */}
       {renderComboText()}
-      
-      {/* Hiển thị cảnh báo trùng lặp */}
       {renderDistractingWarning()}
       
       <div className={styles.gameContent}>
