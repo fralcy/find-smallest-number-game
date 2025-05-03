@@ -43,6 +43,7 @@
       'music': 'Nhạc:',
       'language': 'Ngôn ngữ:',
       'end': 'Kết thúc',
+      'finish': 'Hoàn thành',
       
       // Màn hình chơi
       'find': 'Tìm',
@@ -137,6 +138,7 @@
       'music': 'Music:',
       'language': 'Language:',
       'end': 'End',
+      'finish': 'Finish',
       
       // Gameplay screen
       'find': 'Find',

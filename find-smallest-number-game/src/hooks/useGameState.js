@@ -141,7 +141,8 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
         mode,
         score,
         timeLeft,
-        settings
+        settings,
+        lives: mode === 'zen' ? lives : undefined
       } 
     });
   };
