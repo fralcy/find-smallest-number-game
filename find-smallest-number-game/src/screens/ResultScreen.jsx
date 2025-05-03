@@ -15,7 +15,8 @@ const ResultScreen = () => {
     getGameSettings, 
     gridLevels, 
     freeLevels, 
-    saveGameResult
+    saveGameResult,
+    saveHighScore 
   } = useGameContext();
 
   const [nextLevelUnlocked, setNextLevelUnlocked] = useState(false);
@@ -49,7 +50,7 @@ const ResultScreen = () => {
     }
   }, [location, navigate]);
   
-  // Lưu kết quả game vào lịch sử khi kết thúc game (chỉ một lần duy nhất)
+  // Lưu kết quả game vào lịch sử và cập nhật điểm cao/số sao khi kết thúc game (chỉ một lần duy nhất)
   useEffect(() => {
     // Chỉ lưu kết quả cho campaign mode và chỉ lưu một lần duy nhất
     if (mode === 'campaign' && level && location.state && !resultSaved.current) {
@@ -63,13 +64,15 @@ const ResultScreen = () => {
         timeRemaining,
         stars,
         outcome,
-        completed: outcome === 'finish', // Thêm trường completed dựa vào outcome
-        // Thêm một trường unique để đảm bảo không trùng lặp
+        completed: outcome === 'finish' || outcome === 'timeout', // Cả hoàn thành và hết giờ đều tính là hoàn thành
         uniqueId: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       };
 
       // Lưu kết quả vào lịch sử
       saveGameResult(type, level, gameResult);
+      
+      // Lưu điểm cao và số sao cho campaign
+      saveHighScore(type, mode, parseInt(level, 10), score, stars);
     }
   }, [
     mode,
@@ -82,6 +85,7 @@ const ResultScreen = () => {
     stars,
     outcome,
     saveGameResult,
+    saveHighScore
   ]);
   
   // Phát âm thanh tương ứng khi hiển thị kết quả

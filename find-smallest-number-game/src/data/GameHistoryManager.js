@@ -5,7 +5,8 @@ import { gridLevelsData, freeLevelsData } from './CampaignLevelsData';
 const STORAGE_KEYS = {
   GRID_LEVELS: 'campaign_levels_grid',
   FREE_LEVELS: 'campaign_levels_free',
-  HIGH_SCORES: 'highScores',
+  GRID_HIGH_SCORES: 'grid_high_scores',  // Key mới cho điểm cao Grid mode
+  FREE_HIGH_SCORES: 'free_high_scores',  // Key mới cho điểm cao Free mode
   LEVEL_HISTORY: 'level_history'
 };
 
@@ -80,14 +81,18 @@ const resetProgress = (type = null) => {
   if (!type || type === 'grid') {
     const defaultGridLevels = initializeLevels('grid');
     saveProgress('grid', defaultGridLevels);
+    // Reset điểm cao grid
+    localStorage.removeItem(STORAGE_KEYS.GRID_HIGH_SCORES);
   }
 
   if (!type || type === 'free') {
     const defaultFreeLevels = initializeLevels('free');
     saveProgress('free', defaultFreeLevels);
+    // Reset điểm cao free
+    localStorage.removeItem(STORAGE_KEYS.FREE_HIGH_SCORES);
   }
   
-  // Thêm reset lịch sử level khi reset tiến trình
+  // Xóa lịch sử level
   if (!type) {
     // Xóa tất cả lịch sử
     Object.keys(localStorage).forEach(key => {
@@ -105,21 +110,49 @@ const resetProgress = (type = null) => {
   }
 };
 
-// Hàm tải điểm cao
-const loadHighScores = () => {
-  const savedData = localStorage.getItem(STORAGE_KEYS.HIGH_SCORES);
-  return savedData ? JSON.parse(savedData) : {};
+// Hàm tải điểm cao cho từng mode
+const loadCampaignHighScores = (type) => {
+  const key = type === 'grid' ? STORAGE_KEYS.GRID_HIGH_SCORES : STORAGE_KEYS.FREE_HIGH_SCORES;
+  const savedData = localStorage.getItem(key);
+  return savedData ? JSON.parse(savedData) : [];
 };
 
-// Hàm lưu điểm cao
-const saveHighScore = (type, mode, score) => {
-  const key = `${type}_${mode}`;
-  const highScores = loadHighScores();
-
-  if (score > (highScores[key] || 0)) {
-    highScores[key] = score;
-    localStorage.setItem(STORAGE_KEYS.HIGH_SCORES, JSON.stringify(highScores));
+// Hàm lưu điểm cao cho một level campaign
+const saveHighScore = (type, mode, levelId, score, stars) => {
+  // Chỉ lưu cho campaign mode
+  if (mode !== 'campaign' || !levelId) {
+    return;
   }
+  
+  // Lấy mảng điểm cao cho loại game
+  const storageKey = type === 'grid' ? STORAGE_KEYS.GRID_HIGH_SCORES : STORAGE_KEYS.FREE_HIGH_SCORES;
+  const highScores = loadCampaignHighScores(type);
+  
+  // Tìm dữ liệu của level hiện tại
+  const levelIndex = highScores.findIndex(item => item.levelId === levelId);
+  
+  if (levelIndex === -1) {
+    // Chưa có dữ liệu cho level này, thêm mới
+    highScores.push({
+      levelId,
+      score,
+      stars
+    });
+  } else {
+    // Đã có dữ liệu, cập nhật nếu cao hơn
+    const currentData = highScores[levelIndex];
+    
+    if (score > currentData.score) {
+      currentData.score = score;
+    }
+    
+    if (stars > currentData.stars) {
+      currentData.stars = stars;
+    }
+  }
+  
+  // Lưu lại dữ liệu
+  localStorage.setItem(storageKey, JSON.stringify(highScores));
 };
 
 // Hàm lưu kết quả game vào lịch sử
@@ -155,11 +188,11 @@ const saveGameResult = (type, levelId, result) => {
     timeUsed: result.usedTime || 0,
     timeRemaining: result.timeRemaining || 0,
     stars: result.stars || 0,
-    completed: result.outcome === 'finish',
+    completed: result.outcome === 'finish' || result.outcome === 'timeout', // Cả finish và timeout đều là completed
     uniqueId: result.uniqueId || `${timestamp}-${Math.random().toString(36).substr(2, 9)}`
   };
 
-  // Kiểm tra xem kết quả này đã được lưu chưa - kiểm tra chặt chẽ hơn
+  // Kiểm tra xem kết quả này đã được lưu chưa
   const isDuplicate = history.some(item => {
     // Nếu có cùng uniqueId, chắc chắn là trùng lặp
     if (item.uniqueId && newResult.uniqueId && item.uniqueId === newResult.uniqueId) {
@@ -231,30 +264,18 @@ const getLevelHistory = (type, levelId) => {
   return [];
 };
 
-// Hàm lấy điểm cao nhất của level
+// Hàm lấy điểm cao nhất cho level
 const getHighestScoreForLevel = (type, levelId) => {
-  const history = getLevelHistory(type, levelId);
-  
-  if (history.length === 0) return 0;
-  
-  // Lọc các kết quả đã hoàn thành và lấy điểm cao nhất
-  const completedResults = history.filter(item => item.completed);
-  if (completedResults.length === 0) return 0;
-  
-  return Math.max(...completedResults.map(item => item.score));
+  const highScores = loadCampaignHighScores(type);
+  const levelData = highScores.find(item => item.levelId === parseInt(levelId, 10));
+  return levelData ? levelData.score : 0;
 };
 
-// Hàm lấy số sao cao nhất của level
+// Hàm lấy số sao cao nhất cho level
 const getMaxStarsForLevel = (type, levelId) => {
-  const history = getLevelHistory(type, levelId);
-  
-  if (history.length === 0) return 0;
-  
-  // Lọc các kết quả đã hoàn thành và lấy số sao cao nhất
-  const completedResults = history.filter(item => item.completed);
-  if (completedResults.length === 0) return 0;
-  
-  return Math.max(...completedResults.map(item => item.stars || 0));
+  const highScores = loadCampaignHighScores(type);
+  const levelData = highScores.find(item => item.levelId === parseInt(levelId, 10));
+  return levelData ? levelData.stars : 0;
 };
 
 // Export các hàm tiện ích
@@ -263,7 +284,6 @@ const GameHistoryManager = {
   saveProgress,
   updateLevelProgress,
   resetProgress,
-  loadHighScores,
   saveHighScore,
   saveGameResult,
   getLevelHistory,

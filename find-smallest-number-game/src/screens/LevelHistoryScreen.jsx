@@ -33,10 +33,8 @@ const LevelHistoryScreen = () => {
     const levelHistory = getLevelHistory(type, levelIdNumber);
     setHistory(levelHistory);
     
-    // Lấy điểm cao nhất
+    // Lấy điểm cao nhất và số sao từ cấu trúc mới
     setHighestScore(getHighestScoreForLevel(type, levelIdNumber));
-    
-    // Lấy số sao cao nhất
     setMaxStars(getMaxStarsForLevel(type, levelIdNumber));
     
     setIsLoading(false);

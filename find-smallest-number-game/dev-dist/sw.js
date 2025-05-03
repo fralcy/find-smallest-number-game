@@ -67,13 +67,10 @@ if (!self.define) {
     });
   };
 }
-define(['./workbox-1cfa77fd'], (function (workbox) { 'use strict';
+define(['./workbox-3d1c42bc'], (function (workbox) { 'use strict';
 
-  self.addEventListener('message', event => {
-    if (event.data && event.data.type === 'SKIP_WAITING') {
-      self.skipWaiting();
-    }
-  });
+  self.skipWaiting();
+  workbox.clientsClaim();
 
   /**
    * The precacheAndRoute() method efficiently caches and responds to
@@ -85,7 +82,7 @@ define(['./workbox-1cfa77fd'], (function (workbox) { 'use strict';
     "revision": "a8b973d2b39152e241a80b0aba40e299"
   }, {
     "url": "/find-smallest-number-game/index.html",
-    "revision": "0.itp0kb2sce"
+    "revision": "0.1ognrm1uup"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/find-smallest-number-game/index.html"), {

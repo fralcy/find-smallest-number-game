@@ -27,7 +27,6 @@ export const GameProvider = ({ children }) => {
   // State cho tiến trình của người chơi
   const [gridLevels, setGridLevels] = useState([]);
   const [freeLevels, setFreeLevels] = useState([]);
-  const [highScores, setHighScores] = useState({});
   
   // THÊM MỚI: State cho lịch sử level
   const [levelHistory, setLevelHistory] = useState({});
@@ -37,7 +36,6 @@ export const GameProvider = ({ children }) => {
     // Load dữ liệu từ GameHistoryManager
     setGridLevels(GameHistoryManager.loadProgress('grid'));
     setFreeLevels(GameHistoryManager.loadProgress('free'));
-    setHighScores(GameHistoryManager.loadHighScores());
 
     // Load cài đặt ngôn ngữ
     const savedLanguage = localStorage.getItem('language');
@@ -110,9 +108,8 @@ export const GameProvider = ({ children }) => {
   };
 
   // Lưu điểm cao
-  const saveHighScore = (type, mode, score) => {
-    GameHistoryManager.saveHighScore(type, mode, score);
-    setHighScores(GameHistoryManager.loadHighScores());
+  const saveHighScore = (type, mode, levelId, score, stars) => {
+    GameHistoryManager.saveHighScore(type, mode, levelId, score, stars);
   };
 
   // Reset tiến trình game
@@ -125,10 +122,6 @@ export const GameProvider = ({ children }) => {
 
     if (!type || type === 'free') {
       setFreeLevels(GameHistoryManager.loadProgress('free'));
-    }
-
-    if (!type) {
-      setHighScores(GameHistoryManager.loadHighScores());
     }
     
     // Cập nhật state khi reset lịch sử
@@ -330,12 +323,10 @@ export const GameProvider = ({ children }) => {
         freeLevels,
         updateLevelProgress,
         resetProgress,
-        highScores,
         saveHighScore,
         getGameSettings,
         saveCustomSettings,
         audioManager,
-        // THÊM MỚI: Export các phương thức mới
         saveGameResult,
         getLevelHistory,
         getHighestScoreForLevel,

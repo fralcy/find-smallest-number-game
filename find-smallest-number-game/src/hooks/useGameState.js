@@ -46,11 +46,6 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
       // Calculate stars for completion
       const stars = calculateStars('finish');
       
-      // Save high score
-      if (typeof saveHighScore === 'function') {
-        saveHighScore(type, mode, score);
-      }
-      
       // Update level progress if in campaign mode
       if (mode === 'campaign' && typeof updateLevelProgress === 'function') {
         updateLevelProgress(type, settings.level, stars);
@@ -105,11 +100,6 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
         timeoutStars = 3;
       }
       
-      // Save high score
-      if (typeof saveHighScore === 'function') {
-        saveHighScore(type, mode, score);
-      }
-      
       // Update level progress if in campaign mode
       if (mode === 'campaign' && typeof updateLevelProgress === 'function') {
         updateLevelProgress(type, settings.level, timeoutStars);
@@ -121,24 +111,24 @@ export const useGameState = (settings, type, mode, audioManager, saveHighScore, 
           type,
           mode,
           outcome: 'timeout',
-          score, // Keep the current score (don't reset to 0)
+          score,
           usedTime: settings.totalTime,
           timeRemaining: 0,
           level: mode === 'campaign' ? settings.level : undefined,
-          stars: timeoutStars, // Use calculated stars
+          stars: timeoutStars,
           gameSettings: settings
         }
       });
     }
-  }, [gameStatus, score, timeLeft, settings, type, mode, navigate, saveHighScore, updateLevelProgress, getDifficulty, audioManager, numbersFound]);
+  }, [gameStatus, score, timeLeft, settings, type, mode, navigate, updateLevelProgress, getDifficulty, audioManager, numbersFound]);
 
   // Helper function to calculate stars based on performance
   const calculateStars = useCallback((outcome = 'finish') => {
     // For Zen mode, no stars
     if (mode === 'zen') return 0;
     
-    // If not completed (timeout or abandoned), return 0 stars
-    if (outcome !== 'finish') return 0;
+    // If not completed (lifeout), return 0 stars
+    if (outcome !== 'finish' && outcome !== 'timeout') return 0;
     
     const difficulty = getDifficulty();
     const totalNumbers = type === 'grid' ? 
