@@ -67,7 +67,11 @@ const updateLevelProgress = (type, levelId, stars) => {
       };
     }
     if (level.id === levelId + 1) {
-      return { ...level, unlocked: true }; // Mở khóa màn tiếp theo
+      // Chỉ mở khóa level tiếp theo nếu đạt ít nhất 1 sao
+      return { 
+        ...level, 
+        unlocked: stars >= 1 // Thêm điều kiện kiểm tra số sao >= 1
+      };
     }
     return level;
   });
