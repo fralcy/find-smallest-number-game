@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/find-smallest-number-game/dev-sw.js?dev-sw', { scope: '/find-smallest-number-game/', type: 'classic' })

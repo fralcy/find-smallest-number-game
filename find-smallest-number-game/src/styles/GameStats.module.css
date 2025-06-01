@@ -1,0 +1,47 @@
+.statsContainer {
+  display: flex;
+  flex-direction: column; /* Arrange rows vertically */
+  align-items: left;;
+}
+
+.row {
+  display: flex;
+  justify-content: left;
+  width: 100%;
+}
+
+.scoreValue {
+  font-size: 1.5rem;
+  color: #4A90E2;
+  font-weight: bold;
+}
+
+.timeValue {
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.livesContainer {
+  display: flex;
+  gap: 5px;
+}
+
+.lifeIcon {
+  font-size: 1.5rem;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .statsContainer {
+    padding: 8px 15px;
+  }
+  
+  .scoreValue, .timeValue {
+    font-size: 1.2rem;
+  }
+  
+  .lifeIcon {
+    font-size: 1.2rem;
+  }
+}

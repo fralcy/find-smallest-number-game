@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- Nền hình vuông bo tròn góc -->
+  <rect x="4" y="4" width="40" height="40" rx="8" fill="#4A90E2" />
+  
+  <!-- Mũi tên quay lại -->
+  <path d="M30 14 L18 24 L30 34" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

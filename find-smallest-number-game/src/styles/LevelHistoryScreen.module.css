@@ -1,0 +1,280 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #ffffff;
+  background-image: url('../assets/grid-background.svg');
+  background-size: 24px 32px;
+  background-repeat: repeat;
+  font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+  padding: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+}
+
+.middleSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.title {
+  color: #4A90E2;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.contentContainer {
+  width: 100%;
+  max-width: 700px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Stats section */
+.statsSection {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  padding: 15px 15px 10px;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: #757575;
+}
+
+.statValue {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4A90E2;
+}
+
+.starsContainer {
+  display: flex;
+  gap: 3px;
+}
+
+.star {
+  font-size: 1.2rem;
+}
+
+.activeStar {
+  color: #F5A623;
+}
+
+.inactiveStar {
+  color: #E0E0E0;
+}
+
+/* History table */
+.historyTable {
+  width: 100%;
+}
+
+.tableHeader {
+  display: flex;
+  background-color: #4A90E2;
+  color: white;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.headerCell {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  user-select: none;
+}
+
+.headerCell:hover {
+  background-color: #3A80D2;
+}
+
+.headerCell:nth-child(1) {
+  flex: 2.5;
+}
+
+.headerCell:nth-child(2), 
+.headerCell:nth-child(3) {
+  flex: 1;
+}
+
+.headerCell:nth-child(4) {
+  flex: 0.8;
+}
+
+.sorted {
+  background-color: #3A80D2;
+}
+
+.tableBody {
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tableRow {
+  display: flex;
+  border-bottom: 1px solid #E0E0E0;
+  transition: background-color 0.2s;
+  background-color: rgba(255, 255, 255, 0.9); /* Đảm bảo nền rõ ràng */
+}
+
+.tableRow:nth-child(odd) {
+  background-color: rgba(245, 245, 245, 0.9); /* Màu xám nhạt cho hàng lẻ */
+}
+
+.tableRow:hover {
+  background-color: rgba(230, 240, 250, 0.9); /* Màu xanh nhạt khi hover */
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+/* Thêm style cho hàng hoàn thành và thất bại */
+.completedRow {
+  border-left: 3px solid #27AE60;
+}
+
+.failedRow {
+  border-left: 3px solid #E74C3C;
+}
+
+.cell {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  color: #333333; /* Đảm bảo màu chữ đậm để dễ đọc */
+}
+
+.cell:nth-child(1) {
+  flex: 2.5;
+}
+
+.cell:nth-child(2), 
+.cell:nth-child(3) {
+  flex: 1;
+}
+
+.cell:nth-child(4) {
+  flex: 0.8;
+}
+
+.starIcon {
+  color: #F5A623;
+  margin-right: 2px;
+}
+
+.emptyState {
+  padding: 30px;
+  text-align: center;
+  color: #757575;
+  font-style: italic;
+}
+
+.loadingState {
+  padding: 30px;
+  text-align: center;
+  color: #4A90E2;
+  font-style: italic;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Scrollbar styling */
+.tableBody::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tableBody::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.tableBody::-webkit-scrollbar-thumb {
+  background: #4A90E2;
+  border-radius: 10px;
+}
+
+.tableBody::-webkit-scrollbar-thumb:hover {
+  background: #3A80D2;
+}
+
+/* Responsive styling */
+@media (max-width: 600px) {
+  .statsSection {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  .statItem {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .headerCell, .cell {
+    font-size: 0.9rem;
+    padding: 8px 5px;
+  }
+  
+  .tableBody {
+    max-height: 200px;
+  }
+  
+  .title {
+    font-size: 1.4rem;
+  }
+}

@@ -1,0 +1,234 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 90vh;
+  width: 100%;
+  background-color: #ffffff;
+  background-image: url('../assets/grid-background.svg');
+  background-size: 24px 32px;
+  background-repeat: repeat;
+  font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+  padding: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+}
+
+.middleSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.titleContainer {
+  width: 100%;
+  text-align: center;
+}
+
+.title {
+  color: #4A90E2;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.settingsContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+  gap: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles cho phần độ khó sử dụng radio buttons */
+.difficultyButtons {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+}
+
+.radioButtonWrapper {
+  position: relative;
+  flex: 1;
+}
+
+.radioInput {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.radioLabel {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 4px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border: 2px solid;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.radioLabel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.settingGroup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.settingLabel {
+  color: #333;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.rangeControls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.inputControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inputControl span {
+  color: #000;
+  font-weight: bold;
+}
+
+.numberInput {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 80px;
+  background-color: #fff;
+  color: #000;
+}
+
+.numberInput:focus {
+  outline: none;
+  border-color: #4A90E2;
+  box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
+}
+
+.slider {
+  flex: 1;
+  height: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #ddd;
+  outline: none;
+  border-radius: 4px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4A90E2;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4A90E2;
+  cursor: pointer;
+  border: none;
+}
+
+.sliderValue {
+  min-width: 60px;
+  text-align: right;
+  font-weight: bold;
+  color: #4A90E2;
+}
+
+.settingInfo {
+  display: flex;
+  justify-content: space-between;
+  padding: 0;
+}
+
+.infoLabel {
+  font-weight: bold;
+  color: #333;
+}
+
+.infoValue {
+  font-weight: bold;
+  color: #4A90E2;
+}
+
+.startButton {
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 0.5rem;
+}
+
+.startButton:hover {
+  background-color: #3A80D2;
+  transform: translateY(-2px);
+}
+
+.startButton:active {
+  transform: translateY(1px);
+}

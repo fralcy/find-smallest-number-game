@@ -1,0 +1,189 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #ffffff;
+  background-image: url('../assets/grid-background.svg');
+  background-size: 24px 32px;
+  background-repeat: repeat;
+  font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+  padding: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+}
+
+.middleSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.titleContainer {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  color: #4A90E2;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.contentWrapper {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.levelGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  max-height: 60vh;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 800px;
+  padding: 0.5rem; /* Thêm padding để tránh tràn */
+  overflow-y: auto;
+}
+
+.levelCard {
+  aspect-ratio: 1;
+  background-color: #F5A623;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 10px;
+}
+
+.levelCard:hover:not(.locked) {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.levelLabel {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.levelInfo {
+  color: white;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lockIcon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: white;
+}
+
+/* Style cho nút history */
+.historyButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  z-index: 5;
+}
+
+.historyButton:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.1);
+}
+
+.historyIcon {
+  font-size: 1rem;
+  color: white;
+}
+
+/* Màu sắc dựa trên độ khó */
+.easy {
+  background-color: #27AE60; /* Xanh lá - dễ */
+}
+
+.normal {
+  background-color: #F1C40F; /* Vàng - trung bình */
+}
+
+.hard {
+  background-color: #E74C3C; /* Đỏ - khó */
+}
+
+/* Scrollbar styling */
+.levelGrid::-webkit-scrollbar {
+  width: 10px;
+}
+
+.levelGrid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.levelGrid::-webkit-scrollbar-thumb {
+  background: #4A90E2;
+  border-radius: 10px;
+}
+
+.levelGrid::-webkit-scrollbar-thumb:hover {
+  background: #3A80D2;
+}

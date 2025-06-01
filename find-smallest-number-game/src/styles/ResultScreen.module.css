@@ -1,0 +1,138 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #ffffff;
+  background-image: url('../assets/grid-background.svg');
+  background-size: 24px 32px;
+  background-repeat: repeat;
+  font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+  padding: 20px;
+}
+
+.title {
+  color: #333;
+  font-weight: bold;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.starsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.star {
+  font-size: 2.5rem;
+  transition: transform 0.3s ease;
+}
+
+.activeStar {
+  color: #F5A623;
+  transform: scale(1.1);
+}
+
+.inactiveStar {
+  color: #E0E0E0;
+}
+
+.resultsContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 350px;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.resultRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.resultLabel {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.resultValue {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4A90E2;
+}
+
+/* Độ khó */
+.difficultyValue {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.difficultyEasy {
+  color: #27AE60 !important; /* Xanh lá - dễ */
+  font-weight: bold;
+}
+
+.difficultyNormal {
+  color: #F1C40F !important; /* Vàng - trung bình */
+  font-weight: bold;
+}
+
+.difficultyHard {
+  color: #E74C3C !important; /* Đỏ - khó */
+  font-weight: bold;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 700px;
+}
+
+.actionButton {
+  flex: 1;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.exitButton {
+  background-color: #4CEEAD;
+}
+
+.exitButton:hover {
+  background-color: #3CD69A;
+  transform: translateY(-2px);
+}
+
+.replayButton {
+  background-color: #4CEEAD;
+}
+
+.replayButton:hover {
+  background-color: #3CD69A;
+  transform: translateY(-2px);
+}
+
+.continueButton {
+  background-color: #4A90E2;
+}
+
+.continueButton:hover {
+  background-color: #3A80D2;
+  transform: translateY(-2px);
+}

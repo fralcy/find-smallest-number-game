@@ -1,0 +1,178 @@
+.numberBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  color: #333;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.numberBox:hover {
+  animation: none;
+  transform: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}
+
+.found {
+  cursor: default;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.hovered {
+  background-color: #e0e0e0;
+}
+
+/* Hiệu ứng khi tìm thấy số */
+@keyframes correctAnswer {
+  0% { transform: scale(1.2); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.found.animation {
+  animation: correctAnswer 0.5s ease forwards;
+}
+
+/* Hiệu ứng khi chọn sai */
+@keyframes wrongAnswer {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+.wrong {
+  animation: wrongAnswer 0.4s ease;
+}
+
+/* ===== EASY MODE STYLES ===== */
+.easy {
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.easy:hover {
+  border-color: #4A90E2;
+  background-color: #f8f8f8;
+}
+
+.easy.found {
+  background-color: #4CEEAD; /* Màu nền chuyển màu khi tìm thấy số ở mức EASY */
+  color: white !important; /* Luôn hiện số rõ ràng ở chế độ dễ */
+  opacity: 0.9;
+  animation: correctAnswer 0.5s ease forwards;
+}
+
+/* ===== NORMAL MODE STYLES ===== */
+.normal {
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  color: #444;
+}
+
+.normal:hover {
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+.normal.found {
+  /* Số sẽ biến mất từ từ khi tìm thấy, nhưng không thay đổi màu nền */
+  animation: fadeNumber 0.8s forwards;
+  opacity: 0.7;
+  background-color: #f0f0f0; /* Giữ nguyên màu nền xám */
+}
+
+@keyframes fadeNumber {
+  0% { color: #444; }
+  100% { color: #f0f0f0; } /* Màu chữ giống màu nền -> biến mất */
+}
+
+/* ===== HARD MODE STYLES ===== */
+.hard {
+  font-size: 1rem;
+  color: #333;
+  transition: none; /* Loại bỏ hiệu ứng chuyển đổi */
+}
+
+.hard.found {
+  background-color: #E74C3C; /* Đỏ cam cho HARD mode */
+  opacity: 0.5; /* Gần như biến mất */
+}
+
+/* Loại bỏ các hiệu ứng hover và animation */
+.hard:not(.found):hover {
+  animation: none !important;
+}
+
+.hard:not(.found) {
+  animation: none !important;
+}
+
+.hard.wrong {
+  animation: wrongAnswer 0.4s ease; /* Giữ lại hiệu ứng sai */
+}
+
+/* Loại bỏ hiệu ứng đặc biệt */
+.hard::before {
+  content: none; /* Không hiển thị hiệu ứng ánh sáng */
+}
+
+/* Giao diện màu khác nhau cho từng mức độ khó */
+.easy.found {
+  background-color: #27AE60; /* Xanh lá */
+}
+
+/* Đã loại bỏ màu nền khi tìm thấy cho normal */
+
+.hard.found {
+  background-color: #E74C3C; /* Đỏ cam */
+}
+
+/* Zen Mode Styles */
+.zenMode {
+  font-size: 1.4rem; /* Kích thước chữ lớn hơn cho dễ nhìn */
+  border-radius: 12px; /* Bo góc hơn */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Đổ bóng rõ hơn */
+  transition: transform 0.2s ease; /* Hiệu ứng hover mượt mà */
+  border: none;
+  /* Loại bỏ các animation gây khó chịu */
+  animation: none !important; /* Đảm bảo không có animation từ các class khác */
+  transform: none !important; /* Loại bỏ transform từ các hiệu ứng wiggle */
+  filter: none !important; /* Loại bỏ hiệu ứng blur */
+}
+
+.zenMode:hover {
+  transform: scale(1.05) !important; /* Cho phép phóng to khi hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.zenMode.found {
+  background-color: #4CEEAD !important; /* Màu xanh lá khi tìm thấy */
+  color: white !important; /* Đảm bảo chữ màu trắng */
+  opacity: 0.9;
+}
+
+/* Hiệu ứng khi tìm đúng trong Zen mode */
+@keyframes zenCorrect {
+  0% { transform: scale(1.2); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.zenMode.found.animation {
+  animation: zenCorrect 0.5s ease forwards !important; /* Cho phép animation này */
+}

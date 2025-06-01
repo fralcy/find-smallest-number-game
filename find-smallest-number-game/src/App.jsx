@@ -1,35 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import MainScreen from './screens/MainScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import GameModeScreen from './screens/GameModeScreen';
+import GameModeDetailScreen from './screens/GameModeDetailScreen';
+import CampaignScreen from './screens/CampaignScreen';
+import CustomScreen from './screens/CustomScreen';
+import GameplayScreen from './screens/GameplayScreen';
+import ResultScreen from './screens/ResultScreen';
+import LevelHistoryScreen from './screens/LevelHistoryScreen';
+import { GameProvider, useGameContext } from './contexts/GameContext';
+import { setLanguage, initLanguage } from './utils/languageUtils';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Tạo component để khởi động AudioManager và cài đặt ngôn ngữ
+const AppContent = () => {
+  const { audioManager } = useGameContext();
+
+  // Khởi tạo audio manager và ngôn ngữ khi app loads
+  useEffect(() => {
+    // Khởi tạo ngôn ngữ ngay khi ứng dụng chạy
+    initLanguage();
+
+    // Đăng ký sự kiện để cho phép phát âm thanh trên tương tác người dùng đầu tiên
+    const unlockAudio = () => {
+      const context = new (window.AudioContext || window.webkitAudioContext)();
+      context.resume().then(() => {
+        document.removeEventListener('click', unlockAudio);
+        document.removeEventListener('touchstart', unlockAudio);
+      });
+    };
+
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
+
+    return () => {
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('touchstart', unlockAudio);
+    };
+  }, [audioManager]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainScreen />} />
+        <Route path="/settings" element={<SettingsScreen />} />
+        <Route path="/game-mode" element={<GameModeScreen />} />
+        <Route path="/game-mode/:type" element={<GameModeDetailScreen />} />
+        <Route path="/game/:type/campaign" element={<CampaignScreen />} />
+        <Route path="/game/:type/custom" element={<CustomScreen />} />
+        <Route path="/game/:type/:mode/play" element={<GameplayScreen />} />
+        <Route path="/result" element={<ResultScreen />} />
+        <Route path="/game/:type/level/:levelId/history" element={<LevelHistoryScreen />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
+};
+
+function App() {
+  return (
+    <GameProvider>
+      <AppContent />
+    </GameProvider>
+  );
 }
 
-export default App
+export default App;
